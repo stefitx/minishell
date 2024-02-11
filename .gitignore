@@ -3,6 +3,6 @@
 /C# Mock-Ups/bin/
 /C# Mock-Ups/obj/
 /C# Mock-Ups/Properties/
-/C# Mock-Ups/App.config/
-/C# Mock-Ups/*.config/
-/C# Mock-Ups/App.config
+/C# Mock-Ups/*.config
+/C# Mock-Ups/*.csproj
+/C# Mock-Ups/*.sln
