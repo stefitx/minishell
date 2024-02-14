@@ -61,7 +61,7 @@ class Tokenizer
             start = i;
             while (i < _cmd.Length && !(lastQuote == '\'' ? "'" : lastQuote == '"' ? "$\"" : " $<>|\"'").Contains(_cmd[i]))
                 i++;
-            if (i > start)
+            if (i > start || lastQuote != '\0')
                 tokens.AddLast(new Token(_cmd.Substring(start, i - start), Token.TokenType.Text));
             if (i < _cmd.Length && "$<>|\"'".Contains(_cmd[i]))
             {
