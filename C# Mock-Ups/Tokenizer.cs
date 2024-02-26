@@ -9,7 +9,7 @@ class Tokenizer
     struct Token
     {
         public string content;
-        public enum TokenType { Text, Variable, Special };
+        public enum TokenType { Space, Text, Variable, Special };
         public TokenType tokenType;
         public Token(string _content, TokenType _tokenType)
         {
@@ -34,14 +34,13 @@ class Tokenizer
         Console.WriteLine(dashLine);
         Console.WriteLine($"Split Tokens: {rawTokens.Count}");
         foreach (Token t in rawTokens)
-            Console.WriteLine($"{t.content} {new string[3] { "(Text)", "(Variable)", "(Special)" }[(int)t.tokenType]}");
+            Console.WriteLine($"{t.content} {new string[4] { "(Space)", "(Text)", "(Variable)", "(Special)" }[(int)t.tokenType]}");
         Console.WriteLine(dashLine);
-        //LinkedList<Token> tokens = EvaluateTokens(rawTokens);
-        //Console.WriteLine(dashLine);
-        //Console.WriteLine($"Processed Tokens: {tokens.Count}");
-        //foreach (Token t in tokens)
-        //    Console.WriteLine($"{t.content} ({new string[3] { "Text", "Redirection", "Pipe" }[(int)t.tokenType]})");
-        //Console.WriteLine(dashLine);
+        Console.WriteLine(dashLine);
+        Console.WriteLine($"Joined Text Nodes:");
+        foreach (string s in JoinTextNodes(rawTokens))
+            Console.WriteLine(s);
+        Console.WriteLine(dashLine);
         return null;
     }
     enum QuoteStatus { None, Single, Double };
@@ -56,8 +55,11 @@ class Tokenizer
         tokens = new LinkedList<Token>();
         while (i < _cmd.Length)
         {
+            start = i;
             while (i < _cmd.Length && _cmd[i] == ' ' && lastQuote == '\0')
                 i++;
+            if (i > start)
+                tokens.AddLast(new Token(string.Empty, Token.TokenType.Space));
             start = i;
             while (i < _cmd.Length && !(lastQuote == '\'' ? "'" : lastQuote == '"' ? "$\"" : " $<>|\"'").Contains(_cmd[i]))
                 i++;
@@ -94,6 +96,31 @@ class Tokenizer
         if (lastQuote != '\0')
             throw new Exception("Error: Open Quotes Detected!");
         return tokens;
+    }
+    static LinkedList<string> JoinTextNodes(LinkedList<Token> _tokenList)
+    {
+        LinkedList<string> textNodes = new LinkedList<string>();
+        string s = string.Empty;
+        foreach (Token token in _tokenList)
+        {
+            if (token.tokenType == Token.TokenType.Space || token.tokenType == Token.TokenType.Special)
+            {
+                if (!string.IsNullOrEmpty(s))
+                {
+                    textNodes.AddLast(s);
+                    s = string.Empty;
+                }
+            }
+            else
+            {
+                if (token.tokenType == Token.TokenType.Variable)
+                    s += '$';
+                s += token.content;
+            }
+        }
+        if (!string.IsNullOrEmpty(s))
+            textNodes.AddLast(s);
+        return textNodes;
     }
     //static LinkedList<Command> BuildCommands(LinkedList<Token> _tokens)
     //{
