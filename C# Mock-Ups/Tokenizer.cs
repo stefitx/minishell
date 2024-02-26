@@ -11,10 +11,12 @@ class Tokenizer
         public string content;
         public enum TokenType { Space, Text, Variable, Special };
         public TokenType tokenType;
-        public Token(string _content, TokenType _tokenType)
+        public bool inQuotes; // Only Important For Heredoc Delimiters
+        public Token(string _content, TokenType _tokenType, bool _inQuotes)
         {
             content = _content;
             tokenType = _tokenType;
+            inQuotes = _inQuotes;
         }
     }
     public struct Command
@@ -34,7 +36,7 @@ class Tokenizer
         Console.WriteLine(dashLine);
         Console.WriteLine($"Split Tokens: {rawTokens.Count}");
         foreach (Token t in rawTokens)
-            Console.WriteLine($"{t.content} {new string[4] { "(Space)", "(Text)", "(Variable)", "(Special)" }[(int)t.tokenType]}");
+            Console.WriteLine($"{t.content} {new string[4] { "(Space)", "(Text)", "(Variable)", "(Special)" }[(int)t.tokenType]} {(t.inQuotes ? "(In Quotes)" : "")}");
         Console.WriteLine(dashLine);
         Console.WriteLine(dashLine);
         Console.WriteLine($"Joined Text Nodes:");
@@ -59,12 +61,12 @@ class Tokenizer
             while (i < _cmd.Length && _cmd[i] == ' ' && lastQuote == '\0')
                 i++;
             if (i > start)
-                tokens.AddLast(new Token(string.Empty, Token.TokenType.Space));
+                tokens.AddLast(new Token(string.Empty, Token.TokenType.Space, lastQuote != '\0'));
             start = i;
             while (i < _cmd.Length && !(lastQuote == '\'' ? "'" : lastQuote == '"' ? "$\"" : " $<>|\"'").Contains(_cmd[i]))
                 i++;
             if (i > start || lastQuote != '\0')
-                tokens.AddLast(new Token(_cmd.Substring(start, i - start), Token.TokenType.Text));
+                tokens.AddLast(new Token(_cmd.Substring(start, i - start), Token.TokenType.Text, lastQuote != '\0'));
             if (i < _cmd.Length && "$<>|\"'".Contains(_cmd[i]))
             {
                 if ("\"'".Contains(_cmd[i]))
@@ -82,14 +84,14 @@ class Tokenizer
                         i++;
                     if (i == start)
                         throw new Exception("Error: Variable With No Name Detected!");
-                    tokens.AddLast(new Token(_cmd.Substring(start, i - start), Token.TokenType.Variable));
+                    tokens.AddLast(new Token(_cmd.Substring(start, i - start), Token.TokenType.Variable, lastQuote != '\0'));
                 }
                 else if (lastQuote == '\0')
                 {
                     start = i;
                     if (i + 1 < _cmd.Length && "<>".Contains(_cmd[i]) && _cmd[i] == _cmd[i + 1])
                         i++;
-                    tokens.AddLast(new Token(_cmd.Substring(start, ++i - start), Token.TokenType.Special));
+                    tokens.AddLast(new Token(_cmd.Substring(start, ++i - start), Token.TokenType.Special, lastQuote != '\0'));
                 }
             }
         }
