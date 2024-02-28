@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 class Tokenizer
 {
@@ -11,11 +9,23 @@ class Tokenizer
         public string content;
         public enum TokenType { Space, Text, Variable, Special };
         public TokenType tokenType;
-        public bool inQuotes; // Only Important For Heredoc Delimiters
+        public bool inQuotes; // Only Important For Variables And Text Tokens
         public Token(string _content, TokenType _tokenType, bool _inQuotes)
         {
             content = _content;
             tokenType = _tokenType;
+            inQuotes = _inQuotes;
+        }
+    }
+    struct TextNode
+    {
+        public string original;
+        public string expanded;
+        public bool inQuotes; // Important For Heredoc Delimiters And Ambiguous Error
+        public TextNode(string _original, string _expanded, bool _inQuotes)
+        {
+            original = _original;
+            expanded = _expanded;
             inQuotes = _inQuotes;
         }
     }
@@ -40,8 +50,8 @@ class Tokenizer
         Console.WriteLine(dashLine);
         Console.WriteLine(dashLine);
         Console.WriteLine($"Joined Text Nodes:");
-        foreach (string s in JoinTextNodes(rawTokens))
-            Console.WriteLine(s);
+        foreach (TextNode node in JoinTextNodes(rawTokens))
+            Console.WriteLine($"{node.expanded} (Original: {node.original}) {(node.inQuotes ? "(In Quotes)" : "")}");
         Console.WriteLine(dashLine);
         return null;
     }
@@ -99,29 +109,41 @@ class Tokenizer
             throw new Exception("Error: Open Quotes Detected!");
         return tokens;
     }
-    static LinkedList<string> JoinTextNodes(LinkedList<Token> _tokenList)
+    static LinkedList<TextNode> JoinTextNodes(LinkedList<Token> _tokenList)
     {
-        LinkedList<string> textNodes = new LinkedList<string>();
-        string s = string.Empty;
+        LinkedList<TextNode> textNodes = new LinkedList<TextNode>();
+        string original = string.Empty;
+        string expanded = string.Empty;
+        bool inQuotes = false;
         foreach (Token token in _tokenList)
         {
             if (token.tokenType == Token.TokenType.Space || token.tokenType == Token.TokenType.Special)
             {
-                if (!string.IsNullOrEmpty(s))
+                if (!string.IsNullOrEmpty(original))
                 {
-                    textNodes.AddLast(s);
-                    s = string.Empty;
+                    textNodes.AddLast(new TextNode(original, expanded, inQuotes));
+                    original = string.Empty;
+                    expanded = string.Empty;
+                    inQuotes = false;
                 }
             }
             else
             {
                 if (token.tokenType == Token.TokenType.Variable)
-                    s += '$';
-                s += token.content;
+                {
+                    original += '$' + token.content;
+                    expanded += $"<Value_Of_${token.content}>";
+                }
+                else
+                {
+                    original += token.content;
+                    expanded += token.content;
+                }
+                inQuotes = inQuotes || token.inQuotes;
             }
         }
-        if (!string.IsNullOrEmpty(s))
-            textNodes.AddLast(s);
+        if (!string.IsNullOrEmpty(original))
+            textNodes.AddLast(new TextNode(original, expanded, inQuotes));
         return textNodes;
     }
     //static LinkedList<Command> BuildCommands(LinkedList<Token> _tokens)
