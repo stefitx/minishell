@@ -20,9 +20,9 @@ class Tokenizer
     struct TextNode
     {
         public string original;
-        public string expanded;
+        public string[] expanded;
         public bool inQuotes; // Important For Heredoc Delimiters And Ambiguous Error
-        public TextNode(string _original, string _expanded, bool _inQuotes)
+        public TextNode(string _original, string[] _expanded, bool _inQuotes)
         {
             original = _original;
             expanded = _expanded;
@@ -51,7 +51,12 @@ class Tokenizer
         Console.WriteLine(dashLine);
         Console.WriteLine($"Joined Text Nodes:");
         foreach (TextNode node in JoinTextNodes(rawTokens))
-            Console.WriteLine($"{node.expanded} (Original: {node.original}) {(node.inQuotes ? "(In Quotes)" : "")}");
+        {
+            Console.WriteLine($"Original: {node.original} {(node.inQuotes ? "(In Quotes)" : "")}");
+            Console.WriteLine($"Expansion Text Nodes: {node.expanded.Length}");
+            foreach (string s in node.expanded)
+                Console.WriteLine($"-\t'{s}'");
+        }
         Console.WriteLine(dashLine);
         return null;
     }
@@ -113,17 +118,18 @@ class Tokenizer
     {
         LinkedList<TextNode> textNodes = new LinkedList<TextNode>();
         string original = string.Empty;
-        string expanded = string.Empty;
+        List<string> expanded = new List<string>() { string.Empty };
         bool inQuotes = false;
+        bool addNew = false;
         foreach (Token token in _tokenList)
         {
             if (token.tokenType == Token.TokenType.Space || token.tokenType == Token.TokenType.Special)
             {
                 if (!string.IsNullOrEmpty(original))
                 {
-                    textNodes.AddLast(new TextNode(original, expanded, inQuotes));
+                    textNodes.AddLast(new TextNode(original, expanded.ToArray(), inQuotes));
                     original = string.Empty;
-                    expanded = string.Empty;
+                    expanded = new List<string>() { string.Empty };
                     inQuotes = false;
                 }
             }
@@ -132,19 +138,49 @@ class Tokenizer
                 if (token.tokenType == Token.TokenType.Variable)
                 {
                     original += '$' + token.content;
-                    expanded += $"<Value_Of_${token.content}>";
+                    if (token.inQuotes)
+                        expanded[expanded.Count - 1] += GetEnv(token.content);
+                    else
+                    {
+                        string expansion = GetEnv(token.content);
+                        string[] splitNodes = expansion.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                        for (int i = 0; i < splitNodes.Length; i++)
+                        {
+                            if (i == 0 && ((expanded[expanded.Count - 1] == string.Empty && !inQuotes) || !expansion.StartsWith(" ")))
+                                expanded[expanded.Count - 1] += splitNodes[i];
+                            else
+                                expanded.Add(splitNodes[i]);
+                        }
+                        addNew = expansion.EndsWith(" ");
+                    }
                 }
                 else
                 {
                     original += token.content;
-                    expanded += token.content;
+                    if (addNew)
+                    {
+                        addNew = false;
+                        expanded.Add(token.content);
+                    }
+                    else
+                        expanded[expanded.Count - 1] += token.content;
                 }
                 inQuotes = inQuotes || token.inQuotes;
             }
         }
         if (!string.IsNullOrEmpty(original))
-            textNodes.AddLast(new TextNode(original, expanded, inQuotes));
+            textNodes.AddLast(new TextNode(original, expanded.ToArray(), inQuotes));
         return textNodes;
+    }
+    // Mock-Up Of getenv() Function
+    static string GetEnv(string _var)
+    {
+        switch (_var)
+        {
+            case "a": return $"    1    2    ";
+            case "b": return $"    3    4    ";
+            default: return $"<Value_Of_${_var}>";
+        }
     }
     //static LinkedList<Command> BuildCommands(LinkedList<Token> _tokens)
     //{
