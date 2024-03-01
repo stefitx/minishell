@@ -156,7 +156,7 @@ class Tokenizer
                             string[] splitNodes = expansion.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
                             for (int i = 0; i < splitNodes.Length; i++)
                             {
-                                if (i == 0 && ((expanded.Last.Value == string.Empty && !inQuotes) || !IsSpaceChar(expansion[0])))
+                                if (i == 0 && (expanded.Count == 0 || !IsSpaceChar(expansion[0])))
                                 {
                                     if (expanded.Count == 0)
                                         expanded.AddLast(string.Empty);
@@ -165,7 +165,7 @@ class Tokenizer
                                 else
                                     expanded.AddLast(splitNodes[i]);
                             }
-                            addNew = IsSpaceChar(expansion[expansion.Length - 1]);
+                            addNew = expansion.Length > 0 && IsSpaceChar(expansion[expansion.Length - 1]);
                         }
                     }
                 }
@@ -198,8 +198,11 @@ class Tokenizer
     {
         switch (_var)
         {
-            case "a": return "    1    2    ";
-            case "b": return "    3    4    ";
+            //case "a": return "    1    2    ";
+            //case "b": return "    3    4    ";
+            case "a": return "1";
+            case "b": return "";
+            case "n": return "";
             case "no": return null;
             default: return $"<Value_Of_${_var}>";
         }
