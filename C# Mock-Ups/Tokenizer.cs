@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 class Tokenizer
 {
@@ -55,8 +56,15 @@ class Tokenizer
             Console.WriteLine($"Original: {node.original} {(node.inQuotes ? "(In Quotes)" : "")}");
             Console.WriteLine($"Expansion Text Nodes: {node.expanded.Length}");
             foreach (string s in node.expanded)
-                Console.WriteLine($"-\t'{s}'");
+                Console.WriteLine($"-\t`{s}`");
         }
+        string expandedFull = string.Empty;
+        foreach (TextNode node in JoinTextNodes(rawTokens))
+        {
+            foreach (string s in node.expanded)
+                expandedFull += $"`{s}` ";
+        }
+        Console.WriteLine($"Full Expansion: {expandedFull}");
         Console.WriteLine(dashLine);
         return null;
     }
@@ -73,12 +81,12 @@ class Tokenizer
         while (i < _cmd.Length)
         {
             start = i;
-            while (i < _cmd.Length && _cmd[i] == ' ' && lastQuote == '\0')
+            while (i < _cmd.Length && IsSpaceChar(_cmd[i]) && lastQuote == '\0')
                 i++;
             if (i > start)
                 tokens.AddLast(new Token(string.Empty, Token.TokenType.Space, lastQuote != '\0'));
             start = i;
-            while (i < _cmd.Length && !(lastQuote == '\'' ? "'" : lastQuote == '"' ? "$\"" : " $<>|\"'").Contains(_cmd[i]))
+            while (i < _cmd.Length && !(lastQuote == '\'' ? _cmd[i] == '\'' : lastQuote == '"' ? "\"$".Contains(_cmd[i]) : IsControlChar(_cmd[i])))
                 i++;
             if (i > start || lastQuote != '\0')
                 tokens.AddLast(new Token(_cmd.Substring(start, i - start), Token.TokenType.Text, lastQuote != '\0'));
@@ -118,18 +126,18 @@ class Tokenizer
     {
         LinkedList<TextNode> textNodes = new LinkedList<TextNode>();
         string original = string.Empty;
-        List<string> expanded = new List<string>() { string.Empty };
+        LinkedList<string> expanded = new LinkedList<string>();
         bool inQuotes = false;
         bool addNew = false;
         foreach (Token token in _tokenList)
         {
             if (token.tokenType == Token.TokenType.Space || token.tokenType == Token.TokenType.Special)
             {
-                if (!string.IsNullOrEmpty(original))
+                if (!string.IsNullOrEmpty(original) || inQuotes)
                 {
                     textNodes.AddLast(new TextNode(original, expanded.ToArray(), inQuotes));
                     original = string.Empty;
-                    expanded = new List<string>() { string.Empty };
+                    expanded.Clear();
                     inQuotes = false;
                 }
             }
@@ -138,20 +146,27 @@ class Tokenizer
                 if (token.tokenType == Token.TokenType.Variable)
                 {
                     original += '$' + token.content;
-                    if (token.inQuotes)
-                        expanded[expanded.Count - 1] += GetEnv(token.content);
-                    else
+                    string expansion = GetEnv(token.content);
+                    if (expansion != null)
                     {
-                        string expansion = GetEnv(token.content);
-                        string[] splitNodes = expansion.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                        for (int i = 0; i < splitNodes.Length; i++)
+                        if (token.inQuotes)
+                            expanded.Last.Value += GetEnv(token.content);
+                        else
                         {
-                            if (i == 0 && ((expanded[expanded.Count - 1] == string.Empty && !inQuotes) || !expansion.StartsWith(" ")))
-                                expanded[expanded.Count - 1] += splitNodes[i];
-                            else
-                                expanded.Add(splitNodes[i]);
+                            string[] splitNodes = expansion.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                            for (int i = 0; i < splitNodes.Length; i++)
+                            {
+                                if (i == 0 && ((expanded.Last.Value == string.Empty && !inQuotes) || !IsSpaceChar(expansion[0])))
+                                {
+                                    if (expanded.Count == 0)
+                                        expanded.AddLast(string.Empty);
+                                    expanded.Last.Value += splitNodes[i];
+                                }
+                                else
+                                    expanded.AddLast(splitNodes[i]);
+                            }
+                            addNew = IsSpaceChar(expansion[expansion.Length - 1]);
                         }
-                        addNew = expansion.EndsWith(" ");
                     }
                 }
                 else
@@ -160,10 +175,14 @@ class Tokenizer
                     if (addNew)
                     {
                         addNew = false;
-                        expanded.Add(token.content);
+                        expanded.AddLast(token.content);
                     }
                     else
-                        expanded[expanded.Count - 1] += token.content;
+                    {
+                        if (expanded.Count == 0)
+                            expanded.AddLast(string.Empty);
+                        expanded.Last.Value += token.content;
+                    }
                 }
                 inQuotes = inQuotes || token.inQuotes;
             }
@@ -172,13 +191,16 @@ class Tokenizer
             textNodes.AddLast(new TextNode(original, expanded.ToArray(), inQuotes));
         return textNodes;
     }
+    static bool IsSpaceChar(char c) { return " \t\n".Contains(c); }
+    static bool IsControlChar(char c) { return IsSpaceChar(c) || "$<>|\"'".Contains(c); }
     // Mock-Up Of getenv() Function
     static string GetEnv(string _var)
     {
         switch (_var)
         {
-            case "a": return $"    1    2    ";
-            case "b": return $"    3    4    ";
+            case "a": return "    1    2    ";
+            case "b": return "    3    4    ";
+            case "no": return null;
             default: return $"<Value_Of_${_var}>";
         }
     }
