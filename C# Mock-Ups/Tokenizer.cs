@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
 
 class Tokenizer
 {
     struct Token
     {
         public string content;
-        public enum TokenType { Space, Text, Variable, Special };
+        public enum TokenType { Space, Text, Variable, Redir, Pipe };
         public TokenType tokenType;
         public bool inQuotes; // Only Important For Variables And Text Tokens
         public Token(string _content, TokenType _tokenType, bool _inQuotes)
@@ -21,9 +20,9 @@ class Tokenizer
     struct TextNode
     {
         public string original;
-        public string[] expanded;
+        public LinkedList<string> expanded;
         public bool inQuotes; // Important For Heredoc Delimiters And Ambiguous Error
-        public TextNode(string _original, string[] _expanded, bool _inQuotes)
+        public TextNode(string _original, LinkedList<string> _expanded, bool _inQuotes)
         {
             original = _original;
             expanded = _expanded;
@@ -47,14 +46,15 @@ class Tokenizer
         Console.WriteLine(dashLine);
         Console.WriteLine($"Split Tokens: {rawTokens.Count}");
         foreach (Token t in rawTokens)
-            Console.WriteLine($"{t.content} {new string[4] { "(Space)", "(Text)", "(Variable)", "(Special)" }[(int)t.tokenType]} {(t.inQuotes ? "(In Quotes)" : "")}");
+            Console.WriteLine($"{t.content} {new string[5] { "(Space)", "(Text)", "(Variable)", "(Redirection)", "(Pipe)" }[(int)t.tokenType]} {(t.inQuotes ? "(In Quotes)" : "")}");
         Console.WriteLine(dashLine);
+        SyntaxCheck(rawTokens);
         Console.WriteLine(dashLine);
         Console.WriteLine($"Joined Text Nodes:");
         foreach (TextNode node in JoinTextNodes(rawTokens))
         {
             Console.WriteLine($"Original: {node.original} {(node.inQuotes ? "(In Quotes)" : "")}");
-            Console.WriteLine($"Expansion Text Nodes: {node.expanded.Length}");
+            Console.WriteLine($"Expansion Text Nodes: {node.expanded.Count}");
             foreach (string s in node.expanded)
                 Console.WriteLine($"-\t`{s}`");
         }
@@ -114,13 +114,44 @@ class Tokenizer
                     start = i;
                     if (i + 1 < _cmd.Length && "<>".Contains(_cmd[i]) && _cmd[i] == _cmd[i + 1])
                         i++;
-                    tokens.AddLast(new Token(_cmd.Substring(start, ++i - start), Token.TokenType.Special, lastQuote != '\0'));
+                    tokens.AddLast(new Token(_cmd.Substring(start, ++i - start), _cmd[start] == '|' ? Token.TokenType.Pipe : Token.TokenType.Redir, lastQuote != '\0'));
                 }
             }
         }
         if (lastQuote != '\0')
             throw new Exception("Error: Open Quotes Detected!");
         return tokens;
+    }
+    static void SyntaxCheck(LinkedList<Token> _tokenList)
+    {
+        LinkedListNode<Token> cursor = _tokenList.First;
+        LinkedListNode<Token> prevToken = null;
+        while (cursor != null)
+        {
+            if (cursor.Value.tokenType != Token.TokenType.Space)
+            {
+                if (cursor.Value.tokenType == Token.TokenType.Pipe)
+                {
+                    if (prevToken == null)
+                        throw new Exception("Syntax Error: Pipe At Start Of Command!");
+                    else if (prevToken.Value.tokenType == Token.TokenType.Pipe)
+                        throw new Exception("Syntax Error: Empty Command Between Pipes!");
+                    else if (prevToken.Value.tokenType == Token.TokenType.Redir)
+                        throw new Exception("Syntax Error: Incomplete Redirection!");
+                }
+                else if (cursor.Value.tokenType == Token.TokenType.Redir)
+                {
+                    if (prevToken.Value.tokenType == Token.TokenType.Redir)
+                        throw new Exception("Syntax Error: Incomplete Redirection!");
+                }
+                prevToken = cursor;
+            }
+            cursor = cursor.Next;
+        }
+        if (prevToken.Value.tokenType == Token.TokenType.Pipe)
+            throw new Exception("Syntax Error: Pipe At End Of Command!");
+        else if (prevToken.Value.tokenType == Token.TokenType.Redir)
+            throw new Exception("Syntax Error: Incomplete Redirection At End Of Command!");
     }
     static LinkedList<TextNode> JoinTextNodes(LinkedList<Token> _tokenList)
     {
@@ -131,13 +162,13 @@ class Tokenizer
         bool addNew = false;
         foreach (Token token in _tokenList)
         {
-            if (token.tokenType == Token.TokenType.Space || token.tokenType == Token.TokenType.Special)
+            if (token.tokenType != Token.TokenType.Text && token.tokenType != Token.TokenType.Variable)
             {
                 if (!string.IsNullOrEmpty(original) || inQuotes)
                 {
-                    textNodes.AddLast(new TextNode(original, expanded.ToArray(), inQuotes));
+                    textNodes.AddLast(new TextNode(original, expanded, inQuotes));
                     original = string.Empty;
-                    expanded.Clear();
+                    expanded = new LinkedList<string>();
                     inQuotes = false;
                 }
             }
@@ -188,7 +219,7 @@ class Tokenizer
             }
         }
         if (!string.IsNullOrEmpty(original))
-            textNodes.AddLast(new TextNode(original, expanded.ToArray(), inQuotes));
+            textNodes.AddLast(new TextNode(original, expanded, inQuotes));
         return textNodes;
     }
     static bool IsSpaceChar(char c) { return " \t\n".Contains(c); }
