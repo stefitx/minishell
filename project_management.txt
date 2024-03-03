@@ -17,9 +17,9 @@ emoji :
 - 👩🏻‍💻 = task in progress by Stefi;
 - 💍 = task will be done by Stefi;
 
--  = task finished by Pablo;
--  = task in progress by Pablo;
--  = task will be done by Pablo;
+-  🎯 = task finished by Pablo;
+-  ⚔️ = task in progress by Pablo;
+-  🔫 = task will be done by Pablo;
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -39,15 +39,15 @@ NO NEED TO INTERPRET \ (backslash) OR ; (semicolon)!
 	asdfghjkl, i would suppose it has to do with having a log of all commands used?
 }
 
-- command parsing and execution
+🔫- command parsing and execution
 {
 	- must use readline and affiliated functions to read user input;
-	- must parse input char by char, then split it accordingly;💍
+	- must parse input char by char, then split it accordingly;
 		*** the split must handle ' (single quotes) and " (double quotes) ***
-	- must then execute the parsed commands by executing built-ins or external programs💍
+	- must then execute the parsed commands by executing built-ins or external programs
 }
 
-- built-ins
+💍- built-ins
 {
 	- echo -n = suppress the newline added by the echo command;
 	- cd = change directory with either a relative or an absolute path;
