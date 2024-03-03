@@ -1,0 +1,8 @@
+﻿/.vs
+/C# Mock-Ups/.vs/
+/C# Mock-Ups/bin/
+/C# Mock-Ups/obj/
+/C# Mock-Ups/Properties/
+/C# Mock-Ups/*.config
+/C# Mock-Ups/*.csproj
+/C# Mock-Ups/*.sln
