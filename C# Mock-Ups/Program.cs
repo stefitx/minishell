@@ -10,7 +10,7 @@ class Program
         //string cmd = "\"$n\"$HOME";
         //string cmd = "echo $a$b\"\"";
         //string cmd = "$no";
-        LinkedList<Tokenizer.Command> commands = Tokenizer.ParseCommand(cmd);
+        Tokenizer.ParseCommand(cmd);
         Console.ReadKey();
     }
 }

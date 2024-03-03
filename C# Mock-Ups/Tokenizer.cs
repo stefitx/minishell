@@ -4,20 +4,37 @@ using System.Linq;
 
 class Tokenizer
 {
-    struct Token
+    public enum TokenTypes { Space, Text, Variable, Redir, Pipe };
+    class Token
     {
         public string content;
-        public enum TokenType { Space, Text, Variable, Redir, Pipe };
-        public TokenType tokenType;
+        public TokenTypes tokenType;
         public bool inQuotes; // Only Important For Variables And Text Tokens
-        public Token(string _content, TokenType _tokenType, bool _inQuotes)
+        public Token(string _content, TokenTypes _tokenType, bool _inQuotes)
         {
             content = _content;
             tokenType = _tokenType;
             inQuotes = _inQuotes;
         }
     }
-    struct TextNode
+    class RefinedToken
+    {
+        public TokenTypes tokenType;
+        public TextNode textNode;
+        public RedirNode redirNode;
+        public PipeNode pipeNode;
+        public RefinedToken(TokenTypes _tokenType, object _node)
+        {
+            tokenType = _tokenType;
+            if (_tokenType == TokenTypes.Text)
+                textNode = _node as TextNode;
+            else if (_tokenType == TokenTypes.Redir)
+                redirNode = _node as RedirNode;
+            else if (_tokenType == TokenTypes.Pipe)
+                pipeNode = _node as PipeNode;
+        }
+    }
+    class TextNode
     {
         public string original;
         public LinkedList<string> expanded;
@@ -29,15 +46,31 @@ class Tokenizer
             inQuotes = _inQuotes;
         }
     }
-    public struct Command
+    class RedirNode
     {
-        //LinkedList<string> commandParts;
-        //LinkedList<Token> redirectionQueue;
-        //Token infile;
-        //Token outfile;
+        public TextNode data;
+        public enum RedirTypes { Infile, Outfile, Append, Heredoc };
+        public RedirTypes redirType;
+        public RedirNode(TextNode _data, RedirTypes _redirType)
+        {
+            data = _data;
+            redirType = _redirType;
+        }
+    }
+    class PipeNode
+    {
+        public PipeNode()
+        {
+
+        }
+    }
+    class Command
+    {
+        public LinkedList<TextNode> args;
+        public LinkedList<RedirNode> redirs;
     }
     static readonly string dashLine = "-------------------------------------------------";
-    public static LinkedList<Command> ParseCommand(string _cmd)
+    public static void ParseCommand(string _cmd)
     {
         Console.WriteLine(dashLine);
         Console.WriteLine($"Given Command: {_cmd}");
@@ -50,23 +83,34 @@ class Tokenizer
         Console.WriteLine(dashLine);
         SyntaxCheck(rawTokens);
         Console.WriteLine(dashLine);
-        Console.WriteLine($"Joined Text Nodes:");
-        foreach (TextNode node in JoinTextNodes(rawTokens))
+        Console.WriteLine($"Refined Tokens:");
+        foreach (RefinedToken node in RefineTokens(rawTokens))
         {
-            Console.WriteLine($"Original: {node.original} {(node.inQuotes ? "(In Quotes)" : "")}");
-            Console.WriteLine($"Expansion Text Nodes: {node.expanded.Count}");
-            foreach (string s in node.expanded)
-                Console.WriteLine($"-\t`{s}`");
+            if (node.tokenType == TokenTypes.Text)
+            {
+                Console.WriteLine($"Text (Original): {node.textNode.original} {(node.textNode.inQuotes ? "(In Quotes)" : "")}");
+                Console.WriteLine($"Expansion Text Nodes: {node.textNode.expanded.Count}");
+                foreach (string s in node.textNode.expanded)
+                    Console.WriteLine($"-\t`{s}`");
+            }
+            else if (node.tokenType == TokenTypes.Redir)
+            {
+                Console.WriteLine($"Redirection ({node.redirNode.redirType})");
+            }
+            else if (node.tokenType == TokenTypes.Pipe)
+            {
+                Console.WriteLine("Pipe");
+            }
         }
         string expandedFull = string.Empty;
-        foreach (TextNode node in JoinTextNodes(rawTokens))
+        foreach (RefinedToken node in RefineTokens(rawTokens))
         {
-            foreach (string s in node.expanded)
-                expandedFull += $"`{s}` ";
+            if (node.tokenType == TokenTypes.Text)
+                foreach (string s in node.textNode.expanded)
+                    expandedFull += $"`{s}` ";
         }
         Console.WriteLine($"Full Expansion: {expandedFull}");
         Console.WriteLine(dashLine);
-        return null;
     }
     enum QuoteStatus { None, Single, Double };
     static LinkedList<Token> SplitTokens(string _cmd)
@@ -84,12 +128,12 @@ class Tokenizer
             while (i < _cmd.Length && IsSpaceChar(_cmd[i]) && lastQuote == '\0')
                 i++;
             if (i > start)
-                tokens.AddLast(new Token(string.Empty, Token.TokenType.Space, lastQuote != '\0'));
+                tokens.AddLast(new Token(string.Empty, TokenTypes.Space, lastQuote != '\0'));
             start = i;
             while (i < _cmd.Length && !(lastQuote == '\'' ? _cmd[i] == '\'' : lastQuote == '"' ? "\"$".Contains(_cmd[i]) : IsControlChar(_cmd[i])))
                 i++;
             if (i > start || lastQuote != '\0')
-                tokens.AddLast(new Token(_cmd.Substring(start, i - start), Token.TokenType.Text, lastQuote != '\0'));
+                tokens.AddLast(new Token(_cmd.Substring(start, i - start), TokenTypes.Text, lastQuote != '\0'));
             if (i < _cmd.Length && "$<>|\"'".Contains(_cmd[i]))
             {
                 if ("\"'".Contains(_cmd[i]))
@@ -107,14 +151,14 @@ class Tokenizer
                         i++;
                     if (i == start)
                         throw new Exception("Error: Variable With No Name Detected!");
-                    tokens.AddLast(new Token(_cmd.Substring(start, i - start), Token.TokenType.Variable, lastQuote != '\0'));
+                    tokens.AddLast(new Token(_cmd.Substring(start, i - start), TokenTypes.Variable, lastQuote != '\0'));
                 }
                 else if (lastQuote == '\0')
                 {
                     start = i;
                     if (i + 1 < _cmd.Length && "<>".Contains(_cmd[i]) && _cmd[i] == _cmd[i + 1])
                         i++;
-                    tokens.AddLast(new Token(_cmd.Substring(start, ++i - start), _cmd[start] == '|' ? Token.TokenType.Pipe : Token.TokenType.Redir, lastQuote != '\0'));
+                    tokens.AddLast(new Token(_cmd.Substring(start, ++i - start), _cmd[start] == '|' ? TokenTypes.Pipe : TokenTypes.Redir, lastQuote != '\0'));
                 }
             }
         }
@@ -128,53 +172,66 @@ class Tokenizer
         LinkedListNode<Token> prevToken = null;
         while (cursor != null)
         {
-            if (cursor.Value.tokenType != Token.TokenType.Space)
+            if (cursor.Value.tokenType != TokenTypes.Space)
             {
-                if (cursor.Value.tokenType == Token.TokenType.Pipe)
+                if (cursor.Value.tokenType == TokenTypes.Pipe)
                 {
                     if (prevToken == null)
                         throw new Exception("Syntax Error: Pipe At Start Of Command!");
-                    else if (prevToken.Value.tokenType == Token.TokenType.Pipe)
+                    else if (prevToken.Value.tokenType == TokenTypes.Pipe)
                         throw new Exception("Syntax Error: Empty Command Between Pipes!");
-                    else if (prevToken.Value.tokenType == Token.TokenType.Redir)
+                    else if (prevToken.Value.tokenType == TokenTypes.Redir)
                         throw new Exception("Syntax Error: Incomplete Redirection!");
                 }
-                else if (cursor.Value.tokenType == Token.TokenType.Redir)
+                else if (cursor.Value.tokenType == TokenTypes.Redir)
                 {
-                    if (prevToken.Value.tokenType == Token.TokenType.Redir)
+                    if (prevToken.Value.tokenType == TokenTypes.Redir)
                         throw new Exception("Syntax Error: Incomplete Redirection!");
                 }
                 prevToken = cursor;
             }
             cursor = cursor.Next;
         }
-        if (prevToken.Value.tokenType == Token.TokenType.Pipe)
+        if (prevToken.Value.tokenType == TokenTypes.Pipe)
             throw new Exception("Syntax Error: Pipe At End Of Command!");
-        else if (prevToken.Value.tokenType == Token.TokenType.Redir)
+        else if (prevToken.Value.tokenType == TokenTypes.Redir)
             throw new Exception("Syntax Error: Incomplete Redirection At End Of Command!");
     }
-    static LinkedList<TextNode> JoinTextNodes(LinkedList<Token> _tokenList)
+    static LinkedList<RefinedToken> RefineTokens(LinkedList<Token> _tokenList)
     {
-        LinkedList<TextNode> textNodes = new LinkedList<TextNode>();
+        LinkedList<RefinedToken> refinedTokens = new LinkedList<RefinedToken>();
         string original = string.Empty;
         LinkedList<string> expanded = new LinkedList<string>();
         bool inQuotes = false;
         bool addNew = false;
         foreach (Token token in _tokenList)
         {
-            if (token.tokenType != Token.TokenType.Text && token.tokenType != Token.TokenType.Variable)
+            if (token.tokenType != TokenTypes.Text && token.tokenType != TokenTypes.Variable)
             {
                 if (!string.IsNullOrEmpty(original) || inQuotes)
                 {
-                    textNodes.AddLast(new TextNode(original, expanded, inQuotes));
+                    refinedTokens.AddLast(new RefinedToken(TokenTypes.Text, new TextNode(original, expanded, inQuotes)));
                     original = string.Empty;
                     expanded = new LinkedList<string>();
                     inQuotes = false;
                 }
+                if (token.tokenType == TokenTypes.Redir)
+                {
+                    RedirNode.RedirTypes redirType = RedirNode.RedirTypes.Infile;
+                    if (token.content == ">")
+                        redirType = RedirNode.RedirTypes.Outfile;
+                    else if (token.content == "<<")
+                        redirType = RedirNode.RedirTypes.Heredoc;
+                    else if (token.content == ">>")
+                        redirType = RedirNode.RedirTypes.Append;
+                    refinedTokens.AddLast(new RefinedToken(TokenTypes.Redir, new RedirNode(null, redirType)));
+                }
+                else if (token.tokenType == TokenTypes.Pipe)
+                    refinedTokens.AddLast(new RefinedToken(TokenTypes.Pipe, new PipeNode()));
             }
             else
             {
-                if (token.tokenType == Token.TokenType.Variable)
+                if (token.tokenType == TokenTypes.Variable)
                 {
                     original += '$' + token.content;
                     string expansion = GetEnv(token.content);
@@ -219,8 +276,8 @@ class Tokenizer
             }
         }
         if (!string.IsNullOrEmpty(original))
-            textNodes.AddLast(new TextNode(original, expanded, inQuotes));
-        return textNodes;
+            refinedTokens.AddLast(new RefinedToken(TokenTypes.Text, new TextNode(original, expanded, inQuotes)));
+        return refinedTokens;
     }
     static bool IsSpaceChar(char c) { return " \t\n".Contains(c); }
     static bool IsControlChar(char c) { return IsSpaceChar(c) || "$<>|\"'".Contains(c); }
@@ -238,9 +295,9 @@ class Tokenizer
             default: return $"<Value_Of_${_var}>";
         }
     }
-    //static LinkedList<Command> BuildCommands(LinkedList<Token> _tokens)
-    //{
-    //    LinkedList<Command> commands = new LinkedList<Command>();
-    //    return commands;
-    //}
+    static LinkedList<Command> BuildCommands(LinkedList<Token> _tokens)
+    {
+        LinkedList<Command> commands = new LinkedList<Command>();
+        return commands;
+    }
 }
