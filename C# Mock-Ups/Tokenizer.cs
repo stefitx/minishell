@@ -99,10 +99,12 @@ static class Tokenizer
             }
             cursor = cursor.Next;
         }
-        if (prevToken.Value.tokenType == TokenTypes.Pipe)
-            throw new Exception("Syntax Error: Pipe At End Of Command!");
-        else if (prevToken.Value.tokenType == TokenTypes.Redir)
-            throw new Exception("Syntax Error: Incomplete Redirection At End Of Command!");
+        if (prevToken != null)
+        {
+            if (prevToken.Value.tokenType == TokenTypes.Pipe)
+                throw new Exception("Syntax Error: Pipe At End Of Command!");
+            else if (prevToken.Value.tokenType == TokenTypes.Redir)
+                throw new Exception("Syntax Error: Incomplete Redirection At End Of Command!");
+        }
     }
-    
 }

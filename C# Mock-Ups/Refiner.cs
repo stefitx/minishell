@@ -9,60 +9,58 @@ class Refiner
     public class RefinedToken
     {
         public RefinedTokenTypes tokenType;
-        public TextNode textNode;
-        public RedirNode redirNode;
-        public PipeNode pipeNode;
+        public TextToken textToken;
+        public RedirToken redirToken;
+        public PipeToken pipeNode;
         public RefinedToken(RefinedTokenTypes _tokenType, object _node)
         {
             tokenType = _tokenType;
             if (_tokenType == RefinedTokenTypes.Text)
-                textNode = _node as TextNode;
+                textToken = _node as TextToken;
             else if (_tokenType == RefinedTokenTypes.Redir)
-                redirNode = _node as RedirNode;
+                redirToken = _node as RedirToken;
             else if (_tokenType == RefinedTokenTypes.Pipe)
-                pipeNode = _node as PipeNode;
+                pipeNode = _node as PipeToken;
         }
     }
-    public class TextNode
+    public class TextToken
     {
         public string original;
         public LinkedList<string> expanded;
         public bool inQuotes; // Important For Heredoc Delimiters And Ambiguous Error
-        public TextNode(string _original, LinkedList<string> _expanded, bool _inQuotes)
+        public TextToken(string _original, LinkedList<string> _expanded, bool _inQuotes)
         {
             original = _original;
             expanded = _expanded;
             inQuotes = _inQuotes;
         }
     }
-    public class RedirNode
+    public class RedirToken
     {
-        public TextNode text;
+        public TextToken text;
         public enum RedirTypes { Infile, Outfile, Append, Heredoc };
         public RedirTypes redirType;
-        public RedirNode(TextNode _data, RedirTypes _redirType)
+        public RedirToken(TextToken _data, RedirTypes _redirType)
         {
             text = _data;
             redirType = _redirType;
         }
     }
-    public class PipeNode
+    public class PipeToken
     {
-        public PipeNode()
+        // Not Actually Used Yet, Just Here As A Mock-Up
+        public int fd_in;
+        public int fd_out;
+        public PipeToken()
         {
 
         }
-    }
-    public class Command
-    {
-        public LinkedList<TextNode> args;
-        public LinkedList<RedirNode> redirs;
     }
     static bool IsSpaceChar(char c) { return " \t\n".Contains(c); }
     public static LinkedList<RefinedToken> RefineTokens(LinkedList<Token> _tokenList)
     {
         LinkedList<RefinedToken> refinedTokens = new LinkedList<RefinedToken>();
-        string original = string.Empty;
+        string original = null;
         LinkedList<string> expanded = new LinkedList<string>();
         bool inQuotes = false;
         bool addNew = false;
@@ -72,29 +70,31 @@ class Refiner
             {
                 if (!string.IsNullOrEmpty(original) || inQuotes)
                 {
-                    refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Text, new TextNode(original, expanded, inQuotes)));
-                    original = string.Empty;
+                    refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Text, new TextToken(original, expanded, inQuotes)));
+                    original = null;
                     expanded = new LinkedList<string>();
                     inQuotes = false;
                 }
                 if (token.tokenType == TokenTypes.Redir)
                 {
-                    RedirNode.RedirTypes redirType = RedirNode.RedirTypes.Infile;
+                    RedirToken.RedirTypes redirType = RedirToken.RedirTypes.Infile;
                     if (token.content == ">")
-                        redirType = RedirNode.RedirTypes.Outfile;
+                        redirType = RedirToken.RedirTypes.Outfile;
                     else if (token.content == "<<")
-                        redirType = RedirNode.RedirTypes.Heredoc;
+                        redirType = RedirToken.RedirTypes.Heredoc;
                     else if (token.content == ">>")
-                        redirType = RedirNode.RedirTypes.Append;
-                    refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Redir, new RedirNode(null, redirType)));
+                        redirType = RedirToken.RedirTypes.Append;
+                    refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Redir, new RedirToken(null, redirType)));
                 }
                 else if (token.tokenType == TokenTypes.Pipe)
-                    refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Pipe, new PipeNode()));
+                    refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Pipe, new PipeToken()));
             }
             else
             {
                 if (token.tokenType == TokenTypes.Variable)
                 {
+                    if (original == null)
+                        original = string.Empty;
                     original += '$' + token.content;
                     string expansion = GetEnv(token.content);
                     if (expansion != null)
@@ -121,6 +121,8 @@ class Refiner
                 }
                 else
                 {
+                    if (original == null)
+                        original = string.Empty;
                     original += token.content;
                     if (addNew)
                     {
@@ -137,8 +139,8 @@ class Refiner
                 inQuotes = inQuotes || token.inQuotes;
             }
         }
-        if (!string.IsNullOrEmpty(original))
-            refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Text, new TextNode(original, expanded, inQuotes)));
+        if (original != null)
+            refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Text, new TextToken(original, expanded, inQuotes)));
         return refinedTokens;
     }
     // Mock-Up Of getenv() Function
@@ -154,10 +156,5 @@ class Refiner
             case "no": return null;
             default: return $"<Value_Of_${_var}>";
         }
-    }
-    static LinkedList<Command> BuildCommands(LinkedList<RefinedToken> _tokens)
-    {
-        LinkedList<Command> commands = new LinkedList<Command>();
-        return commands;
     }
 }
