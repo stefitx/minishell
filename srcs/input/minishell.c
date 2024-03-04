@@ -39,6 +39,9 @@ int	main(int argc, char **argv, char **env)
 {
 	char	*line;
 	// t_data	*data;
+	char	**cmd;
+
+	cmd = ft_split("cd srcs", ' ');
 
 	(void)env;
 	(void)argv;
@@ -53,6 +56,8 @@ int	main(int argc, char **argv, char **env)
 			return 0;
 		if (ft_strcmp(line, "exit"))
 			return(write(1, "exit\n", 5));
+		if (ft_strcmp(line, "cd srcs"))
+			changedir(cmd);
 		// if (lexer(line))
 		// {
 		// 	data = parser(line, envp);

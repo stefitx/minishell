@@ -43,7 +43,14 @@ typedef struct s_cmd
 	pid_t	**pids;
 }	t_cmd;
 
+typedef struct s_exec
+{
+	int		**pipefds;
+	pid_t	**pids;
+}
+
 int	ft_strcmp(const char *line, const char *s);
+int	changedir(char	**cmd);
 
 
 #endif
