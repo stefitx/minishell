@@ -23,7 +23,7 @@ BUILTIN_FILES = cd.c
 # EXPANSOR_FILES	=
 # PARSER_FILES	=
 # LEXER_FILES	=
-# EXECUTOR_FILES	=
+EXEC_FILES	= exec.c
 # HEREDOC_FILES	=
 # BONUS_FILES	=
 
@@ -44,9 +44,11 @@ PARSER_DIR	=	pars/
 
 INPUT_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(INPUT_DIR),$(INPUT_FILES)))
 BUILTIN_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(BUILTIN_DIR),$(BUILTIN_FILES)))
+EXEC_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(EXEC_DIR),$(EXEC_FILES)))
 
 INPUT_OBJ	=	$(addprefix $(DIR_OBJ),$(INPUT_SRC:.c=.o))
 BUILTIN_OBJ	=	$(addprefix $(DIR_OBJ),$(BUILTIN_SRC:.c=.o))
+EXEC_OBJ	=	$(addprefix $(DIR_OBJ),$(EXEC_SRC:.c=.o))
 
 LIB_A		:=	./inc/readline/libreadline.a \
 				./inc/libft/libft.a ./inc/readline/libhistory.a
@@ -66,7 +68,7 @@ libraries:
 	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
 	@$(MAKE) rdline --no-print-directory
 
-$(NAME): $(INPUT_OBJ) $(BUILTIN_OBJ)
+$(NAME): $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
 
 rdline: temp $(RDLINE_ROOT)libreadline.a
