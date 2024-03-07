@@ -39,8 +39,11 @@ int	main(int argc, char **argv, char **env)
 {
 	char	*line;
 	// t_data	*data;
+	char *cmd = "cd /Users/atudor/Desktop/gitminishell/srcs";
+	char	**cmd1;
 
-	(void)env;
+	char *cmd2 = "cd /Users/atudor/Desktop/gitminishell/srcs"; 
+
 	(void)argv;
 
 	if (argc != 1)
@@ -53,6 +56,13 @@ int	main(int argc, char **argv, char **env)
 			return 0;
 		if (ft_strcmp(line, "exit"))
 			return(write(1, "exit\n", 5));
+		if (ft_strcmp(line, cmd))
+		{
+			cmd1 = ft_split(cmd, ' ');
+			changedir(cmd1);
+		}
+		if (ft_strcmp(line, cmd2))
+			exec_cmd(env, cmd2);
 		// if (lexer(line))
 		// {
 		// 	data = parser(line, envp);

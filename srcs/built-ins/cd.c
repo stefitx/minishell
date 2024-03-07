@@ -12,9 +12,9 @@
 
 #include "../inc/minishell.h"
 
-void	changedir(char	**cmd)
+int	changedir(char	**cmd)
 {
-	if (!ft_strcmp(cmd[0]))
+	if (!ft_strcmp(cmd[0], "cd"))
 		return (2);
 	else
 	{
@@ -23,7 +23,9 @@ void	changedir(char	**cmd)
 			perror("cd: ");
 			perror(cmd[1]);
 			perror(": No such file or directory");
+			exit(1);
 		}
+		return (1);
 	}
 }
 

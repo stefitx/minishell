@@ -26,6 +26,7 @@
 
 typedef struct s_data
 {
+	struct s_cmd	**cmd_arr;
 	char	**cmd;
 	char	*path;
 }	t_data;
@@ -36,14 +37,18 @@ typedef struct s_cmd
 	int		cmd_id;
 	int		nr_of_cmds;
 	char	**cmd;
+	char	*builtin;
 	char	*path;
 	char	*filename_out;
 	char	*filename_in;
-	int		**pipes;
-	pid_t	**pids;
+	int		pipefd[2];
+	pid_t	*pid;
 }	t_cmd;
 
 int	ft_strcmp(const char *line, const char *s);
+int	changedir(char	**cmd);
+void	execute_command(char **env, char *command);
+void	exec_cmd(char **env, char *command);
 
 
 #endif

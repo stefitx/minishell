@@ -19,11 +19,11 @@ NAME	=	minishell
 COMP	=	./inc/libft/libft.a
 
 INPUT_FILES	= minishell.c
-# BUILTIN_FILES =
+BUILTIN_FILES = cd.c
 # EXPANSOR_FILES	=
 # PARSER_FILES	=
 # LEXER_FILES	=
-# EXECUTOR_FILES	=
+EXEC_FILES	= exec.c
 # HEREDOC_FILES	=
 # BONUS_FILES	=
 
@@ -34,7 +34,7 @@ DIR_OBJ		:=	temp/
 INC_ROOT	:=	inc/m
 SRCS_DIR	=	srcs/
 
-BUILT_DIR	=	built-ins/
+BUILTIN_DIR	=	built-ins/
 EXEC_DIR	=	exec/
 EXPAN_DIR	=	expan/
 HERE_DIR	=	heredoc/
@@ -43,8 +43,12 @@ LEXER_DIR	=	lex/
 PARSER_DIR	=	pars/
 
 INPUT_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(INPUT_DIR),$(INPUT_FILES)))
+BUILTIN_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(BUILTIN_DIR),$(BUILTIN_FILES)))
+EXEC_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(EXEC_DIR),$(EXEC_FILES)))
 
 INPUT_OBJ	=	$(addprefix $(DIR_OBJ),$(INPUT_SRC:.c=.o))
+BUILTIN_OBJ	=	$(addprefix $(DIR_OBJ),$(BUILTIN_SRC:.c=.o))
+EXEC_OBJ	=	$(addprefix $(DIR_OBJ),$(EXEC_SRC:.c=.o))
 
 LIB_A		:=	./inc/readline/libreadline.a \
 				./inc/libft/libft.a ./inc/readline/libhistory.a
@@ -64,7 +68,7 @@ libraries:
 	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
 	@$(MAKE) rdline --no-print-directory
 
-$(NAME): $(INPUT_OBJ)
+$(NAME): $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
 
 rdline: temp $(RDLINE_ROOT)libreadline.a
@@ -79,15 +83,17 @@ temp	:
 	@mkdir -p $(DIR_OBJ)
 
 clean	:
-	@$(MAKE) -C libft clean --no-print-directory
+	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
 	@$(RM) $(DIR_OBJ)
 
 
 fclean	: clean
-	@$(MAKE) -C libft clean --no-print-directory
+	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
 	@$(RM) $(NAME)
-	@$(MAKE) -C readline clean --no-print-directory
+# 	@$(MAKE) -C $(RDLINE_ROOT) clean --no-print-directory
 
 re		: fclean all
 
 .PHONY : all clean fclean re libraries rdline
+
+.SILENT:

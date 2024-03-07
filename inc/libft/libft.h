@@ -58,6 +58,7 @@ void	ft_putnbr_fd(int n, int fd);
 size_t	ft_strlen(const char *str);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
+char	**free_matrix(char **matrix, int column_num);
 
 //bonus
 t_list	*ft_lstnew(void *content);
