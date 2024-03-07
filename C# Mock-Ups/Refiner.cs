@@ -26,11 +26,13 @@ class Refiner
     public class TextToken
     {
         public string original;
+        public string originalQuoted;
         public LinkedList<string> expanded;
         public bool inQuotes; // Important For Heredoc Delimiters And Ambiguous Error
-        public TextToken(string _original, LinkedList<string> _expanded, bool _inQuotes)
+        public TextToken(string _original, string _originalQuoted, LinkedList<string> _expanded, bool _inQuotes)
         {
             original = _original;
+            originalQuoted = _originalQuoted;
             expanded = _expanded;
             inQuotes = _inQuotes;
         }
@@ -61,17 +63,19 @@ class Refiner
     {
         LinkedList<RefinedToken> refinedTokens = new LinkedList<RefinedToken>();
         string original = null;
+        string originalQuoted = null;
         LinkedList<string> expanded = new LinkedList<string>();
         bool inQuotes = false;
         bool addNew = false;
         foreach (Token token in _tokenList)
         {
-            if (token.tokenType != TokenTypes.Text && token.tokenType != TokenTypes.Variable)
+            if (token.tokenType == TokenTypes.Space || token.tokenType == TokenTypes.Redir || token.tokenType == TokenTypes.Pipe)
             {
                 if (!string.IsNullOrEmpty(original) || inQuotes)
                 {
-                    refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Text, new TextToken(original, expanded, inQuotes)));
+                    refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Text, new TextToken(original, originalQuoted, expanded, inQuotes)));
                     original = null;
+                    originalQuoted = null;
                     expanded = new LinkedList<string>();
                     inQuotes = false;
                 }
@@ -89,18 +93,32 @@ class Refiner
                 else if (token.tokenType == TokenTypes.Pipe)
                     refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Pipe, new PipeToken()));
             }
+            else if (token.tokenType == TokenTypes.Quote)
+            {
+                if (originalQuoted == null)
+                    originalQuoted = string.Empty;
+                originalQuoted += token.content;
+            }
             else
             {
+                inQuotes = inQuotes || token.quoteStatus != QuoteStatus.None;
                 if (token.tokenType == TokenTypes.Variable)
                 {
                     if (original == null)
                         original = string.Empty;
                     original += '$' + token.content;
+                    if (originalQuoted == null)
+                        originalQuoted = string.Empty;
+                    originalQuoted += '$' + token.content;
                     string expansion = GetEnv(token.content);
                     if (expansion != null)
                     {
-                        if (token.inQuotes)
+                        if (token.quoteStatus != QuoteStatus.None)
+                        {
+                            if (expanded.Count == 0)
+                                expanded.AddLast(string.Empty);
                             expanded.Last.Value += GetEnv(token.content);
+                        }
                         else
                         {
                             string[] splitNodes = expansion.Split(new char[] { ' ', '\t', '\n' }, StringSplitOptions.RemoveEmptyEntries);
@@ -124,6 +142,9 @@ class Refiner
                     if (original == null)
                         original = string.Empty;
                     original += token.content;
+                    if (originalQuoted == null)
+                        originalQuoted = string.Empty;
+                    originalQuoted += token.content;
                     if (addNew)
                     {
                         addNew = false;
@@ -136,11 +157,10 @@ class Refiner
                         expanded.Last.Value += token.content;
                     }
                 }
-                inQuotes = inQuotes || token.inQuotes;
             }
         }
-        if (original != null)
-            refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Text, new TextToken(original, expanded, inQuotes)));
+        if (originalQuoted != null)
+            refinedTokens.AddLast(new RefinedToken(RefinedTokenTypes.Text, new TextToken(original, originalQuoted, expanded, inQuotes)));
         return refinedTokens;
     }
     // Mock-Up Of getenv() Function
