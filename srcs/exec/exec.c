@@ -42,6 +42,7 @@
 // 	return (&cmds);
 // }
 
+
 char	**find_path()
 {
 	char	*to_split;

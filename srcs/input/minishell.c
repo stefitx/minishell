@@ -42,7 +42,7 @@ int	main(int argc, char **argv, char **env)
 	char *cmd = "cd /Users/atudor/Desktop/gitminishell/srcs";
 	char	**cmd1;
 
-	char *cmd2 = "cd /Users/atudor/Desktop/gitminishell/srcs"; 
+	char *cmd2 = "ls -la"; 
 
 	(void)argv;
 
