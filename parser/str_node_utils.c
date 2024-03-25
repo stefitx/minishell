@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/17 14:22:48 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/25 12:31:52 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_str_node	*clone_str_node(t_str_node *node)
 {
 	if (!node)
 		return (NULL);
-	return create_str_node(node->str);
+	return (create_str_node(node->str));
 }
 
 t_str_node	*find_last_str_node(t_str_node *head)

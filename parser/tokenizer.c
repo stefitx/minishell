@@ -6,89 +6,81 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/17 13:21:20 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/25 12:10:21 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-static int	IsSpaceChar(char c)
-{
-	return (ft_strchr(" \t\n", c) != NULL);
-}
-
-static int	IsControlChar(char c)
-{
-	return (IsSpaceChar(c) || ft_strchr("$<>|\"'", c));
-}
-
-static int	aaaa(char c, char quote)
+static int	is_control_char(char c, char quote)
 {
 	if (quote == '\'')
 		return (c == '\'');
 	if (quote == '"')
 		return (ft_strchr("\"$", c) != NULL);
-	return (IsControlChar(c));
+	return (ft_strchr(" \t\n", c) || ft_strchr("$<>|\"'", c));
 }
 
-t_token	*SplitTokens(char *cmd)
+static void	handle_quote(char *cmd, t_tokenizer_data *data)
 {
-	int		i;
-	int		start;
-	char	quote;
-	t_token	*tokens;
+	if (data->quote == cmd[data->i])
+		data->quote = '\0';
+	else
+		data->quote = cmd[data->i];
+	add_token(&data->tokens, ft_substr(cmd, data->i++, 1), TOKEN_QUOTE,
+		data->quote);
+}
 
-	quote = '\0';
-	i = 0;
-	tokens = NULL;
-	while (cmd[i])
+static void	handle_control_char(char *cmd, t_tokenizer_data *data)
+{
+	if (ft_strchr("\"'", cmd[data->i]))
+		handle_quote(cmd, data);
+	else if (cmd[data->i] == '$' && data->quote != '\'')
 	{
-		start = i;
-		while (cmd[i] && IsSpaceChar(cmd[i]) && quote == '\0')
-			i++;
-		if (i > start)
-			add_token(&tokens, NULL, TOKEN_SPACE, quote);
-		start = i;
-		while (cmd[i] && !aaaa(cmd[i], quote))
-			i++;
-		if (i > start || quote != '\0')
-			add_token(&tokens, ft_substr(cmd, start, i - start), TOKEN_TEXT,
-				quote);
-		if (cmd[i] && ft_strchr("$<>|\"'", cmd[i]))
-		{
-			if (ft_strchr("\"'", cmd[i]))
-			{
-				if (quote == cmd[i])
-					quote = '\0';
-				else
-					quote = cmd[i];
-				add_token(&tokens, ft_substr(cmd, i++, 1), TOKEN_QUOTE, quote);
-			}
-			else if (cmd[i] == '$' && quote != '\'')
-			{
-				start = ++i;
-				while (cmd[i] && (ft_isalnum(cmd[i]) || cmd[i] == '_'
-						|| (cmd[i] == '?' && start == i)))
-					i++;
-				// if (i == start)
-				// 	throw new Exception("Error: Variable With No Name Detected!");
-				add_token(&tokens, ft_substr(cmd, start, i - start),
-					TOKEN_VARIABLE, quote);
-			}
-			else if (quote == '\0')
-			{
-				start = i;
-				if (cmd[i] && cmd[i + 1] && ft_strchr("<>", cmd[i])
-					&& cmd[i] == cmd[i + 1])
-					i++;
-				add_token(&tokens, ft_substr(cmd, start, ++i - start),
-					TOKEN_REDIR, quote);
-			}
-		}
+		data->start = ++data->i;
+		while (cmd[data->i] && (ft_isalnum(cmd[data->i]) || cmd[data->i] == '_'
+				|| (cmd[data->i] == '?' && data->start == data->i)))
+			data->i++;
+		// if (i == start)
+		// 	throw new Exception("Error: Variable With No Name Detected!");
+		add_token(&data->tokens, ft_substr(cmd, data->start, data->i
+				- data->start), TOKEN_VARIABLE, data->quote);
+	}
+	else if (data->quote == '\0')
+	{
+		data->start = data->i;
+		if (ft_strchr("<>", cmd[data->i]) && cmd[data->i] == cmd[data->i + 1])
+			data->i++;
+		add_token(&data->tokens, ft_substr(cmd, data->start, ++data->i
+				- data->start), TOKEN_REDIR, data->quote);
+	}
+}
+
+t_token	*split_tokens(char *cmd)
+{
+	t_tokenizer_data	data;
+
+	ft_bzero(&data, sizeof(t_tokenizer_data));
+	while (cmd[data.i])
+	{
+		data.start = data.i;
+		while (cmd[data.i] && ft_strchr(" \t\n", cmd[data.i])
+			&& data.quote == '\0')
+			data.i++;
+		if (data.i > data.start)
+			add_token(&data.tokens, NULL, TOKEN_SPACE, data.quote);
+		data.start = data.i;
+		while (cmd[data.i] && !is_control_char(cmd[data.i], data.quote))
+			data.i++;
+		if (data.i > data.start || data.quote != '\0')
+			add_token(&data.tokens, ft_substr(cmd, data.start, data.i
+					- data.start), TOKEN_TEXT, data.quote);
+		if (cmd[data.i] && ft_strchr("$<>|\"'", cmd[data.i]))
+			handle_control_char(cmd, &data);
 	}
 	// if (quote != '\0')
 	// 	throw new Exception("Error: Open Quotes Detected!");
-	return (tokens);
+	return (data.tokens);
 }
 
 // public static void SyntaxCheck(LinkedList<Token> _tokenList)
@@ -131,7 +123,6 @@ t_token	*SplitTokens(char *cmd)
 // 	t_token	*tokens;
 // 	char	*types[] = {"Space", "Text", "Quote", "Variable", "Redir", "Pipe"};
 // 	char	*quotes[] = {"None", "Single", "Double"};
-
 // 	if (argn != 2)
 // 		return (1);
 // 	tokens = SplitTokens(args[1]);

@@ -1,10 +1,10 @@
 #include "parser.h"
 
-t_single_command	*create_single_command(t_text_token *args, t_redir_token *redirs)
+t_single_cmd	*create_single_cmd(t_text_token *args, t_redir_token *redirs)
 {
-	t_single_command	*cmd;
+	t_single_cmd	*cmd;
 
-	cmd = ft_calloc(1, sizeof(t_single_command));
+	cmd = ft_calloc(1, sizeof(t_single_cmd));
 	if (!cmd)
 		return (NULL);
 	cmd->args = args;
@@ -13,7 +13,7 @@ t_single_command	*create_single_command(t_text_token *args, t_redir_token *redir
 	return (cmd);
 }
 
-t_single_command	*find_last_single_command(t_single_command *head)
+t_single_cmd	*find_last_single_cmd(t_single_cmd *head)
 {
 	if (!head)
 		return (NULL);
@@ -22,13 +22,13 @@ t_single_command	*find_last_single_command(t_single_command *head)
 	return (head);
 }
 
-void	add_single_command(t_single_command **head, t_text_token *args, t_redir_token *redirs)
+void	add_single_cmd(t_single_cmd **head, t_text_token *args, t_redir_token *redirs)
 {
-	t_single_command	*new;
+	t_single_cmd	*new;
 
-	new = create_single_command(args, redirs);
+	new = create_single_cmd(args, redirs);
 	if (!*head)
 		*head = new;
 	else
-		find_last_single_command(*head)->next = new;
+		find_last_single_cmd(*head)->next = new;
 }

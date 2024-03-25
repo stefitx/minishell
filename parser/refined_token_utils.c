@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   refined_token_utils.c                              :+:      :+:    :+:   */
+/*   ref_token_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,12 +12,12 @@
 
 #include "parser.h"
 
-t_refined_token	*create_refined_token(enum e_refined_token_types type,
+t_ref_token	*create_ref_token(enum e_ref_token_types type,
 		void *data)
 {
-	t_refined_token	*token;
+	t_ref_token	*token;
 
-	token = ft_calloc(1, sizeof(t_refined_token));
+	token = ft_calloc(1, sizeof(t_ref_token));
 	if (!token)
 		return (NULL);
 	token->token_type = type;
@@ -31,7 +31,7 @@ t_refined_token	*create_refined_token(enum e_refined_token_types type,
 	return (token);
 }
 
-t_refined_token	*find_last_refined_token(t_refined_token *head)
+t_ref_token	*find_last_ref_token(t_ref_token *head)
 {
 	if (!head)
 		return (NULL);
@@ -40,14 +40,14 @@ t_refined_token	*find_last_refined_token(t_refined_token *head)
 	return (head);
 }
 
-void	add_refined_token(t_refined_token **head,
-		enum e_refined_token_types type, void *data)
+void	add_ref_token(t_ref_token **head,
+		enum e_ref_token_types type, void *data)
 {
-	t_refined_token	*new;
+	t_ref_token	*new;
 
-	new = create_refined_token(type, data);
+	new = create_ref_token(type, data);
 	if (!*head)
 		*head = new;
 	else
-		find_last_refined_token(*head)->next = new;
+		find_last_ref_token(*head)->next = new;
 }
