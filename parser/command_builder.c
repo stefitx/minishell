@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 12:06:35 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/25 12:35:36 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/26 18:01:14 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,5 +107,8 @@ int	main(int argn, char **args)
 		if (cursor)
 			printf("\n");
 	}
+	clear_token_list(raw_tokens);
+	clear_ref_token_list(tokens);
+	clear_single_cmd_list(cmd->cmd_list);
 	return (0);
 }

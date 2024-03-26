@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/17 13:10:12 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:28:44 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,13 @@ void	add_token(t_token **head, char *s, enum e_token_types type,
 		*head = new;
 	else
 		find_last_token(*head)->next = new;
+}
+
+void	clear_token_list(t_token *head)
+{
+	if (!head)
+		return ;
+	clear_token_list(head->next);
+	free(head->content);
+	free(head);
 }

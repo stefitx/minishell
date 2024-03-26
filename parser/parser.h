@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/25 12:19:27 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:36:44 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,6 +143,7 @@ t_token						*create_token(char *s, enum e_token_types type,
 t_token						*find_last_token(t_token *head);
 void						add_token(t_token **head, char *s,
 								enum e_token_types type, char quote);
+void						clear_token_list(t_token *head);
 
 // ref_token_utils.c
 t_ref_token					*create_ref_token(enum e_ref_token_types type,
@@ -150,6 +151,7 @@ t_ref_token					*create_ref_token(enum e_ref_token_types type,
 t_ref_token					*find_last_ref_token(t_ref_token *head);
 void						add_ref_token(t_ref_token **head,
 								enum e_ref_token_types type, void *data);
+void						clear_ref_token_list(t_ref_token *head);
 
 // str_node_utils.c
 t_str_node					*create_str_node(char *s);
@@ -177,11 +179,13 @@ void						add_redir_token(t_redir_token **head,
 								t_redir_token *new);
 void						clear_redir_token_list(t_redir_token *head);
 
+// single_command_utils.c
 t_single_cmd				*create_single_cmd(t_text_token *args,
 								t_redir_token *redirs);
 t_single_cmd				*find_last_single_cmd(t_single_cmd *head);
 void						add_single_cmd(t_single_cmd **head,
 								t_text_token *args, t_redir_token *redirs);
+void						clear_single_cmd_list(t_single_cmd *head);
 
 void						ft_strappend(char **s, char *add);
 
@@ -190,6 +194,8 @@ char						**ft_split_str(char const *s, char *c);
 t_token						*split_tokens(char *cmd);
 
 t_ref_token					*refine_tokens(t_token *raw_tokens);
+
+char						*get_env_wrapper(char *var);
 
 t_command					*build_commands(t_ref_token *tokens);
 

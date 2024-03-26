@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/25 12:10:21 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/26 17:21:22 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,9 +41,10 @@ static void	handle_control_char(char *cmd, t_tokenizer_data *data)
 		while (cmd[data->i] && (ft_isalnum(cmd[data->i]) || cmd[data->i] == '_'
 				|| (cmd[data->i] == '?' && data->start == data->i)))
 			data->i++;
-		// if (i == start)
-		// 	throw new Exception("Error: Variable With No Name Detected!");
-		add_token(&data->tokens, ft_substr(cmd, data->start, data->i
+		if (data->i == data->start)
+			add_token(&data->tokens, ft_strdup("$"), TOKEN_TEXT, data->quote);
+		else
+			add_token(&data->tokens, ft_substr(cmd, data->start, data->i
 				- data->start), TOKEN_VARIABLE, data->quote);
 	}
 	else if (data->quote == '\0')

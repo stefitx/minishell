@@ -25,7 +25,7 @@ t_ref_token	*create_ref_token(enum e_ref_token_types type,
 		token->text_token = data;
 	else if (type == R_Redir)
 		token->redir_token = data;
-	else if (type == R_Pipe)
+	else
 		token->pipe_token = data;
 	token->next = NULL;
 	return (token);
@@ -50,4 +50,18 @@ void	add_ref_token(t_ref_token **head,
 		*head = new;
 	else
 		find_last_ref_token(*head)->next = new;
+}
+
+void	clear_ref_token_list(t_ref_token *head)
+{
+	if (!head)
+		return ;
+	clear_ref_token_list(head->next);
+	if (head->token_type == R_Text)
+		clear_text_token_list(head->text_token);
+	else if (head->token_type == R_Redir)
+		clear_redir_token_list(head->redir_token);
+	// else
+		// token->pipe_token = data;
+	free(head);
 }
