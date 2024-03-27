@@ -6,20 +6,11 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/26 17:21:22 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 11:32:54 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
-
-static int	is_control_char(char c, char quote)
-{
-	if (quote == '\'')
-		return (c == '\'');
-	if (quote == '"')
-		return (ft_strchr("\"$", c) != NULL);
-	return (ft_strchr(" \t\n", c) || ft_strchr("$<>|\"'", c));
-}
 
 static void	handle_quote(char *cmd, t_tokenizer_data *data)
 {
@@ -45,7 +36,7 @@ static void	handle_control_char(char *cmd, t_tokenizer_data *data)
 			add_token(&data->tokens, ft_strdup("$"), TOKEN_TEXT, data->quote);
 		else
 			add_token(&data->tokens, ft_substr(cmd, data->start, data->i
-				- data->start), TOKEN_VARIABLE, data->quote);
+					- data->start), TOKEN_VARIABLE, data->quote);
 	}
 	else if (data->quote == '\0')
 	{
@@ -65,8 +56,7 @@ t_token	*split_tokens(char *cmd)
 	while (cmd[data.i])
 	{
 		data.start = data.i;
-		while (cmd[data.i] && ft_strchr(" \t\n", cmd[data.i])
-			&& data.quote == '\0')
+		while (cmd[data.i] && is_space_char(cmd[data.i]) && data.quote == '\0')
 			data.i++;
 		if (data.i > data.start)
 			add_token(&data.tokens, NULL, TOKEN_SPACE, data.quote);

@@ -12,8 +12,7 @@
 
 #include "parser.h"
 
-t_ref_token	*create_ref_token(enum e_ref_token_types type,
-		void *data)
+t_ref_token	*create_ref_token(enum e_ref_token_types type, void *data)
 {
 	t_ref_token	*token;
 
@@ -21,9 +20,9 @@ t_ref_token	*create_ref_token(enum e_ref_token_types type,
 	if (!token)
 		return (NULL);
 	token->token_type = type;
-	if (type == R_Text)
+	if (type == REF_TOKEN_TEXT)
 		token->text_token = data;
-	else if (type == R_Redir)
+	else if (type == REF_TOKEN_REDIR)
 		token->redir_token = data;
 	else
 		token->pipe_token = data;
@@ -40,8 +39,8 @@ t_ref_token	*find_last_ref_token(t_ref_token *head)
 	return (head);
 }
 
-void	add_ref_token(t_ref_token **head,
-		enum e_ref_token_types type, void *data)
+void	add_ref_token(t_ref_token **head, enum e_ref_token_types type,
+		void *data)
 {
 	t_ref_token	*new;
 
@@ -57,11 +56,11 @@ void	clear_ref_token_list(t_ref_token *head)
 	if (!head)
 		return ;
 	clear_ref_token_list(head->next);
-	if (head->token_type == R_Text)
+	if (head->token_type == REF_TOKEN_TEXT)
 		clear_text_token_list(head->text_token);
-	else if (head->token_type == R_Redir)
+	else if (head->token_type == REF_TOKEN_REDIR)
 		clear_redir_token_list(head->redir_token);
-	// else
-		// token->pipe_token = data;
+	else
+		clear_pipe_token_list(head->pipe_token);
 	free(head);
 }

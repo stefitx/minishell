@@ -1,48 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   str_node_utils.c                                   :+:      :+:    :+:   */
+/*   pipe_token_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/27 12:25:35 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:38:41 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-t_str_node	*create_str_node(char *s)
+t_pipe_token	*create_pipe_token(void)
 {
-	t_str_node	*node;
+	t_pipe_token	*token;
+	int				fds[2];
 
-	node = ft_calloc(1, sizeof(t_str_node));
-	if (!node)
+	token = ft_calloc(1, sizeof(t_pipe_token));
+	if (!token)
 		return (NULL);
-	node->str = ft_strdup(s);
-	node->next = NULL;
-	return (node);
+	pipe(fds);
+	token->fd_in = fds[0];
+	token->fd_out = fds[1];
+	token->next = NULL;
+	return (token);
 }
 
-t_str_node	*clone_str_node(t_str_node *node)
+t_pipe_token	*clone_pipe_token(t_pipe_token *token)
 {
-	if (!node)
+	t_pipe_token	*new;
+
+	new = ft_calloc(1, sizeof(t_pipe_token));
+	if (!new)
 		return (NULL);
-	return (create_str_node(node->str));
+	new->fd_in = token->fd_in;
+	new->fd_out = token->fd_out;
+	new->next = NULL;
+	return (new);
 }
 
-t_str_node	*clone_str_node_list(t_str_node *node)
-{
-	t_str_node	*head;
-
-	if (!node)
-		return (NULL);
-	head = clone_str_node(node);
-	head->next = clone_str_node_list(node->next);
-	return (head);
-}
-
-t_str_node	*find_last_str_node(t_str_node *head)
+t_pipe_token	*find_last_pipe_token(t_pipe_token *head)
 {
 	if (!head)
 		return (NULL);
@@ -51,19 +49,18 @@ t_str_node	*find_last_str_node(t_str_node *head)
 	return (head);
 }
 
-void	add_str_node(t_str_node **head, t_str_node *node)
+void	add_pipe_token(t_pipe_token **head, t_pipe_token *new)
 {
 	if (!*head)
-		*head = node;
+		*head = new;
 	else
-		find_last_str_node(*head)->next = node;
+		find_last_pipe_token(*head)->next = new;
 }
 
-void	clear_str_node_list(t_str_node *head)
+void	clear_pipe_token_list(t_pipe_token *head)
 {
 	if (!head)
 		return ;
-	clear_str_node_list(head->next);
-	free(head->str);
+	clear_pipe_token_list(head->next);
 	free(head);
 }

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:38:37 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/17 12:51:16 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:31:43 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	ft_strappend(char **s, char *add)
 {
 	char	*new;
+
 	if (!s || !add)
 		return ;
 	if (*s)

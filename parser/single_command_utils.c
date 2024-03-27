@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 17:35:05 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/26 17:35:57 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:27:40 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,21 @@ t_single_cmd	*find_last_single_cmd(t_single_cmd *head)
 	return (head);
 }
 
-void	add_single_cmd(t_single_cmd **head, t_text_token *args, t_redir_token *redirs)
+size_t	cmd_list_len(t_single_cmd *head)
+{
+	size_t	n;
+
+	n = 0;
+	while (head)
+	{
+		n++;
+		head = head->next;
+	}
+	return (n);
+}
+
+void	add_single_cmd(t_single_cmd **head, t_text_token *args,
+		t_redir_token *redirs)
 {
 	t_single_cmd	*new;
 

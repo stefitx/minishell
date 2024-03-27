@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/26 17:36:44 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:38:55 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ enum						e_token_types
 
 enum						e_quote_status
 {
-	None,
-	Single,
-	Double
+	QUOTE_NONE,
+	QUOTE_SINGLE,
+	QUOTE_DOUBLE
 };
 
 typedef struct s_token
@@ -67,10 +67,10 @@ typedef struct s_text_token
 
 enum						e_redir_types
 {
-	Infile,
-	Outfile,
-	Heredoc,
-	Append
+	REDIR_INFILE,
+	REDIR_OUTFILE,
+	REDIR_HEREDOC,
+	REDIR_APPEND
 };
 
 typedef struct s_redir_token
@@ -89,9 +89,9 @@ typedef struct s_pipe_token
 
 enum						e_ref_token_types
 {
-	R_Text,
-	R_Redir,
-	R_Pipe
+	REF_TOKEN_TEXT,
+	REF_TOKEN_REDIR,
+	REF_TOKEN_PIPE
 };
 
 typedef struct s_ref_token
@@ -156,6 +156,7 @@ void						clear_ref_token_list(t_ref_token *head);
 // str_node_utils.c
 t_str_node					*create_str_node(char *s);
 t_str_node					*clone_str_node(t_str_node *node);
+t_str_node					*clone_str_node_list(t_str_node *node);
 t_str_node					*find_last_str_node(t_str_node *head);
 void						add_str_node(t_str_node **head, t_str_node *node);
 void						clear_str_node_list(t_str_node *head);
@@ -179,10 +180,19 @@ void						add_redir_token(t_redir_token **head,
 								t_redir_token *new);
 void						clear_redir_token_list(t_redir_token *head);
 
+// pipe_token_utils.c
+t_pipe_token				*create_pipe_token(void);
+t_pipe_token				*clone_pipe_token(t_pipe_token *token);
+t_pipe_token				*find_last_pipe_token(t_pipe_token *head);
+void						add_pipe_token(t_pipe_token **head,
+								t_pipe_token *new);
+void						clear_pipe_token_list(t_pipe_token *head);
+
 // single_command_utils.c
 t_single_cmd				*create_single_cmd(t_text_token *args,
 								t_redir_token *redirs);
 t_single_cmd				*find_last_single_cmd(t_single_cmd *head);
+size_t						cmd_list_len(t_single_cmd *head);
 void						add_single_cmd(t_single_cmd **head,
 								t_text_token *args, t_redir_token *redirs);
 void						clear_single_cmd_list(t_single_cmd *head);
@@ -191,12 +201,19 @@ void						ft_strappend(char **s, char *add);
 
 char						**ft_split_str(char const *s, char *c);
 
+// tokenizer.c
 t_token						*split_tokens(char *cmd);
 
+// refiner.c
 t_ref_token					*refine_tokens(t_token *raw_tokens);
 
-char						*get_env_wrapper(char *var);
+// parser_utils.c
+char						*get_ifs_set(void);
+int							is_space_char(char c);
+int							is_control_char(char c, char quote);
+char						*get_env(char *var);
 
+// command_builder.c
 t_command					*build_commands(t_ref_token *tokens);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/17 14:07:09 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:31:25 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ t_redir_token	*clone_redir_token(t_redir_token *token)
 {
 	if (!token)
 		return (NULL);
-	return create_redir_token(token->redir_type, token->text_token);
+	return (create_redir_token(token->redir_type, token->text_token));
 }
 
 t_redir_token	*find_last_redir_token(t_redir_token *head)

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 12:06:35 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/26 18:01:14 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:46:24 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,26 +14,27 @@
 
 static void	main_loop(t_ref_token *token, t_cmd_builder_data *data)
 {
-	if (token->token_type == R_Pipe)
+	if (token->token_type == REF_TOKEN_PIPE)
 	{
 		add_single_cmd(&data->cmd_set->cmd_list, data->args, data->redirs);
+		add_pipe_token(&data->cmd_set->pipes,
+			clone_pipe_token(token->pipe_token));
 		data->args = NULL;
 		data->redirs = NULL;
 	}
-	else if (token->token_type == R_Text)
+	else if (token->token_type == REF_TOKEN_TEXT)
 	{
 		if (data->prev_redir)
 			data->prev_redir->text_token = clone_text_token(token->text_token);
 		else
-			add_text_token(&data->args,
-				clone_text_token(token->text_token));
+			add_text_token(&data->args, clone_text_token(token->text_token));
 	}
 	else
 	{
 		data->prev_redir = clone_redir_token(token->redir_token);
 		add_redir_token(&data->redirs, data->prev_redir);
 	}
-	if (token->token_type != R_Redir)
+	if (token->token_type != REF_TOKEN_REDIR)
 		data->prev_redir = NULL;
 }
 
@@ -63,13 +64,17 @@ int	main(int argn, char **args)
 	t_text_token	*cursor2;
 	t_str_node		*cursor2_2;
 	t_redir_token	*cursor3;
+	t_pipe_token	*cursor4;
 
 	if (argn != 2)
 		return (1);
 	raw_tokens = split_tokens(args[1]);
 	tokens = refine_tokens(raw_tokens);
 	cmd = build_commands(tokens);
+	clear_token_list(raw_tokens);
+	clear_ref_token_list(tokens);
 	cursor = cmd->cmd_list;
+	cursor4 = cmd->pipes;
 	while (cursor)
 	{
 		if (cursor->args)
@@ -103,12 +108,19 @@ int	main(int argn, char **args)
 		}
 		else
 			printf("Redirs: (null)\n");
+		if (cursor4)
+		{
+			printf("Pipe: %d -> %d\n", cursor4->fd_in, cursor4->fd_out);
+			cursor4 = cursor4->next;
+			if (cursor4)
+				printf("\n");
+		}
 		cursor = cursor->next;
 		if (cursor)
 			printf("\n");
 	}
-	clear_token_list(raw_tokens);
-	clear_ref_token_list(tokens);
 	clear_single_cmd_list(cmd->cmd_list);
+	clear_pipe_token_list(cmd->pipes);
+	free(cmd);
 	return (0);
 }

@@ -1,43 +1,45 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   ft_split_str.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/16 17:53:26 by pfontenl          #+#    #+#             */
-/*   Updated: 2023/11/08 18:38:39 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 12:22:46 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/libft.h"
 
-static size_t	count_words(char const *s, char *c)
+static size_t	count_words(char const *s, char *set)
 {
 	size_t	n;
 	size_t	i;
 
+	if (!set || !set[0])
+		return (1);
 	n = 0;
 	i = 0;
-	while (*s && s[i])
+	while (s && s[i])
 	{
-		if (!ft_strchr(c, s[i]) && (i == 0 || ft_strchr(c, s[i - 1])))
+		if (!ft_strchr(set, s[i]) && (i == 0 || ft_strchr(set, s[i - 1])))
 			n++;
 		i++;
 	}
 	return (n);
 }
 
-static char	*copy_word(char const *s, char *c, size_t *cursor)
+static char	*copy_word(char const *s, char *set, size_t *cursor)
 {
 	size_t	start;
 	size_t	len;
 
-	while (ft_strchr(c, s[*cursor]))
+	while (ft_strchr(set, s[*cursor]))
 		(*cursor)++;
 	start = *cursor;
 	len = 0;
-	while (s[*cursor] && !ft_strchr(c, s[*cursor]))
+	while (s[*cursor] && !ft_strchr(set, s[*cursor]))
 	{
 		len++;
 		(*cursor)++;
@@ -58,7 +60,7 @@ static void	free_words(char **words, size_t word_count)
 	free(words);
 }
 
-char	**split_words(char const *s, char *c, size_t word_count)
+char	**split_words(char const *s, char *set, size_t word_count)
 {
 	size_t	i;
 	char	**words;
@@ -71,7 +73,7 @@ char	**split_words(char const *s, char *c, size_t word_count)
 	cursor = 0;
 	while (i < word_count)
 	{
-		words[i] = copy_word(s, c, &cursor);
+		words[i] = copy_word(s, set, &cursor);
 		if (!words[i])
 		{
 			free_words(words, word_count);
@@ -83,14 +85,14 @@ char	**split_words(char const *s, char *c, size_t word_count)
 	return (words);
 }
 
-char	**ft_split_str(char const *s, char *c)
+char	**ft_split_str(char const *s, char *set)
 {
 	size_t	word_count;
 	char	**words;
 
 	if (!s)
 		return (NULL);
-	word_count = count_words(s, c);
-	words = split_words(s, c, word_count);
+	word_count = count_words(s, set);
+	words = split_words(s, set, word_count);
 	return (words);
 }

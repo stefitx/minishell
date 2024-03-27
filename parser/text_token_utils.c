@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/26 18:01:53 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/27 11:57:09 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ t_text_token	*clone_text_token(t_text_token *token)
 {
 	if (!token)
 		return (NULL);
-	return create_text_token(token->original, token->original_quoted,
-		token->expanded, token->in_quotes);
+	return (create_text_token(token->original, token->original_quoted,
+			clone_str_node_list(token->expanded), token->in_quotes));
 }
 
 t_text_token	*find_last_text_token(t_text_token *head)
@@ -60,6 +60,6 @@ void	clear_text_token_list(t_text_token *head)
 	clear_text_token_list(head->next);
 	free(head->original);
 	free(head->original_quoted);
-	// clear_str_node_list(head->expanded);
+	clear_str_node_list(head->expanded);
 	free(head);
 }
