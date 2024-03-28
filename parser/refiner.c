@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 13:22:04 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/28 12:27:26 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:19:22 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,7 @@ static void	handle_unquoted_var(t_token *raw_token, t_refiner_data *data)
 	char	**split_str;
 	int		i;
 
-	split_str = ft_split_str(data->expansion, get_ifs_set());
+	split_str = ft_split_set(data->expansion, get_ifs_set());
 	i = 0;
 	while (split_str[i])
 	{

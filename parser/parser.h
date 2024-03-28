@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/28 12:27:05 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/28 18:19:22 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,7 +199,7 @@ void						clear_single_cmd_list(t_single_cmd *head);
 
 void						ft_strappend(char **s, char *add);
 
-char						**ft_split_str(char const *s, char *c);
+char						**ft_split_set(char const *s, char *c);
 
 // parser_utils.c
 char						*get_ifs_set(void);
@@ -220,5 +220,22 @@ void						add_ref_redir_token(char *content,
 
 // command_builder.c
 t_command					*build_commands(t_ref_token *tokens);
+
+typedef struct s_env
+{
+	char					*name;
+	char					*val;
+	struct s_env			*next;
+}							t_env;
+
+void						env_add_var(t_env **env, char *name, char *val);
+void						env_init(t_env **env, char **og_env);
+size_t						env_len(t_env *env);
+t_env						*env_get_var(t_env *var, char *name);
+void						env_set_var(t_env **env, char *name, char *val);
+void						env_unset_var(t_env **env, char *name);
+void						env_clear_var(t_env *env_var);
+void						env_clear_all(t_env *env);
+char						**env_to_arr(t_env *env);
 
 #endif
