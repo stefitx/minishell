@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/27 12:38:55 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/28 12:27:05 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,20 +138,20 @@ typedef struct s_cmd_builder_data
 }							t_cmd_builder_data;
 
 // token_utils.c
-t_token						*create_token(char *s, enum e_token_types type,
+t_token						*token_create(char *s, enum e_token_types type,
 								char quote);
-t_token						*find_last_token(t_token *head);
-void						add_token(t_token **head, char *s,
+t_token						*token_find_last(t_token *head);
+void						token_append(t_token **head, char *s,
 								enum e_token_types type, char quote);
-void						clear_token_list(t_token *head);
+void						token_list_clear(t_token *head);
 
 // ref_token_utils.c
-t_ref_token					*create_ref_token(enum e_ref_token_types type,
+t_ref_token					*ref_token_create(enum e_ref_token_types type,
 								void *data);
-t_ref_token					*find_last_ref_token(t_ref_token *head);
-void						add_ref_token(t_ref_token **head,
+t_ref_token					*ref_token_find_last(t_ref_token *head);
+void						ref_token_append(t_ref_token **head,
 								enum e_ref_token_types type, void *data);
-void						clear_ref_token_list(t_ref_token *head);
+void						ref_token_list_clear(t_ref_token *head);
 
 // str_node_utils.c
 t_str_node					*create_str_node(char *s);
@@ -162,23 +162,23 @@ void						add_str_node(t_str_node **head, t_str_node *node);
 void						clear_str_node_list(t_str_node *head);
 
 // text_token_utils.c
-t_text_token				*create_text_token(char *original,
+t_text_token				*text_token_create(char *original,
 								char *original_quoted, t_str_node *expanded,
 								int in_quotes);
-t_text_token				*clone_text_token(t_text_token *token);
-t_text_token				*find_last_text_token(t_text_token *head);
-void						add_text_token(t_text_token **head,
+t_text_token				*text_token_clone(t_text_token *token);
+t_text_token				*text_token_find_last(t_text_token *head);
+void						text_token_append(t_text_token **head,
 								t_text_token *new);
-void						clear_text_token_list(t_text_token *head);
+void						text_token_list_clear(t_text_token *head);
 
 // redir_token_utils.c
-t_redir_token				*create_redir_token(enum e_redir_types type,
+t_redir_token				*redir_token_create(enum e_redir_types type,
 								t_text_token *data);
-t_redir_token				*clone_redir_token(t_redir_token *token);
-t_redir_token				*find_last_redir_token(t_redir_token *head);
-void						add_redir_token(t_redir_token **head,
+t_redir_token				*redir_token_clone(t_redir_token *token);
+t_redir_token				*redir_token_find_last(t_redir_token *head);
+void						redir_token_append(t_redir_token **head,
 								t_redir_token *new);
-void						clear_redir_token_list(t_redir_token *head);
+void						redir_token_list_clear(t_redir_token *head);
 
 // pipe_token_utils.c
 t_pipe_token				*create_pipe_token(void);
@@ -201,17 +201,22 @@ void						ft_strappend(char **s, char *add);
 
 char						**ft_split_str(char const *s, char *c);
 
+// parser_utils.c
+char						*get_ifs_set(void);
+int							is_space_char(char c);
+int							is_control_char(char c, char quote);
+char						*get_env(char *var);
+
 // tokenizer.c
 t_token						*split_tokens(char *cmd);
 
 // refiner.c
 t_ref_token					*refine_tokens(t_token *raw_tokens);
 
-// parser_utils.c
-char						*get_ifs_set(void);
-int							is_space_char(char c);
-int							is_control_char(char c, char quote);
-char						*get_env(char *var);
+// refiner_utils.c
+void						add_ref_text_token(t_refiner_data *data);
+void						add_ref_redir_token(char *content,
+								t_refiner_data *data);
 
 // command_builder.c
 t_command					*build_commands(t_ref_token *tokens);

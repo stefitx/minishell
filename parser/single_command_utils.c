@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 17:35:05 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/27 12:27:40 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/28 12:19:46 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	clear_single_cmd_list(t_single_cmd *head)
 	if (!head)
 		return ;
 	clear_single_cmd_list(head->next);
-	clear_text_token_list(head->args);
-	clear_redir_token_list(head->redirs);
+	text_token_list_clear(head->args);
+	redir_token_list_clear(head->redirs);
 	free(head);
 }

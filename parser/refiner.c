@@ -6,44 +6,94 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 13:22:04 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/27 12:41:57 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/28 12:27:26 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-static void	add_new_text_token(t_refiner_data *data)
+static void	handle_special_token(t_token *raw_token, t_refiner_data *data);
+static void	handle_text_token(t_token *raw_token, t_refiner_data *data);
+static void	handle_var_token(t_token *raw_token, t_refiner_data *data);
+static void	handle_unquoted_var(t_token *raw_token, t_refiner_data *data);
+
+t_ref_token	*refine_tokens(t_token *raw_tokens)
 {
-	add_ref_token(&data->ref_tokens, REF_TOKEN_TEXT, create_text_token(data->og,
-			data->og_quoted, data->expanded, data->in_quotes));
-	free(data->og);
-	data->og = NULL;
-	free(data->og_quoted);
-	data->og_quoted = NULL;
-	data->expanded = NULL;
-	data->in_quotes = 0;
+	t_refiner_data	data;
+
+	ft_bzero(&data, sizeof(t_refiner_data));
+	while (raw_tokens)
+	{
+		if (raw_tokens->token_type == TOKEN_TEXT
+			|| raw_tokens->token_type == TOKEN_VARIABLE)
+		{
+			if (raw_tokens->quote_status != QUOTE_NONE)
+				data.in_quotes = 1;
+			if (raw_tokens->token_type == TOKEN_VARIABLE)
+				handle_var_token(raw_tokens, &data);
+			else
+				handle_text_token(raw_tokens, &data);
+		}
+		else if (raw_tokens->token_type == TOKEN_QUOTE)
+			ft_strappend(&data.og_quoted, raw_tokens->content);
+		else
+			handle_special_token(raw_tokens, &data);
+		raw_tokens = raw_tokens->next;
+	}
+	if (data.og || data.og_quoted)
+		add_ref_text_token(&data);
+	return (data.ref_tokens);
 }
 
 static void	handle_special_token(t_token *raw_token, t_refiner_data *data)
 {
-	enum e_redir_types	redir_type;
-
 	if ((data->og && data->og[0]) || data->in_quotes)
-		add_new_text_token(data);
+		add_ref_text_token(data);
 	if (raw_token->token_type == TOKEN_REDIR)
-	{
-		redir_type = REDIR_INFILE;
-		if (ft_strncmp(raw_token->content, ">", 2) == 0)
-			redir_type = REDIR_OUTFILE;
-		else if (ft_strncmp(raw_token->content, "<<", 3) == 0)
-			redir_type = REDIR_HEREDOC;
-		else if (ft_strncmp(raw_token->content, ">>", 3) == 0)
-			redir_type = REDIR_APPEND;
-		add_ref_token(&data->ref_tokens, REF_TOKEN_REDIR,
-			create_redir_token(redir_type, NULL));
-	}
+		add_ref_redir_token(raw_token->content, data);
 	else if (raw_token->token_type == TOKEN_PIPE)
-		add_ref_token(&data->ref_tokens, REF_TOKEN_PIPE, create_pipe_token());
+		ref_token_append(&data->ref_tokens, REF_TOKEN_PIPE,
+			create_pipe_token());
+}
+
+static void	handle_text_token(t_token *raw_token, t_refiner_data *data)
+{
+	ft_strappend(&data->og, raw_token->content);
+	ft_strappend(&data->og_quoted, raw_token->content);
+	if (data->add_new)
+	{
+		data->add_new = 0;
+		add_str_node(&data->expanded, create_str_node(raw_token->content));
+	}
+	else
+	{
+		if (!data->expanded)
+			add_str_node(&data->expanded, create_str_node(""));
+		ft_strappend(&find_last_str_node(data->expanded)->str,
+			raw_token->content);
+	}
+}
+
+static void	handle_var_token(t_token *raw_token, t_refiner_data *data)
+{
+	ft_strappend(&data->og, "$");
+	ft_strappend(&data->og, raw_token->content);
+	ft_strappend(&data->og_quoted, "$");
+	ft_strappend(&data->og_quoted, raw_token->content);
+	data->expansion = get_env(raw_token->content);
+	if (data->expansion)
+	{
+		if (raw_token->quote_status != QUOTE_NONE)
+		{
+			if (!data->expanded)
+				add_str_node(&data->expanded, create_str_node(""));
+			ft_strappend(&find_last_str_node(data->expanded)->str,
+				get_env(raw_token->content));
+		}
+		else
+			handle_unquoted_var(raw_token, data);
+		data->expansion = NULL;
+	}
 }
 
 static void	handle_unquoted_var(t_token *raw_token, t_refiner_data *data)
@@ -69,74 +119,6 @@ static void	handle_unquoted_var(t_token *raw_token, t_refiner_data *data)
 	free(split_str);
 	data->add_new = data->expansion && ft_strchr(get_ifs_set(),
 			data->expansion[ft_strlen(data->expansion) - 1]);
-}
-
-static void	handle_var_token(t_token *raw_token, t_refiner_data *data)
-{
-	ft_strappend(&data->og, "$");
-	ft_strappend(&data->og, raw_token->content);
-	ft_strappend(&data->og_quoted, "$");
-	ft_strappend(&data->og_quoted, raw_token->content);
-	data->expansion = get_env(raw_token->content);
-	if (data->expansion)
-	{
-		if (raw_token->quote_status != QUOTE_NONE)
-		{
-			if (!data->expanded)
-				add_str_node(&data->expanded, create_str_node(""));
-			ft_strappend(&find_last_str_node(data->expanded)->str,
-				get_env(raw_token->content));
-		}
-		else
-			handle_unquoted_var(raw_token, data);
-		data->expansion = NULL;
-	}
-}
-
-static void	handle_text_token(t_token *raw_token, t_refiner_data *data)
-{
-	ft_strappend(&data->og, raw_token->content);
-	ft_strappend(&data->og_quoted, raw_token->content);
-	if (data->add_new)
-	{
-		data->add_new = 0;
-		add_str_node(&data->expanded, create_str_node(raw_token->content));
-	}
-	else
-	{
-		if (!data->expanded)
-			add_str_node(&data->expanded, create_str_node(""));
-		ft_strappend(&find_last_str_node(data->expanded)->str,
-			raw_token->content);
-	}
-}
-
-t_ref_token	*refine_tokens(t_token *raw_tokens)
-{
-	t_refiner_data	data;
-
-	ft_bzero(&data, sizeof(t_refiner_data));
-	while (raw_tokens)
-	{
-		if (raw_tokens->token_type == TOKEN_TEXT
-			|| raw_tokens->token_type == TOKEN_VARIABLE)
-		{
-			data.in_quotes = raw_tokens->quote_status != QUOTE_NONE
-				|| data.in_quotes;
-			if (raw_tokens->token_type == TOKEN_VARIABLE)
-				handle_var_token(raw_tokens, &data);
-			else
-				handle_text_token(raw_tokens, &data);
-		}
-		else if (raw_tokens->token_type == TOKEN_QUOTE)
-			ft_strappend(&data.og_quoted, raw_tokens->content);
-		else
-			handle_special_token(raw_tokens, &data);
-		raw_tokens = raw_tokens->next;
-	}
-	if (data.og || data.og_quoted)
-		add_new_text_token(&data);
-	return (data.ref_tokens);
 }
 
 /*

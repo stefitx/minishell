@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 12:06:35 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/27 12:46:24 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/28 12:44:20 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ static void	main_loop(t_ref_token *token, t_cmd_builder_data *data)
 	else if (token->token_type == REF_TOKEN_TEXT)
 	{
 		if (data->prev_redir)
-			data->prev_redir->text_token = clone_text_token(token->text_token);
+			data->prev_redir->text_token = text_token_clone(token->text_token);
 		else
-			add_text_token(&data->args, clone_text_token(token->text_token));
+			text_token_append(&data->args, text_token_clone(token->text_token));
 	}
 	else
 	{
-		data->prev_redir = clone_redir_token(token->redir_token);
-		add_redir_token(&data->redirs, data->prev_redir);
+		data->prev_redir = redir_token_clone(token->redir_token);
+		redir_token_append(&data->redirs, data->prev_redir);
 	}
 	if (token->token_type != REF_TOKEN_REDIR)
 		data->prev_redir = NULL;
@@ -54,6 +54,7 @@ t_command	*build_commands(t_ref_token *tokens)
 	return (data.cmd_set);
 }
 
+/*
 int	main(int argn, char **args)
 {
 	t_command		*cmd;
@@ -71,8 +72,8 @@ int	main(int argn, char **args)
 	raw_tokens = split_tokens(args[1]);
 	tokens = refine_tokens(raw_tokens);
 	cmd = build_commands(tokens);
-	clear_token_list(raw_tokens);
-	clear_ref_token_list(tokens);
+	token_list_clear(raw_tokens);
+	ref_token_list_clear(tokens);
 	cursor = cmd->cmd_list;
 	cursor4 = cmd->pipes;
 	while (cursor)
@@ -83,13 +84,22 @@ int	main(int argn, char **args)
 			cursor2 = cursor->args;
 			while (cursor2)
 			{
-				printf("- `%s`\n", cursor2->original);
-				cursor2_2 = cursor2->expanded;
-				while (cursor2_2)
+				printf("- Original: `%s`\n", cursor2->original);
+				printf("- Original (With Quotes): `%s`\n",
+					cursor2->original_quoted);
+				printf("In Quotes? %s\n", cursor2->in_quotes ? "Yes" : "No");
+				if (cursor2->expanded)
 				{
-					printf("  - `%s`\n", cursor2_2->str);
-					cursor2_2 = cursor2_2->next;
+					printf("Expanded:\n");
+					cursor2_2 = cursor2->expanded;
+					while (cursor2_2)
+					{
+						printf("  - `%s`\n", cursor2_2->str);
+						cursor2_2 = cursor2_2->next;
+					}
 				}
+				else
+					printf("Expanded: (null)\n");
 				cursor2 = cursor2->next;
 			}
 		}
@@ -124,3 +134,4 @@ int	main(int argn, char **args)
 	free(cmd);
 	return (0);
 }
+*/

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/27 11:32:54 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/28 12:20:54 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static void	handle_quote(char *cmd, t_tokenizer_data *data)
 		data->quote = '\0';
 	else
 		data->quote = cmd[data->i];
-	add_token(&data->tokens, ft_substr(cmd, data->i++, 1), TOKEN_QUOTE,
+	token_append(&data->tokens, ft_substr(cmd, data->i++, 1), TOKEN_QUOTE,
 		data->quote);
 }
 
@@ -33,9 +33,10 @@ static void	handle_control_char(char *cmd, t_tokenizer_data *data)
 				|| (cmd[data->i] == '?' && data->start == data->i)))
 			data->i++;
 		if (data->i == data->start)
-			add_token(&data->tokens, ft_strdup("$"), TOKEN_TEXT, data->quote);
+			token_append(&data->tokens, ft_strdup("$"), TOKEN_TEXT,
+				data->quote);
 		else
-			add_token(&data->tokens, ft_substr(cmd, data->start, data->i
+			token_append(&data->tokens, ft_substr(cmd, data->start, data->i
 					- data->start), TOKEN_VARIABLE, data->quote);
 	}
 	else if (data->quote == '\0')
@@ -43,7 +44,7 @@ static void	handle_control_char(char *cmd, t_tokenizer_data *data)
 		data->start = data->i;
 		if (ft_strchr("<>", cmd[data->i]) && cmd[data->i] == cmd[data->i + 1])
 			data->i++;
-		add_token(&data->tokens, ft_substr(cmd, data->start, ++data->i
+		token_append(&data->tokens, ft_substr(cmd, data->start, ++data->i
 				- data->start), TOKEN_REDIR, data->quote);
 	}
 }
@@ -59,12 +60,12 @@ t_token	*split_tokens(char *cmd)
 		while (cmd[data.i] && is_space_char(cmd[data.i]) && data.quote == '\0')
 			data.i++;
 		if (data.i > data.start)
-			add_token(&data.tokens, NULL, TOKEN_SPACE, data.quote);
+			token_append(&data.tokens, NULL, TOKEN_SPACE, data.quote);
 		data.start = data.i;
 		while (cmd[data.i] && !is_control_char(cmd[data.i], data.quote))
 			data.i++;
 		if (data.i > data.start || data.quote != '\0')
-			add_token(&data.tokens, ft_substr(cmd, data.start, data.i
+			token_append(&data.tokens, ft_substr(cmd, data.start, data.i
 					- data.start), TOKEN_TEXT, data.quote);
 		if (cmd[data.i] && ft_strchr("$<>|\"'", cmd[data.i]))
 			handle_control_char(cmd, &data);

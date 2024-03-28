@@ -6,13 +6,13 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/27 12:31:25 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/03/28 12:25:16 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-t_redir_token	*create_redir_token(enum e_redir_types type, t_text_token *data)
+t_redir_token	*redir_token_create(enum e_redir_types type, t_text_token *data)
 {
 	t_redir_token	*token;
 
@@ -20,19 +20,19 @@ t_redir_token	*create_redir_token(enum e_redir_types type, t_text_token *data)
 	if (!token)
 		return (NULL);
 	token->redir_type = type;
-	token->text_token = clone_text_token(data);
+	token->text_token = NULL;
 	token->next = NULL;
 	return (token);
 }
 
-t_redir_token	*clone_redir_token(t_redir_token *token)
+t_redir_token	*redir_token_clone(t_redir_token *token)
 {
 	if (!token)
 		return (NULL);
-	return (create_redir_token(token->redir_type, token->text_token));
+	return (redir_token_create(token->redir_type, token->text_token));
 }
 
-t_redir_token	*find_last_redir_token(t_redir_token *head)
+t_redir_token	*redir_token_find_last(t_redir_token *head)
 {
 	if (!head)
 		return (NULL);
@@ -41,19 +41,19 @@ t_redir_token	*find_last_redir_token(t_redir_token *head)
 	return (head);
 }
 
-void	add_redir_token(t_redir_token **head, t_redir_token *new)
+void	redir_token_append(t_redir_token **head, t_redir_token *new)
 {
 	if (!*head)
 		*head = new;
 	else
-		find_last_redir_token(*head)->next = new;
+		redir_token_find_last(*head)->next = new;
 }
 
-void	clear_redir_token_list(t_redir_token *head)
+void	redir_token_list_clear(t_redir_token *head)
 {
 	if (!head)
 		return ;
-	clear_redir_token_list(head->next);
-	clear_text_token_list(head->text_token);
+	redir_token_list_clear(head->next);
+	text_token_list_clear(head->text_token);
 	free(head);
 }

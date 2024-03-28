@@ -12,7 +12,7 @@
 
 #include "parser.h"
 
-t_ref_token	*create_ref_token(enum e_ref_token_types type, void *data)
+t_ref_token	*ref_token_create(enum e_ref_token_types type, void *data)
 {
 	t_ref_token	*token;
 
@@ -30,7 +30,7 @@ t_ref_token	*create_ref_token(enum e_ref_token_types type, void *data)
 	return (token);
 }
 
-t_ref_token	*find_last_ref_token(t_ref_token *head)
+t_ref_token	*ref_token_find_last(t_ref_token *head)
 {
 	if (!head)
 		return (NULL);
@@ -39,27 +39,27 @@ t_ref_token	*find_last_ref_token(t_ref_token *head)
 	return (head);
 }
 
-void	add_ref_token(t_ref_token **head, enum e_ref_token_types type,
+void	ref_token_append(t_ref_token **head, enum e_ref_token_types type,
 		void *data)
 {
 	t_ref_token	*new;
 
-	new = create_ref_token(type, data);
+	new = ref_token_create(type, data);
 	if (!*head)
 		*head = new;
 	else
-		find_last_ref_token(*head)->next = new;
+		ref_token_find_last(*head)->next = new;
 }
 
-void	clear_ref_token_list(t_ref_token *head)
+void	ref_token_list_clear(t_ref_token *head)
 {
 	if (!head)
 		return ;
-	clear_ref_token_list(head->next);
+	ref_token_list_clear(head->next);
 	if (head->token_type == REF_TOKEN_TEXT)
-		clear_text_token_list(head->text_token);
+		text_token_list_clear(head->text_token);
 	else if (head->token_type == REF_TOKEN_REDIR)
-		clear_redir_token_list(head->redir_token);
+		redir_token_list_clear(head->redir_token);
 	else
 		clear_pipe_token_list(head->pipe_token);
 	free(head);
