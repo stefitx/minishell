@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+         #
+#    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/03/03 16:38:55 by atudor           ###   ########.fr        #
+#    Updated: 2024/03/30 12:39:58 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,37 +18,65 @@ RM		=	rm -fr
 NAME	=	minishell
 COMP	=	./inc/libft/libft.a
 
+ENV_FILES =	env_add_var.c \
+			env_clear_all.c \
+			env_clear_var.c \
+			env_get_var.c \
+			env_init.c \
+			env_len.c \
+			env_set_var.c \
+			env_to_arr.c \
+			env_unset_var.c
 INPUT_FILES	= minishell.c
 BUILTIN_FILES = cd.c
 # EXPANSOR_FILES	=
-# PARSER_FILES	=
+PARSER_FILES =	command_builder.c \
+				ft_split_set.c \
+				parser_utils.c \
+				pipe_token_utils.c \
+				redir_token_utils.c \
+				refined_token_utils.c \
+				refiner_utils.c \
+				refiner.c \
+				single_command_utils.c \
+				ft_strappend.c \
+				str_node_utils.c \
+				text_token_utils.c \
+				token_utils.c \
+				tokenizer.c # ft_split_set.c and ft_strappend.c should be moved to libft
 # LEXER_FILES	=
 EXEC_FILES	= exec.c
 # HEREDOC_FILES	=
 # BONUS_FILES	=
 
-HEADER	= ./inc/minishell.h
+HEADER		=	./inc/minishell.h
 LIBFT_ROOT	:=	./inc/libft/
 RDLINE_ROOT	:=	./inc/readline/
 DIR_OBJ		:=	temp/
 INC_ROOT	:=	inc/m
 SRCS_DIR	=	srcs/
 
-BUILTIN_DIR	=	built-ins/
-EXEC_DIR	=	exec/
-EXPAN_DIR	=	expan/
-HERE_DIR	=	heredoc/
-INPUT_DIR	=	input/
-LEXER_DIR	=	lex/
-PARSER_DIR	=	pars/
+ENV_DIR		= env/
+BUILTIN_DIR	= built-ins/
+EXEC_DIR	= exec/
+# EXPAN_DIR	= expan/
+# HERE_DIR	= heredoc/
+INPUT_DIR	= input/
+# LEXER_DIR	= lex/
+PARSER_DIR	= parser/
 
-INPUT_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(INPUT_DIR),$(INPUT_FILES)))
-BUILTIN_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(BUILTIN_DIR),$(BUILTIN_FILES)))
-EXEC_SRC	=	$(addprefix $(SRCS_DIR),$(addprefix $(EXEC_DIR),$(EXEC_FILES)))
 
-INPUT_OBJ	=	$(addprefix $(DIR_OBJ),$(INPUT_SRC:.c=.o))
-BUILTIN_OBJ	=	$(addprefix $(DIR_OBJ),$(BUILTIN_SRC:.c=.o))
-EXEC_OBJ	=	$(addprefix $(DIR_OBJ),$(EXEC_SRC:.c=.o))
+ENV_SRC		= $(addprefix $(SRCS_DIR),$(addprefix $(ENV_DIR),$(ENV_FILES)))
+INPUT_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(INPUT_DIR),$(INPUT_FILES)))
+BUILTIN_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(BUILTIN_DIR),$(BUILTIN_FILES)))
+EXEC_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(EXEC_DIR),$(EXEC_FILES)))
+PARSER_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(PARSER_DIR),$(PARSER_FILES)))
+
+ENV_OBJ		= $(addprefix $(DIR_OBJ),$(ENV_SRC:.c=.o))
+INPUT_OBJ	= $(addprefix $(DIR_OBJ),$(INPUT_SRC:.c=.o))
+BUILTIN_OBJ	= $(addprefix $(DIR_OBJ),$(BUILTIN_SRC:.c=.o))
+EXEC_OBJ	= $(addprefix $(DIR_OBJ),$(EXEC_SRC:.c=.o))
+PARSER_OBJ	= $(addprefix $(DIR_OBJ),$(PARSER_SRC:.c=.o))
 
 LIB_A		:=	./inc/readline/libreadline.a \
 				./inc/libft/libft.a ./inc/readline/libhistory.a
@@ -68,7 +96,7 @@ libraries:
 	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
 	@$(MAKE) rdline --no-print-directory
 
-$(NAME): $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ)
+$(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
 
 rdline: temp $(RDLINE_ROOT)libreadline.a
