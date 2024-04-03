@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/30 12:39:42 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/03 12:45:26 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,6 +209,7 @@ char						*get_env(char *var);
 
 // tokenizer.c
 t_token						*split_tokens(char *cmd);
+int							syntax_check(t_token *tokens);
 
 // refiner.c
 t_ref_token					*refine_tokens(t_token *raw_tokens);

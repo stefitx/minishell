@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/03/30 12:33:21 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/03 12:46:05 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,12 @@ void	parse_cmd(char *s)
 	raw_tokens = split_tokens(s);
 	tokens = refine_tokens(raw_tokens);
 	cmd = build_commands(tokens);
-	token_list_clear(raw_tokens);
-	ref_token_list_clear(tokens);
 	cursor = cmd->cmd_list;
 	cursor4 = cmd->pipes;
+	if (syntax_check(raw_tokens))
+		cursor = NULL;
+	token_list_clear(raw_tokens);
+	ref_token_list_clear(tokens);
 	while (cursor)
 	{
 		if (cursor->args)
