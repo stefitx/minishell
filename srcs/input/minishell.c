@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/03 12:46:05 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/03 18:54:05 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,27 +70,19 @@ int	main(int argc, char **argv, char **env)
 
 // if signal is ctrl-D, says exit and exits
 
-void	parse_cmd(char *s)
+static void	parse_cmd(char *s)
 {
 	t_command		*cmd;
 	t_single_cmd	*cursor;
 	char			*redirs[] = {"<", ">", "<<", ">>"};
-	t_token			*raw_tokens;
-	t_ref_token		*tokens;
 	t_text_token	*cursor2;
 	t_str_node		*cursor2_2;
 	t_redir_token	*cursor3;
 	t_pipe_token	*cursor4;
 
-	raw_tokens = split_tokens(s);
-	tokens = refine_tokens(raw_tokens);
-	cmd = build_commands(tokens);
+	cmd = parse_command(s);
 	cursor = cmd->cmd_list;
 	cursor4 = cmd->pipes;
-	if (syntax_check(raw_tokens))
-		cursor = NULL;
-	token_list_clear(raw_tokens);
-	ref_token_list_clear(tokens);
 	while (cursor)
 	{
 		if (cursor->args)
@@ -131,7 +123,8 @@ void	parse_cmd(char *s)
 				printf("  - Original: `%s`\n", cursor3->text_token->original);
 				printf("  - Original (With Quotes): `%s`\n",
 					cursor3->text_token->original_quoted);
-				printf("  In Quotes? %s\n", cursor3->text_token->in_quotes ? "Yes" : "No");
+				printf("  In Quotes? %s\n",
+					cursor3->text_token->in_quotes ? "Yes" : "No");
 				if (cursor3->text_token->expanded)
 				{
 					printf("  Expanded:\n");
@@ -165,14 +158,35 @@ void	parse_cmd(char *s)
 	free(cmd);
 }
 
+static void	sig_handler_idle(int signal)
+{
+	if (signal == SIGINT)
+	{
+		rl_newline(0, 0);
+		rl_on_new_line();
+		rl_replace_line(" ", 0);
+		rl_redisplay();
+	}
+}
+
+static void	sig_idle(struct sigaction *sigact)
+{
+	(*sigact).sa_handler = sig_handler_idle;
+	sigemptyset(&(*sigact).sa_mask);
+	(*sigact).sa_flags = 0;
+	sigaction(SIGINT, sigact, NULL);
+}
+
 int	main(int argc, char **argv, char **env)
 {
-	char	*line;
+	struct sigaction	sigact;
+	char				*line;
 
 	(void)argv;
 	(void)env;
 	if (argc != 1)
 		return (perror("Usage: ./minishell\n"), 1);
+	sig_idle(&sigact);
 	while (1)
 	{
 		line = readline("shortking👑$ ");

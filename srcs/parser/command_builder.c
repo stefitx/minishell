@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 12:06:35 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/30 12:22:18 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/03 18:23:56 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,12 +38,12 @@ static void	main_loop(t_ref_token *token, t_cmd_builder_data *data)
 		data->prev_redir = NULL;
 }
 
-t_command	*build_commands(t_ref_token *tokens)
+static t_command	*build_commands(t_ref_token *tokens)
 {
 	t_cmd_builder_data	data;
 
 	ft_bzero(&data, sizeof(t_cmd_builder_data));
-	data.cmd_set = ft_calloc(1, sizeof(t_command));
+	data.cmd_set = ft_calloc(1, sizeof(t_command *));
 	while (tokens)
 	{
 		main_loop(tokens, &data);
@@ -52,6 +52,25 @@ t_command	*build_commands(t_ref_token *tokens)
 	if (data.args || data.redirs)
 		add_single_cmd(&data.cmd_set->cmd_list, data.args, data.redirs);
 	return (data.cmd_set);
+}
+
+t_command	*parse_command(char *s)
+{
+	t_token		*raw_tokens;
+	t_ref_token	*tokens;
+	t_command	*cmd;
+
+	raw_tokens = split_tokens(s);
+	if (syntax_check(raw_tokens))
+	{
+		token_list_clear(raw_tokens);
+		return (NULL);
+	}
+	tokens = refine_tokens(raw_tokens);
+	cmd = build_commands(tokens);
+	token_list_clear(raw_tokens);
+	ref_token_list_clear(tokens);
+	return (cmd);
 }
 
 /*

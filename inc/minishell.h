@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:57:03 by atudor            #+#    #+#             */
-/*   Updated: 2024/03/30 12:15:46 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/03 18:38:01 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdarg.h>
 # include <fcntl.h>
 # include <errno.h>
+# include <signal.h>
 # include <sys/stat.h>
 # include <readline/readline.h>
 # include <readline/history.h>

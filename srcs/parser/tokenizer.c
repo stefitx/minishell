@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/03 12:50:55 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/03 18:30:19 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,8 +70,6 @@ t_token	*split_tokens(char *cmd)
 		if (cmd[data.i] && ft_strchr("$<>|\"'", cmd[data.i]))
 			handle_control_char(cmd, &data);
 	}
-	// if (quote != '\0')
-	// 	throw new Exception("Error: Open Quotes Detected!");
 	return (data.tokens);
 }
 
