@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/03 18:54:05 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/04 19:21:03 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,8 @@ static void	parse_cmd(char *s)
 	t_pipe_token	*cursor4;
 
 	cmd = parse_command(s);
+	if (!cmd)
+		return ;
 	cursor = cmd->cmd_list;
 	cursor4 = cmd->pipes;
 	while (cursor)

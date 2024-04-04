@@ -10,3 +10,4 @@ C# Mock-Ups/*.sln
 a.out
 *.o
 minishell
+inc/libft/libft.a

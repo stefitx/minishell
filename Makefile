@@ -6,12 +6,12 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/03/30 12:39:58 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/04 19:04:50 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror
+CFLAGS	=	-Wall -Wextra -Werror -fsanitize=address
 INCLUDE	=	-I./inc -I./readline
 RM		=	rm -fr
 
