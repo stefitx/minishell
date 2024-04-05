@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/05 12:18:00 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/05 13:15:23 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,12 @@ static void	sig_handler_idle(int signal)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+	if (signal == SIGQUIT)
+	{
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
 }
 
 static void	sig_idle(struct sigaction *sigact)
@@ -179,6 +185,7 @@ static void	sig_idle(struct sigaction *sigact)
 	sigemptyset(&(*sigact).sa_mask);
 	(*sigact).sa_flags = 0;
 	sigaction(SIGINT, sigact, NULL);
+	sigaction(SIGQUIT, sigact, NULL);
 }
 
 int	main(int argc, char **argv, char **env)

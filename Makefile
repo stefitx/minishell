@@ -6,11 +6,20 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/05 12:20:30 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/05 12:52:42 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-CC		=	gcc
+COLOR_NONE=\033[0;0m
+COLOR_RED=\033[1;31m
+COLOR_GREEN=\033[1;32m
+COLOR_YELLOW=\033[1;33m
+COLOR_PINK=\033[1;35m
+COLOR_CYAN=\033[1;36m
+
+PREFIX=$(COLOR_YELLOW)[MINISHELL]$(COLOR_NONE)  
+
+CC		=	cc
 CFLAGS	=	-Wall -Wextra -Werror #-fsanitize=address
 INCLUDE	=	-I./inc -I./readline
 RM		=	rm -fr
@@ -98,7 +107,7 @@ libraries:
 
 $(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
-	@echo 'Minishell compiled!'
+	@echo "$(PREFIX)$(COLOR_GREEN)Minishell built successfully!$(COLOR_NONE)"
 
 rdline: temp $(RDLINE_ROOT)libreadline.a
 # 	@cd $(RDLINE_ROOT) && ./configure
@@ -107,7 +116,7 @@ rdline: temp $(RDLINE_ROOT)libreadline.a
 $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
-	@printf "Compiled $< to $@!\n"
+	@printf "$(PREFIX)$(COLOR_CYAN)Compiled $< to $@!$(COLOR_NONE)\n"
 
 temp	:
 	@mkdir -p $(DIR_OBJ)
@@ -115,11 +124,12 @@ temp	:
 clean	:
 	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
 	@$(RM) $(DIR_OBJ)
-
+	@echo "$(PREFIX)$(COLOR_RED)Objects deleted successfully!$(COLOR_NONE)"
 
 fclean	: clean
 	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
 	@$(RM) $(NAME)
+	@echo "$(PREFIX)$(COLOR_RED)Minishell deleted successfully!$(COLOR_NONE)"
 # 	@$(MAKE) -C $(RDLINE_ROOT) clean --no-print-directory
 
 re		: fclean all
