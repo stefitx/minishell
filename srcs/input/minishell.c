@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/04 19:21:03 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/05 12:18:00 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,8 @@ static void	parse_cmd(char *s)
 		return ;
 	cursor = cmd->cmd_list;
 	cursor4 = cmd->pipes;
+	if (cursor)
+		add_history(s);
 	while (cursor)
 	{
 		if (cursor->args)
@@ -164,9 +166,9 @@ static void	sig_handler_idle(int signal)
 {
 	if (signal == SIGINT)
 	{
-		rl_newline(0, 0);
+		write(STDOUT_FILENO, "\n", 1);
 		rl_on_new_line();
-		rl_replace_line(" ", 0);
+		rl_replace_line("", 0);
 		rl_redisplay();
 	}
 }
@@ -197,11 +199,7 @@ int	main(int argc, char **argv, char **env)
 			write(STDOUT_FILENO, "exit\n", 5);
 			exit(0);
 		}
-		if (line[0])
-		{
-			add_history(line);
-			parse_cmd(line);
-		}
+		parse_cmd(line);
 		free(line);
 	}
 	return (0);

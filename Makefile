@@ -6,12 +6,12 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/04 19:04:50 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/05 12:20:30 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror -fsanitize=address
+CFLAGS	=	-Wall -Wextra -Werror #-fsanitize=address
 INCLUDE	=	-I./inc -I./readline
 RM		=	rm -fr
 
@@ -98,6 +98,7 @@ libraries:
 
 $(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
+	@echo 'Minishell compiled!'
 
 rdline: temp $(RDLINE_ROOT)libreadline.a
 # 	@cd $(RDLINE_ROOT) && ./configure
@@ -106,6 +107,7 @@ rdline: temp $(RDLINE_ROOT)libreadline.a
 $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
+	@printf "Compiled $< to $@!\n"
 
 temp	:
 	@mkdir -p $(DIR_OBJ)

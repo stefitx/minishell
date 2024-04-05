@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 12:06:35 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/04 19:21:05 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/05 12:09:09 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,8 +68,8 @@ t_command	*parse_command(char *s)
 	}
 	tokens = refine_tokens(raw_tokens);
 	cmd = build_commands(tokens);
-	// token_list_clear(raw_tokens);
-	// ref_token_list_clear(tokens);
+	token_list_clear(raw_tokens);
+	ref_token_list_clear(tokens);
 	return (cmd);
 }
 
