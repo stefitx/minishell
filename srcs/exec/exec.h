@@ -41,14 +41,10 @@ typedef struct s_xcmd
 	char	*path;
 	int		nr_redir_out;
 	int		nr_redir_in;
-	int		nr_heredoc;
-	int		nr_append;
 	char	**infile;
 	int		fd_in;
 	char	**outfile;
 	int		fd_out;
-	char	**append;
-	int		fd_append;
 	int		pipefd[2];
 	pid_t	*pid;
 }	t_xcmd;
@@ -59,16 +55,21 @@ void	execute_command(char **env, char *command);
 void	exec_cmd(char **env, char *command);
 
 void	fill_path(t_xcmd *xcmd);
-char	*access_path(char *argv);
 
 // exec
 void	parse_and_exec(char *s, t_env *env);
+void	redir_and_execute(t_env *env_list, t_xcmd **cmd);
+
+// exec_utils
 void	pipe_error(int *pipefd);
+
+// pipexstuff
+void	execution(char **env, t_xcmd *cmd);
 
 // init_xcmd
 void	fill_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
 void	fill_cmd(char ***xcmd, t_single_cmd *cmd);
-void	fill(t_xcmd *xcmd, t_command *cmd, int nr_cmds, pid_t *pid);
+void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid);
 t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds);
 t_xcmd	**init_exe_cmd(t_command *cmd);
 
@@ -78,7 +79,7 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
 int		check_builtin(char **xcmd);
 
 // redirections
+void	redirections(t_xcmd *cmd, int i);
 
-
-
+char **get_cmd_array(t_single_cmd *cmd);
 #endif

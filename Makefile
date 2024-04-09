@@ -56,7 +56,10 @@ PARSER_FILES =	command_builder.c \
 # LEXER_FILES	=
 EXEC_FILES	=	exec.c \
 				init_xcmd.c \
-				init_utils.c
+				init_utils.c \
+				redirections.c \
+				exec_utils.c \
+				pipexstuff.c \
 # HEREDOC_FILES	=
 # BONUS_FILES	=
 

@@ -36,131 +36,99 @@ int	ft_strcmp(const char *line, const char *s)
 		return (0);
 }
 
-/*
-int	main(int argc, char **argv, char **env)
-{
-	char	*line;
-	char	*cmd;
-	char	**cmd1;
-	char	*cmd2;
+// static void	parse_cmd(char *s)
+// {
+// 	t_command		*cmd;
+// 	t_single_cmd	*cursor;
+// 	char			*redirs[] = {"<", ">", "<<", ">>"};
+// 	t_text_token	*cursor2;
+// 	t_str_node		*cursor2_2;
+// 	t_redir_token	*cursor3;
+// 	t_pipe_token	*cursor4;
 
-	// t_data	*data;
-	cmd = "cd /Users/atudor/Desktop/gitminishell/srcs";
-	cmd2 = "ls -la";
-	(void)argv;
-	if (argc != 1)
-		return (write(2, "Usage: ./minishell\n", 20));
-	// signal_handler();
-	while (1)
-	{
-		line = readline("minishell$ ");
-		if (!line || ft_strcmp(line, "exit"))
-			return (write(1, "exit\n", 5), exit(0), 0);
-		if (ft_strcmp(line, cmd))
-		{
-			cmd1 = ft_split(cmd, ' ');
-			changedir(cmd1);
-		}
-		if (ft_strcmp(line, cmd2))
-			exec_cmd(env, cmd2);
-	}
-	return (0);
-}
-*/
+// 	cmd = parse_command(s);
+// 	if (!cmd)
+// 		return ;
+// 	cursor = cmd->cmd_list;
+// 	cursor4 = cmd->pipes;
+// 	if (cursor)
+// 		add_history(s);
+// 	while (cursor)
+// 	{
+// 		if (cursor->args)
+// 		{
+// 			printf("Args: \n");
+// 			cursor2 = cursor->args;
+// 			while (cursor2)
+// 			{
+// 				printf("- Original: `%s`\n", cursor2->original);
+// 				printf("- Original (With Quotes): `%s`\n",
+// 					cursor2->original_quoted);
+// 				printf("In Quotes? %s\n", cursor2->in_quotes ? "Yes" : "No");
+// 				if (cursor2->expanded)
+// 				{
+// 					printf("Expanded:\n");
+// 					cursor2_2 = cursor2->expanded;
+// 					while (cursor2_2)
+// 					{
+// 						printf("  - `%s`\n", cursor2_2->str);
+// 						cursor2_2 = cursor2_2->next;
+// 					}
+// 				}
+// 				else
+// 					printf("Expanded: (null)\n");
+// 				cursor2 = cursor2->next;
+// 			}
+// 		}
+// 		else
+// 			printf("Args: (null)\n");
+// 		if (cursor->redirs)
+// 		{
+// 			printf("Redirs: \n");
+// 			cursor3 = cursor->redirs;
+// 			while (cursor3)
+// 			{
+// 				printf("- %s %s\n", redirs[cursor3->redir_type],
+// 					cursor3->text_token->original);
+// 				printf("  - Original: `%s`\n", cursor3->text_token->original);
+// 				printf("  - Original (With Quotes): `%s`\n",
+// 					cursor3->text_token->original_quoted);
+// 				printf("  In Quotes? %s\n",
+// 					cursor3->text_token->in_quotes ? "Yes" : "No");
+// 				if (cursor3->text_token->expanded)
+// 				{
+// 					printf("  Expanded:\n");
+// 					cursor2_2 = cursor3->text_token->expanded;
+// 					while (cursor2_2)
+// 					{
+// 						printf("    - `%s`\n", cursor2_2->str);
+// 						cursor2_2 = cursor2_2->next;
+// 					}
+// 				}
+// 				else
+// 					printf("  Expanded: (null)\n");
+// 				cursor3 = cursor3->next;
+// 			}
+// 		}
+// 		else
+// 			printf("Redirs: (null)\n");
+// 		if (cursor4)
+// 		{
+// 			printf("Pipe: %d -> %d\n", cursor4->fd_in, cursor4->fd_out);
+// 			cursor4 = cursor4->next;
+// 			if (cursor4)
+// 				printf("\n");
+// 		}
+// 		cursor = cursor->next;
+// 		if (cursor)
+// 			printf("\n");
+// 	}
+// 	clear_single_cmd_list(cmd->cmd_list);
+// 	clear_pipe_token_list(cmd->pipes);
+// 	free(cmd);
+// }
 
-// if signal is ctrl-D, says exit and exits
-
-static void	parse_cmd(char *s)
-{
-	t_command		*cmd;
-	t_single_cmd	*cursor;
-	char			*redirs[] = {"<", ">", "<<", ">>"};
-	t_text_token	*cursor2;
-	t_str_node		*cursor2_2;
-	t_redir_token	*cursor3;
-	t_pipe_token	*cursor4;
-
-	cmd = parse_command(s);
-	if (!cmd)
-		return ;
-	cursor = cmd->cmd_list;
-	cursor4 = cmd->pipes;
-	if (cursor)
-		add_history(s);
-	while (cursor)
-	{
-		if (cursor->args)
-		{
-			printf("Args: \n");
-			cursor2 = cursor->args;
-			while (cursor2)
-			{
-				printf("- Original: `%s`\n", cursor2->original);
-				printf("- Original (With Quotes): `%s`\n",
-					cursor2->original_quoted);
-				printf("In Quotes? %s\n", cursor2->in_quotes ? "Yes" : "No");
-				if (cursor2->expanded)
-				{
-					printf("Expanded:\n");
-					cursor2_2 = cursor2->expanded;
-					while (cursor2_2)
-					{
-						printf("  - `%s`\n", cursor2_2->str);
-						cursor2_2 = cursor2_2->next;
-					}
-				}
-				else
-					printf("Expanded: (null)\n");
-				cursor2 = cursor2->next;
-			}
-		}
-		else
-			printf("Args: (null)\n");
-		if (cursor->redirs)
-		{
-			printf("Redirs: \n");
-			cursor3 = cursor->redirs;
-			while (cursor3)
-			{
-				printf("- %s %s\n", redirs[cursor3->redir_type],
-					cursor3->text_token->original);
-				printf("  - Original: `%s`\n", cursor3->text_token->original);
-				printf("  - Original (With Quotes): `%s`\n",
-					cursor3->text_token->original_quoted);
-				printf("  In Quotes? %s\n",
-					cursor3->text_token->in_quotes ? "Yes" : "No");
-				if (cursor3->text_token->expanded)
-				{
-					printf("  Expanded:\n");
-					cursor2_2 = cursor3->text_token->expanded;
-					while (cursor2_2)
-					{
-						printf("    - `%s`\n", cursor2_2->str);
-						cursor2_2 = cursor2_2->next;
-					}
-				}
-				else
-					printf("  Expanded: (null)\n");
-				cursor3 = cursor3->next;
-			}
-		}
-		else
-			printf("Redirs: (null)\n");
-		if (cursor4)
-		{
-			printf("Pipe: %d -> %d\n", cursor4->fd_in, cursor4->fd_out);
-			cursor4 = cursor4->next;
-			if (cursor4)
-				printf("\n");
-		}
-		cursor = cursor->next;
-		if (cursor)
-			printf("\n");
-	}
-	clear_single_cmd_list(cmd->cmd_list);
-	clear_pipe_token_list(cmd->pipes);
-	free(cmd);
-}
+//had to comment out the whole function bc it wouldn't compile
 
 static void	sig_handler_idle(int signal)
 {
@@ -216,8 +184,8 @@ int	main(int argc, char **argv, char **env)
 			write(STDOUT_FILENO, "exit\n", 5);
 			exit(0);
 		}
-		//parse_and_exec(line, our_env);
-		parse_cmd(line);
+		parse_and_exec(line, our_env);
+		//parse_cmd(line);
 		free(line);
 	}
 	return (0);

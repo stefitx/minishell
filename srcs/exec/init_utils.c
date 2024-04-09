@@ -33,19 +33,14 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 
 	xcmd->nr_redir_in = 0;
 	xcmd->nr_redir_out = 0;
-	xcmd->nr_heredoc = 0;
-	xcmd->nr_append = 0;
 	temp = parse_redir;
 	while (temp)
 	{
-		if (temp->redir_type == REDIR_INFILE)
+		if (temp->redir_type == REDIR_INFILE || temp->redir_type == REDIR_HEREDOC)
 			xcmd->nr_redir_in++;
-		else if (temp->redir_type == REDIR_OUTFILE)
+		else if (temp->redir_type == REDIR_OUTFILE || temp->redir_type == REDIR_APPEND)
 			xcmd->nr_redir_out++;
-		else if (temp->redir_type == REDIR_HEREDOC)
-			xcmd->nr_heredoc++;
-		else if (temp->redir_type == REDIR_APPEND)
-			xcmd->nr_append++;
+		temp = temp->next;
 	}
 }
 

@@ -12,138 +12,48 @@
 
 #include "../../inc/minishell.h"
 
-char	**find_path()
-{
-	char	*to_split;
-	char	**split_path;
+// void	execute_command(char **env, char *command)
+// {
+// 	char	**args;
+// 	char	*path;
+// 	int		i;
 
-	to_split = ft_substr(getenv("PATH="), 5, ft_strlen(getenv("PATH")));
-	split_path = ft_split(to_split, ':');
-	free(to_split);
-	return (split_path);
-}
-
-char	**find_command(char *argv)
-{
-	char	**command;
-
-	command = ft_split(argv, ' ');
-	return (command);
-}
-
-char	*construct_command_path(char **split_path, char *command)
-{
-	char	*path;
-	int		i;
-	char	*temp;
-
-	i = 0;
-	while (split_path[i])
-	{
-		temp = ft_strjoin(split_path[i], "/");
-		path = ft_strjoin(temp, command);
-		free(temp);
-		if (access(path, F_OK | X_OK) == 0)
-			return (path);
-		free(path);
-		i++;
-	}
-	return (NULL);
-}
-
-char	*access_path(char *argv)
-{
-	char	*path;
-	char	**split_path;
-	char	**command;
-
-	split_path = find_path();
-	command = find_command(argv);
-	if (access(command[0], F_OK) == 0)
-	{
-		if (access(command[0], X_OK) == -1)
-		{
-			ft_putstr_fd(command[0], 2);
-			ft_putstr_fd(": Permission denied", 2);
-			exit(126);
-		}
-		return (command[0]);
-	}
-	path = construct_command_path(split_path, command[0]);
-	if (path != NULL)
-		return (path);
-	ft_putstr_fd("zsh: ", 2);
-	ft_putstr_fd(command[0], 2);
-	ft_putstr_fd(": command not found\n", 2);
-	exit(127);
-	return (NULL);
-}
-
-void	execute_command(char **env, char *command)
-{
-	char	**cmd;
-	char	*path;
-	int		i;
-
-	cmd = find_command(command);
-	i = 0;
-	while (cmd[i] != NULL)
-		i++;
-	path = access_path(command);
-	if (execve(path, cmd, env) == -1)
-	{
-		free_matrix(cmd, i);
-		free(path);
-		perror("Command execution failed");
-		exit(EXIT_FAILURE);
-	}
-}
-
-void	exec_cmd(char **env, char *command)
-{
-	pid_t	pid;
-	pid = fork();
-	if (pid == 0)
-	{
-		execute_command(env, command);
-		exit(0);
-	}
-	int status;
-	waitpid(pid, &status, 0);
-}
-
-void	pipe_error(int *pipefd)
-{
-	if (pipe(pipefd) == -1)
-	{
-		write(2, "Error creating pipe", 19);
-		exit(EXIT_FAILURE);
-	}
-}
-
-void	execution(t_env *env_list, t_xcmd **cmd)
+// 	i = 0;
+// 	args = ft_split(command, ' ');
+// 	path = access_path(args[0]);
+// 	if (execve(path, args, env) == -1)
+// 	{
+// 		perror("execve");
+// 		exit(EXIT_FAILURE);
+// 	}
+// }
+void	redir_and_execute(t_env *env_list, t_xcmd **cmd)
 {
 	int				i;
 	char			**env;
+	int 			status;
 
 	i = 0;
 	env = env_to_arr(env_list);
+	(void)env;
 	while (i < (*cmd)->nr_cmds)
 	{
 		(*cmd)->pid[i] = fork();
-		if ((*cmd)->pid[i] = 0)
+		if ((*cmd)->pid[i] == 0)
 		{
-			redirections(cmd[i]);
+			signal(SIGINT, SIG_DFL);
+			redirections(cmd[i], int i);
 			// if (cmd[i]->builtin == 1)
 			// 	builtin(cmd[i]);
-			else
-				execute_command(env, cmd[i]->cmd);
+			// else
+			execution(env, cmd[i]);
+			exit(0);
 		}
-		i++;
+		//signal(SIGINT, SIG_DFL);
 		else
-			waitpid(pid, &status, 0);
+			waitpid((*cmd)->pid[i], &status, 0);
+		i++;
 	}
-	//exec_cmd(env, command);
 }
 
 void	parse_and_exec(char *s, t_env *env)
@@ -162,7 +72,8 @@ void	parse_and_exec(char *s, t_env *env)
 	token_list_clear(raw_tokens);
 	ref_token_list_clear(tokens);
 	xcmd = init_exe_cmd(cmd);
-	execution(env, xcmd);
+	//printf("nr_cmds: %d\n", xcmd[0]->nr_cmds);
+	redir_and_execute(env, xcmd);
 	//do infile
 	// execute command
 	// do outfile redirs
