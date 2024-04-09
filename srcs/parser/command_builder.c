@@ -38,7 +38,7 @@ static void	main_loop(t_ref_token *token, t_cmd_builder_data *data)
 		data->prev_redir = NULL;
 }
 
-static t_command	*build_commands(t_ref_token *tokens)
+t_command	*build_commands(t_ref_token *tokens)
 {
 	t_cmd_builder_data	data;
 

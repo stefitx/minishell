@@ -55,7 +55,8 @@ PARSER_FILES =	command_builder.c \
 				tokenizer.c # ft_split_set.c and ft_strappend.c should be moved to libft
 # LEXER_FILES	=
 EXEC_FILES	=	exec.c \
-				init_xcmd.c
+				init_xcmd.c \
+				init_utils.c
 # HEREDOC_FILES	=
 # BONUS_FILES	=
 

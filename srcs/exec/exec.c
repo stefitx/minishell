@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/minishell.h"
 
 char	**find_path()
 {
@@ -112,13 +112,48 @@ void	exec_cmd(char **env, char *command)
 	waitpid(pid, &status, 0);
 }
 
-void	parse_and_exec(char *s)
+void	pipe_error(int *pipefd)
+{
+	if (pipe(pipefd) == -1)
+	{
+		write(2, "Error creating pipe", 19);
+		exit(EXIT_FAILURE);
+	}
+}
+
+void	execution(t_env *env_list, t_xcmd **cmd)
+{
+	int				i;
+	char			**env;
+
+	i = 0;
+	env = env_to_arr(env_list);
+	while (i < (*cmd)->nr_cmds)
+	{
+		(*cmd)->pid[i] = fork();
+		if ((*cmd)->pid[i] = 0)
+		{
+			redirections(cmd[i]);
+			// if (cmd[i]->builtin == 1)
+			// 	builtin(cmd[i]);
+			else
+				execute_command(env, cmd[i]->cmd);
+		}
+		i++;
+		else
+			waitpid(pid, &status, 0);
+	}
+	//exec_cmd(env, command);
+}
+
+void	parse_and_exec(char *s, t_env *env)
 {
 	t_xcmd			**xcmd;
 	// t_xdata			xdata;
 	t_command		*cmd;
 	t_token			*raw_tokens;
 	t_ref_token		*tokens;
+	
 
 
 	raw_tokens = split_tokens(s);
@@ -127,7 +162,7 @@ void	parse_and_exec(char *s)
 	token_list_clear(raw_tokens);
 	ref_token_list_clear(tokens);
 	xcmd = init_exe_cmd(cmd);
-	(void)xcmd;
+	execution(env, xcmd);
 	//do infile
 	// execute command
 	// do outfile redirs

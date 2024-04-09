@@ -25,7 +25,7 @@
 # include <readline/history.h>
 
 
-# include "libft/libft.h"
+# include "./libft/libft.h"
 
 # include "../srcs/parser/parser.h"
 

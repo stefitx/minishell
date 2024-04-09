@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../inc/minishell.h"
+#include "../../inc/minishell.h"
 #include "../parser/parser.h"
 
 int	ft_strcmp(const char *line, const char *s)
@@ -200,12 +200,14 @@ int	main(int argc, char **argv, char **env)
 {
 	struct sigaction	sigact;
 	char				*line;
+	t_env				*our_env;
 
 	(void)argv;
 	(void)env;
 	if (argc != 1)
 		return (perror("Usage: ./minishell\n"), 1);
 	sig_idle(&sigact);
+	env_init(&our_env, env);
 	while (1)
 	{
 		line = readline("shortking👑$ ");
@@ -214,6 +216,7 @@ int	main(int argc, char **argv, char **env)
 			write(STDOUT_FILENO, "exit\n", 5);
 			exit(0);
 		}
+		//parse_and_exec(line, our_env);
 		parse_cmd(line);
 		free(line);
 	}
