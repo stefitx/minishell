@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/05 13:15:23 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/09 12:22:52 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,18 +164,26 @@ static void	parse_cmd(char *s)
 
 static void	sig_handler_idle(int signal)
 {
-	if (signal == SIGINT)
+	int		i;
+	char	*temp;
+
+	if (signal == SIGINT || signal == SIGQUIT)
 	{
-		write(STDOUT_FILENO, "\n", 1);
+		temp = ft_strdup(rl_line_buffer);
+		i = 0;
+		while (i++ < 2)
+			ft_strappend(&temp, " ");
 		rl_on_new_line();
-		rl_replace_line("", 0);
+		rl_replace_line(temp, 1);
+		free(temp);
 		rl_redisplay();
-	}
-	if (signal == SIGQUIT)
-	{
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
+		if (signal == SIGINT)
+		{
+			write(STDOUT_FILENO, "\n", 1);
+			rl_replace_line("", 1);
+			rl_on_new_line();
+			rl_redisplay();
+		}
 	}
 }
 
