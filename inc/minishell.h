@@ -23,32 +23,30 @@
 # include <sys/stat.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+
+
 # include "libft/libft.h"
 
-//Executor
-typedef struct s_data
-{
-	struct s_cmd	**cmd_arr;
-	char			**cmd;
-	char			*path;
-}	t_data;
+# include "../srcs/parser/parser.h"
 
-typedef struct s_cmd
-{
-	int		cmd_id;
-	int		nr_of_cmds;
-	char	**cmd;
-	char	*builtin;
-	char	*path;
-	char	**filename_out;
-	char	**filename_in;
-	int		pipefd[2];
-	pid_t	*pid;
-}	t_cmd;
+# include "../srcs/exec/exec.h"
 
-int		ft_strcmp(const char *line, const char *s);
-int		changedir(char	**cmd);
-void	execute_command(char **env, char *command);
-void	exec_cmd(char **env, char *command);
+# include "../srcs/env/env.h"
+
+
+
+// int		ft_strcmp(const char *line, const char *s);
+// int		changedir(char	**cmd);
+// void	execute_command(char **env, char *command);
+// void	exec_cmd(char **env, char *command);
+// t_xcmd	**init_exe_cmd(t_command *cmd);
+// void	fill_cmd(char ***xcmd, t_single_cmd *cmd);
+// void	fill_path(t_xcmd *xcmd);
+// void	fill_redir(t_xcmd *xcmd, t_single_cmd *cmd);
+// int	check_builtin(char **xcmd);
+// char	*access_path(char *argv);
+// void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
+// void	fill_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
+
 
 #endif

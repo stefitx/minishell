@@ -54,13 +54,15 @@ PARSER_FILES =	command_builder.c \
 				token_utils.c \
 				tokenizer.c # ft_split_set.c and ft_strappend.c should be moved to libft
 # LEXER_FILES	=
-EXEC_FILES	= exec.c
+EXEC_FILES	=	exec.c \
+				init_xcmd.c
 # HEREDOC_FILES	=
 # BONUS_FILES	=
 
 HEADER		=	./inc/minishell.h
 LIBFT_ROOT	:=	./inc/libft/
-RDLINE_ROOT	:=	./inc/readline/
+# RDLINE_ROOT	:=	./inc/readline/
+RDLINE_ROOT	:=	/opt/homebrew/opt/readline/lib/
 DIR_OBJ		:=	temp/
 INC_ROOT	:=	inc/m
 SRCS_DIR	=	srcs/
@@ -87,8 +89,11 @@ BUILTIN_OBJ	= $(addprefix $(DIR_OBJ),$(BUILTIN_SRC:.c=.o))
 EXEC_OBJ	= $(addprefix $(DIR_OBJ),$(EXEC_SRC:.c=.o))
 PARSER_OBJ	= $(addprefix $(DIR_OBJ),$(PARSER_SRC:.c=.o))
 
-LIB_A		:=	./inc/readline/libreadline.a \
-				./inc/libft/libft.a ./inc/readline/libhistory.a
+LIB_A		:=	/opt/homebrew/opt/readline/lib/libreadline.a /opt/homebrew/opt/readline/lib/libhistory.a \
+				./inc/libft/libft.a 
+
+# LIB_A		:=	./inc/readline/libreadline.a \
+# 				./inc/libft/libft.a ./inc/readline/libhistory.a
 
 LIB_ADD_DIR	:=	-L$(RDLINE_ROOT) -L$(LIBFT_ROOT)
 
