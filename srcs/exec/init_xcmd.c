@@ -110,9 +110,10 @@ t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
 	{
 		xcmd[i] = malloc(sizeof(t_xcmd));
 		xcmd[i]->cmd = get_cmd_array(t_single_cmd);
-		// clear_single_cmd_list(cmd->cmd_list);
-		// free(cmd);
+		xcmd[i]->cmd_id = i;
+		xcmd[i]->nr_cmds = nr_cmds;
 		fill(xcmd[i], t_single_cmd, nr_cmds, pid);
+		pipe_error(xcmd[i]->pipefd);
 		t_single_cmd = t_single_cmd->next;
 		i++;
 	}

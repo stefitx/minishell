@@ -12,21 +12,6 @@
 
 #include "../../inc/minishell.h"
 
-// void	execute_command(char **env, char *command)
-// {
-// 	char	**args;
-// 	char	*path;
-// 	int		i;
-
-// 	i = 0;
-// 	args = ft_split(command, ' ');
-// 	path = access_path(args[0]);
-// 	if (execve(path, args, env) == -1)
-// 	{
-// 		perror("execve");
-// 		exit(EXIT_FAILURE);
-// 	}
-// }
 void	redir_and_execute(t_env *env_list, t_xcmd **cmd)
 {
 	int				i;
@@ -35,18 +20,18 @@ void	redir_and_execute(t_env *env_list, t_xcmd **cmd)
 
 	i = 0;
 	env = env_to_arr(env_list);
-	(void)env;
 	while (i < (*cmd)->nr_cmds)
 	{
 		(*cmd)->pid[i] = fork();
 		if ((*cmd)->pid[i] == 0)
 		{
 			signal(SIGINT, SIG_DFL);
-			redirections(cmd[i], int i);
+			redirections(&cmd, i);
 			// if (cmd[i]->builtin == 1)
 			// 	builtin(cmd[i]);
 			// else
 			execution(env, cmd[i]);
+			printf("here\n");
 			exit(0);
 		}
 		//signal(SIGINT, SIG_DFL);
@@ -74,8 +59,7 @@ void	parse_and_exec(char *s, t_env *env)
 	xcmd = init_exe_cmd(cmd);
 	//printf("nr_cmds: %d\n", xcmd[0]->nr_cmds);
 	redir_and_execute(env, xcmd);
-	//do infile
-	// execute command
-	// do outfile redirs
+	clear_single_cmd_list(cmd->cmd_list);
+	free(cmd);
 	// xdata.cmd_arr = &xcmd;
 }

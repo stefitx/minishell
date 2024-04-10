@@ -79,7 +79,7 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
 int		check_builtin(char **xcmd);
 
 // redirections
-void	redirections(t_xcmd *cmd, int i);
+void	redirections(t_xcmd ***cmd, int i);
 
 char **get_cmd_array(t_single_cmd *cmd);
 #endif

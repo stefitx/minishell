@@ -59,7 +59,7 @@ void	out_redir(t_xcmd *cmd)
 	close(cmd->fd_out);
 }
 
-void	in_redir(t_xcmd *cmd, int i)
+void	in_redir(t_xcmd *cmd)
 {
 	int	i;
 
@@ -85,13 +85,43 @@ void	in_redir(t_xcmd *cmd, int i)
 	close(cmd->fd_in);
 }
 
-void	redirections(t_xcmd *cmd, int i)
+void	pipe_redir(t_xcmd **cmd, int i)
 {
-	if (cmd->nr_redir_in > 0)
-		in_redir(cmd);
-	if (cmd->nr_redir_out > 0)
-		out_redir(cmd);
+	if (cmd[i]->nr_cmds > 1)
+	{
+		if (cmd[i]->cmd_id == 0)
+		{
+			dup2(cmd[i]->pipefd[1], 1);
+			close(cmd[i]->pipefd[1]);
+			printf("pipefd[1]: %d\n", cmd[i]->pipefd[1]);
+			close(cmd[i]->pipefd[0]);
+		}
+		else if (cmd[i]->cmd_id > 0)
+		{
+			dup2(cmd[i - 1]->pipefd[0], 0);
+			close(cmd[i -1]->pipefd[0]);
+			printf("pipefd[0]: %d\n", cmd[i - 1]->pipefd[0]);
+			close(cmd[i]->pipefd[1]);
+			if (i < cmd[i]->nr_cmds - 1)
+			{
+				dup2(cmd[i]->pipefd[1], 1);
+				close(cmd[i]->pipefd[0]);
+				close(cmd[i]->pipefd[1]);
+			}
+		}
+
+	}
 }
 
-//fix heredoc
-//find out how exactly to treat the pipe if it gets discarded. im talking about the redirections between commands
+void	redirections(t_xcmd ***cmd, int i)
+{
+	pipe_redir(*cmd, i);
+	if ((*cmd)[i]->nr_redir_in > 0)
+	{
+		in_redir(*cmd[i]);
+	}
+	if ((*cmd)[i]->nr_redir_out > 0)
+	{
+		out_redir(*cmd[i]);
+	}
+}
