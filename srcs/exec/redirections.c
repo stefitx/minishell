@@ -85,37 +85,42 @@ void	in_redir(t_xcmd *cmd)
 	close(cmd->fd_in);
 }
 
-void	pipe_redir(t_xcmd **cmd, int i)
+void	pipe_redir(t_xcmd **cmd, int i, int **pipes)
 {
-	if (cmd[i]->nr_cmds > 1)
+	if ((*cmd)[i].nr_cmds > 1)
 	{
-		if (cmd[i]->cmd_id == 0)
+		if ((*cmd)[i].cmd_id != 0)
 		{
-			dup2(cmd[i]->pipefd[1], 1);
-			close(cmd[i]->pipefd[1]);
-			printf("pipefd[1]: %d\n", cmd[i]->pipefd[1]);
-			close(cmd[i]->pipefd[0]);
-		}
-		else if (cmd[i]->cmd_id > 0)
-		{
-			dup2(cmd[i - 1]->pipefd[0], 0);
-			close(cmd[i -1]->pipefd[0]);
-			printf("pipefd[0]: %d\n", cmd[i - 1]->pipefd[0]);
-			close(cmd[i]->pipefd[1]);
-			if (i < cmd[i]->nr_cmds - 1)
-			{
-				dup2(cmd[i]->pipefd[1], 1);
-				close(cmd[i]->pipefd[0]);
-				close(cmd[i]->pipefd[1]);
-			}
-		}
-
-	}
+			dup2(pipes[i - 1][0], 0);
+			close(pipes[i - 1][0]);
+        }
+		if (i < (*cmd)[i].nr_cmds - 1)
+			dup2(pipes[i][1], 1);
+		//close(pipes[i][1]);
+		//close(pipes[i][0]);
+    }
+	// if ((*cmd)[i].nr_cmds > 1)
+	// {
+	// 	if ((*cmd)[i].cmd_id == 0)
+	// 	{
+	// 		dup2((*cmd)[i].pipefd[1], STDOUT_FILENO);
+	// 		close((*cmd)[i].pipefd[1]);
+	// 		printf("pipefd[1]: %d\n", (*cmd)[i].pipefd[0]);
+	// 		fflush(stdout);
+	// 	}
+	// 	else
+	// 	{
+	// 		if ((*cmd)[i].cmd_id < (*cmd)[i].nr_cmds - 1)
+	// 			dup2((*cmd)[i].pipefd[1], STDOUT_FILENO);
+	// 		printf("pipefd[0]: %d\n", (*cmd)[i - 1].pipefd[0]);
+	// 		dup2((*cmd)[i - 1].pipefd[0], STDIN_FILENO);
+	// 	}
+	// }
 }
 
-void	redirections(t_xcmd ***cmd, int i)
+void	redirections(t_xcmd ***cmd, int i, int **pipes)
 {
-	pipe_redir(*cmd, i);
+	pipe_redir(*cmd, i, pipes);
 	if ((*cmd)[i]->nr_redir_in > 0)
 	{
 		in_redir(*cmd[i]);

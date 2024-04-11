@@ -29,7 +29,7 @@
 typedef struct s_xdata
 {
 	struct s_cmd	**cmd_arr;
-	pid_t			*pid;
+	int				*pipes[2];
 }	t_xdata;
 
 typedef struct s_xcmd
@@ -45,7 +45,7 @@ typedef struct s_xcmd
 	int		fd_in;
 	char	**outfile;
 	int		fd_out;
-	int		pipefd[2];
+	//int		pipefd[2];
 	pid_t	*pid;
 }	t_xcmd;
 
@@ -58,7 +58,7 @@ void	fill_path(t_xcmd *xcmd);
 
 // exec
 void	parse_and_exec(char *s, t_env *env);
-void	redir_and_execute(t_env *env_list, t_xcmd **cmd);
+void	redir_and_execute(t_env *env_list, t_xcmd **cmd, int **pipes);
 
 // exec_utils
 void	pipe_error(int *pipefd);
@@ -79,7 +79,7 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
 int		check_builtin(char **xcmd);
 
 // redirections
-void	redirections(t_xcmd ***cmd, int i);
+void	redirections(t_xcmd ***cmd, int i, int **pipes);
 
 char **get_cmd_array(t_single_cmd *cmd);
 #endif

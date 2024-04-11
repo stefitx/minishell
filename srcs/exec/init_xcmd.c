@@ -113,7 +113,7 @@ t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
 		xcmd[i]->cmd_id = i;
 		xcmd[i]->nr_cmds = nr_cmds;
 		fill(xcmd[i], t_single_cmd, nr_cmds, pid);
-		pipe_error(xcmd[i]->pipefd);
+		//pipe_error(xcmd[i]->pipefd);
 		t_single_cmd = t_single_cmd->next;
 		i++;
 	}
