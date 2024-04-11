@@ -11,3 +11,4 @@ a.out
 *.o
 minishell
 inc/libft/libft.a
+inc/readline/*

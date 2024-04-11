@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/04 19:21:08 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/11 19:33:06 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,8 +90,7 @@ static int	syntax_check_loop(t_token *tokens, enum e_token_types *last_token,
 			return (write(STDERR_FILENO,
 					"Syntax Error: Unfinished Redirection\n", 38), 1);
 	}
-	if (tokens->token_type == TOKEN_REDIR && (*last_token == TOKEN_REDIR
-			|| *last_token == TOKEN_PIPE))
+	if (tokens->token_type == TOKEN_REDIR && *last_token == TOKEN_REDIR)
 		return (write(STDERR_FILENO,
 				"Syntax Error: Unfinished Redirection\n", 38), 1);
 	if (tokens->token_type != TOKEN_SPACE)
