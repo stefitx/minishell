@@ -29,7 +29,7 @@
 typedef struct s_xdata
 {
 	struct s_cmd	**cmd_arr;
-	int				*pipes[2];
+	pid_t			*pid;
 }	t_xdata;
 
 typedef struct s_xcmd
@@ -43,10 +43,11 @@ typedef struct s_xcmd
 	int		nr_redir_in;
 	char	**infile;
 	int		fd_in;
-	char	**outfile;
-	int		fd_out;
-	//int		pipefd[2];
+	char	**out;
+	int		fd_o;
+	int		pipefd[2];
 	pid_t	*pid;
+	int		exit_status;
 }	t_xcmd;
 
 int		ft_strcmp(const char *line, const char *s);
@@ -58,7 +59,7 @@ void	fill_path(t_xcmd *xcmd);
 
 // exec
 void	parse_and_exec(char *s, t_env *env);
-void	redir_and_execute(t_env *env_list, t_xcmd **cmd, int **pipes);
+void	redir_and_execute(t_env *env_list, t_xcmd **cmd);
 
 // exec_utils
 void	pipe_error(int *pipefd);
@@ -75,11 +76,13 @@ t_xcmd	**init_exe_cmd(t_command *cmd);
 
 // init_utils
 int		count_cmds(t_command *cmd);
+void	count_args(t_text_token *text, char ***args);
+void	allocate_cmd_and_pid(t_xcmd **xcmd, int nr_cmds);
 void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
 int		check_builtin(char **xcmd);
 
 // redirections
-void	redirections(t_xcmd ***cmd, int i, int **pipes);
+void	redirections(t_xcmd **cmd, int i);
 
-char **get_cmd_array(t_single_cmd *cmd);
+char	**get_cmd_array(t_single_cmd *cmd);
 #endif

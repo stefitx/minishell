@@ -22,7 +22,7 @@ void	fill_redirs(t_xcmd *x, t_redir_token *parse_redir)
 	j = 0;
 	temp = parse_redir;
 	x->infile = malloc(sizeof(char *) * (x->nr_redir_in + 1));
-	x->outfile = malloc(sizeof(char *) * (x->nr_redir_out + 1));
+	x->out = malloc(sizeof(char *) * (x->nr_redir_out + 1));
 	while (temp)
 	{
 		if (temp->redir_type == REDIR_INFILE)
@@ -30,13 +30,13 @@ void	fill_redirs(t_xcmd *x, t_redir_token *parse_redir)
 		else if (temp->redir_type == REDIR_HEREDOC)
 			x->infile[i++] = ft_strjoin("\n", temp->text_token->expanded->str);
 		else if (temp->redir_type == REDIR_OUTFILE)
-			x->outfile[j++] = ft_strdup(temp->text_token->expanded->str);
+			x->out[j++] = ft_strdup(temp->text_token->expanded->str);
 		else if (temp->redir_type == REDIR_APPEND)
-			x->outfile[j++] = ft_strjoin("\n", temp->text_token->expanded->str);
+			x->out[j++] = ft_strjoin("\n", temp->text_token->expanded->str);
 		temp = temp->next;
 	}
 	x->infile[i] = NULL;
-	x->outfile[j] = NULL;
+	x->out[j] = NULL;
 }
 
 void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid)
@@ -54,7 +54,7 @@ void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid)
 	cursor = cursor->next;
 }
 
-char **get_cmd_array(t_single_cmd *cmd)
+char	**get_cmd_array(t_single_cmd *cmd)
 {
 	t_text_token	*t_text_token;
 	t_str_node		*t_str_node;
@@ -79,8 +79,7 @@ char **get_cmd_array(t_single_cmd *cmd)
 		if (t_text_token->expanded)
 		{
 			t_str_node = t_text_token->expanded;
-			args[i] = ft_strdup(t_str_node->str);
-			i++;
+			args[i++] = ft_strdup(t_str_node->str);
 		}
 		t_text_token = t_text_token->next;
 	}
@@ -90,10 +89,10 @@ char **get_cmd_array(t_single_cmd *cmd)
 
 t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
 {
-	t_xcmd	**xcmd;
+	t_xcmd			**xcmd;
 	t_single_cmd	*t_single_cmd;
-	pid_t	*pid;
-	int		i;
+	pid_t			*pid;
+	int				i;
 
 	xcmd = malloc(sizeof(t_xcmd *) * nr_cmds);
 	if (!xcmd)
@@ -113,7 +112,7 @@ t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
 		xcmd[i]->cmd_id = i;
 		xcmd[i]->nr_cmds = nr_cmds;
 		fill(xcmd[i], t_single_cmd, nr_cmds, pid);
-		//pipe_error(xcmd[i]->pipefd);
+		pipe_error(xcmd[i]->pipefd);
 		t_single_cmd = t_single_cmd->next;
 		i++;
 	}

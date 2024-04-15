@@ -27,6 +27,33 @@ int	count_cmds(t_command *cmd)
 	return (nr_cmds);
 }
 
+void	count_args(t_text_token *text, char ***args)
+{
+	int	i;
+
+	i = 0;
+	while (text)
+	{
+		if (text->expanded)
+			i++;
+		text = text->next;
+	}
+	(*args) = malloc(sizeof(char *) * (i + 1));
+}
+
+void	allocate_cmd_and_pid(t_xcmd **xcmd, int nr_cmds)
+{
+	(*xcmd) = malloc(sizeof(t_xcmd *) * nr_cmds);
+	// if (!(*xcmd))
+	// 	exit(EXIT_FAILURE);
+	(*xcmd)->pid = malloc(sizeof(pid_t) * nr_cmds);
+	if (!(*xcmd)->pid)
+	{
+		free(*xcmd);
+		//exit(EXIT_FAILURE);
+	}
+}
+
 void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 {
 	t_redir_token	*temp;
@@ -36,9 +63,11 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 	temp = parse_redir;
 	while (temp)
 	{
-		if (temp->redir_type == REDIR_INFILE || temp->redir_type == REDIR_HEREDOC)
+		if (temp->redir_type == REDIR_INFILE
+			|| temp->redir_type == REDIR_HEREDOC)
 			xcmd->nr_redir_in++;
-		else if (temp->redir_type == REDIR_OUTFILE || temp->redir_type == REDIR_APPEND)
+		else if (temp->redir_type == REDIR_OUTFILE
+			|| temp->redir_type == REDIR_APPEND)
 			xcmd->nr_redir_out++;
 		temp = temp->next;
 	}

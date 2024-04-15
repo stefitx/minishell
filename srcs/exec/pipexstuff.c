@@ -87,4 +87,3 @@ void	execution(char **env, t_xcmd *cmd)
 		exit(EXIT_FAILURE);
 	}
 }
-
