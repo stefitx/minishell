@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/03 18:24:11 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/17 13:11:09 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,8 +220,8 @@ void						add_ref_redir_token(char *content,
 								t_refiner_data *data);
 
 // command_builder.c
-t_command					*parse_command(char	*s);
-//sorry i had to add it or else it wouldnt compile
-t_command	*build_commands(t_ref_token *tokens);
+t_command					*parse_command(char *s);
+// sorry i had to add it or else it wouldnt compile
+t_command					*build_commands(t_ref_token *tokens);
 
 #endif

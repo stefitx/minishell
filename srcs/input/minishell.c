@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/09 12:22:52 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/17 13:13:25 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,10 @@ int	main(int argc, char **argv, char **env)
 		return (perror("Usage: ./minishell\n"), 1);
 	sig_idle(&sigact);
 	env_init(&our_env, env);
+	// env test, ignore
+	// char **a = env_to_arr(our_env);
+	// while (*a)
+	// 	ft_putendl_fd(*a++, 1);
 	while (1)
 	{
 		line = readline("shortking👑$ ");
