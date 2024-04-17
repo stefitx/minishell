@@ -65,6 +65,7 @@ void	redir_and_execute(t_env *env_list, t_xcmd **cmd);
 void	pipe_error(int *pipefd);
 
 // pipexstuff
+char	**find_path(char **env, char *s);
 void	execution(char **env, t_xcmd *cmd);
 
 // init_xcmd

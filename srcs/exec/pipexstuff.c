@@ -12,7 +12,7 @@
 
 #include "../../inc/minishell.h"
 
-char	**find_path(char **env)
+char	**find_path(char **env, char *s)
 {
 	int		i;
 	char	*to_split;
@@ -21,11 +21,13 @@ char	**find_path(char **env)
 	i = 0;
 	while (env[i])
 	{
-		if (ft_strncmp(env[i], "PATH=", 5) == 0)
+		if (ft_strncmp(env[i], s, ft_strlen(s)) == 0)
 			break ;
 		i++;
 	}
-	to_split = ft_substr(env[i], 5, ft_strlen(env[i]));
+	if (env[i] == NULL)
+		return (NULL);
+	to_split = ft_substr(env[i], ft_strlen(s), ft_strlen(env[i]));
 	split_path = ft_split(to_split, ':');
 	free(to_split);
 	return (split_path);
@@ -56,7 +58,7 @@ char	*access_path(char **cmd, char **env)
 	char	*path;
 	char	**split_path;
 
-	split_path = find_path(env);
+	split_path = find_path(env, "PATH=");
 	if (access(cmd[0], F_OK) == 0)
 	{
 		if (access(cmd[0], X_OK) == -1)

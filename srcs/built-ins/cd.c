@@ -12,21 +12,29 @@
 
 #include "../inc/minishell.h"
 
-int	changedir(char	**cmd)
+void	ft_cd(t_xcmd *cmd, char **env)
 {
-	if (!ft_strcmp(cmd[0], "cd"))
-		return (2);
-	else
-	{
-		if (chdir(cmd[1]) == -1)
+    if (cmd->cmd[1] != NULL)
+    {
+        if (chdir(cmd->cmd[1]) != 0) 
+        {
+            ft_putstr_fd("minishell: cd: ", 2);
+            perror(cmd->cmd[1]);
+            cmd->exit_status = 1;
+            return ;
+        }
+    }
+    else
+    {
+        char **home_path = NULL;
+		home_path= find_path(env, "HOME=");
+        if (home_path == NULL || *home_path == NULL)
 		{
-			perror("cd: ");
-			perror(cmd[1]);
-			perror(": No such file or directory");
-			exit(1);
+			ft_putstr_fd("minishell: cd: HOME not set\n", 2);
+			cmd->exit_status = 1;
+			return;
 		}
-		return (1);
-	}
+		else
+			chdir(home_path[0]);
+    }
 }
-
-/*not finished at all*/
