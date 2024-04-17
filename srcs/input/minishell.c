@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/17 17:55:45 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:57:05 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,7 @@ int	main(int argc, char **argv, char **env)
 	if (argc != 1)
 		return (perror("Usage: ./minishell\n"), 1);
 	sig_idle(&sigact);
+	our_env = NULL;
 	env_init(&our_env, env);
 	// env test, ignore
 	// char **a = env_to_arr(our_env);
