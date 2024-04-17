@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:45:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/30 11:45:32 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/17 13:05:21 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,11 @@ void	env_unset_var(t_env **env, char *name)
 	t_env	*cursor;
 	t_env	*prev;
 
+	if (ft_strncmp(name, "?", 2) == 0)
+	{
+		env_set_var(env, "?", ft_strdup("0"));
+		return ;
+	}
 	cursor = *env;
 	prev = NULL;
 	while (cursor && ft_strncmp(cursor->name, name, ft_strlen(name)))
