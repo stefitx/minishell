@@ -184,11 +184,8 @@ int	main(int argc, char **argv, char **env)
 	while (1)
 	{
 		line = readline("shortking👑$ ");
-		if (!line || ft_strcmp(line, "exit"))
-		{
-			write(STDOUT_FILENO, "exit\n", 5);
+		if (!line)
 			exit(0);
-		}
 		parse_and_exec(line, our_env);
 		//parse_cmd(line);
 		free(line);

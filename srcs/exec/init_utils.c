@@ -77,7 +77,8 @@ int	check_builtin(char **xcmd)
 {
 	if (ft_strcmp(xcmd[0], "cd") || ft_strcmp(xcmd[0], "pwd")
 		|| ft_strcmp(xcmd[0], "echo") || ft_strcmp(xcmd[0], "export")
-		|| ft_strcmp(xcmd[0], "unset") || ft_strcmp(xcmd[0], "env"))
+		|| ft_strcmp(xcmd[0], "unset") || ft_strcmp(xcmd[0], "env") 
+		|| ft_strcmp(xcmd[0], "exit"))
 		return (1);
 	else
 		return (0);

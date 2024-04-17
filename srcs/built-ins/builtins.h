@@ -25,8 +25,14 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-// cd
+typedef struct s_export
+{
+	char	*name;
+	char	*value;
+	char	*str;
+}	t_export;
 
+// cd
 void	ft_cd(t_xcmd *cmd, char **env);
 
 // echo
@@ -34,10 +40,15 @@ void	ft_echo(t_xcmd *cmd);
 
 // env
 
+void	ft_env(t_xcmd *cmd, char **env);
+
 // exit
+void	ft_exit(t_xcmd *xcmd);
 
 // export
 
 // pwd
+
+// unset
 
 #endif

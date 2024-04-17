@@ -37,7 +37,13 @@ ENV_FILES =	env_add_var.c \
 			env_to_arr.c \
 			env_unset_var.c
 INPUT_FILES	= minishell.c
-BUILTIN_FILES = cd.c echo.c
+BUILTIN_FILES = cd.c \
+				echo.c \
+				env.c \
+				exit.c \
+				# export.c \
+				# pwd.c \
+				# unset.c
 # EXPANSOR_FILES	=
 PARSER_FILES =	command_builder.c \
 				ft_split_set.c \

@@ -1,15 +1,7 @@
 
 🐚🐢MINISHELL PROJECT MANAGEMENT🐌🐣
 
-Hi there Pablo!
-
-We will be using this .txt file to communicate the changes and progress made in the project, so we have a documentation in time of everything we are doing.
-
-We will be putting the date of changes made, the name of person applying the changes, and we will be describing the changes done.
-
-The code itself should also have some simple comments accompanying the functions in order to be able to understand it better.
-
-I have outlined the points of the subject, in order to be able to divide the tasks, but further comments and details should be added by each of us as we go.
+shortking👑$ supremacy
 
 emoji :
 
@@ -23,31 +15,20 @@ emoji :
 
 --------------------------------------------------------------------------------------------------------------------
 
-For initial execution:
-
-
-- when you execute bash with another argument after (e.g. bash cat) it will try to execute the second argument. 
-
-***Pipex can solve this.
-
-- when you execute ./minishell, the program mmust display a prompt, just like in bash.
-
-NO NEED TO INTERPRET \ (backslash) OR ; (semicolon)!
-
-- working history
+💍- working history
 {
 	asdfghjkl, i would suppose it has to do with having a log of all commands used?
 }
 
-🔫- command parsing and execution
+🎯🌸- command parsing and execution
 {
 	- must use readline and affiliated functions to read user input;
 	- must parse input char by char, then split it accordingly;
 		*** the split must handle ' (single quotes) and " (double quotes) ***
-	- must then execute the parsed commands by executing built-ins or external programs
+	🌸- must then execute the parsed commands by executing built-ins or external programs
 }
 
-💍- built-ins
+👩🏻‍💻- built-ins
 {
 	- echo -n = suppress the newline added by the echo command;
 	- cd = change directory with either a relative or an absolute path;
@@ -55,9 +36,10 @@ NO NEED TO INTERPRET \ (backslash) OR ; (semicolon)!
 	- export = shows set environment variables;
 	- env = displays the current environment;
 	- exit = exits the shell;
+	- unset
 }
 
-- redirections and pipes
+🌸- redirections and pipes
 {
 	- < = takes input from a file;
 	- > = writes output to a file;
@@ -66,13 +48,13 @@ NO NEED TO INTERPRET \ (backslash) OR ; (semicolon)!
 	- | (Pipe) = connect output of one command to input of another;
 }
 
-- environment variables and exit status
+🎯- environment variables and exit status
 {
 	- $ = when followed by variable name, expands said variable, executing the previous command (e.g. echo $PWD);
-	- $? = holds the exit status of the last executed command, executes previous command on it (e.g. echo $?);
+	💍- $? = holds the exit status of the last executed command, executes previous command on it (e.g. echo $?);
 }
 
-- signal handling
+🎯- signal handling
 {
 	- ctrl-C = interrupts current process, displays a new line;
 	- ctrl-D = exits the shell;
@@ -88,12 +70,3 @@ NO NEED TO INTERPRET \ (backslash) OR ; (semicolon)!
 }
 
 --------------------------------------------------------------------------------------------------------------------
-
-01/02/2024 - Stefi 
-
-{
-	
-}
-
---------------------------------------------------------------------------------------------------------------------
-

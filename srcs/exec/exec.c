@@ -29,7 +29,7 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 	}
 }
 
-void	builtin_execution(char **env, t_xcmd **cmd, int i)
+void	builtin_execution(t_env *env_list, char **env, t_xcmd **cmd, int i)
 {
 	t_xcmd	*xcmd;
 	int orig_stdin = dup(STDIN_FILENO);
@@ -38,23 +38,19 @@ void	builtin_execution(char **env, t_xcmd **cmd, int i)
 	redirections(cmd, i);
 	xcmd = cmd[i];
 	if (strcmp(xcmd->cmd[0], "cd") == 0)
-	{
-		//see whats wrong with strcmp
 		ft_cd(xcmd, env);
-	}
 	else if (strcmp(xcmd->cmd[0], "echo") == 0)
 		ft_echo(xcmd);
-	// else if (ft_strcmp(cmd->cmd[0], "env") == 0)
-	// 	ft_env(env);
-	// else if (ft_strcmp(cmd->cmd[0], "pwd") == 0)
+	else if (strcmp(xcmd->cmd[0], "env") == 0)
+		ft_env(xcmd, env);
+	else if (strcmp(xcmd->cmd[0], "exit") == 0)
+		ft_exit(xcmd);
+	else if (strcmp(xcmd->cmd[0], "export") == 0)
+		ft_export(xcmd->cmd, env_list, env);
+	// else if (strcmp(xcmd->cmd[0], "pwd") == 0)
 	// 	ft_pwd();
-	// else if (ft_strcmp(cmd->cmd[0], "export") == 0)
-	// 	ft_export(cmd->cmd, env);
 	// else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
 	// 	ft_unset(cmd->cmd, env);
-
-	// else if (ft_strcmp(cmd->cmd[0], "exit") == 0)
-	// 	ft_exit(cmd->cmd);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
 	close(orig_stdin);
@@ -65,6 +61,7 @@ void	redir_and_execute(t_env *env_list, t_xcmd **cmd)
 {
 	int				i;
 	char			**env;
+	int				status;
 
 	i = 0;
 	env = env_to_arr(env_list);
@@ -74,27 +71,22 @@ void	redir_and_execute(t_env *env_list, t_xcmd **cmd)
 			(*cmd)->pid[i] = fork();
 		if ((*cmd)->pid[i] == 0 && !cmd[i]->builtin)
 		{
+			printf("child\n");
 			signal(SIGINT, SIG_DFL);
 			redirections(cmd, i);
 			execution(env, cmd[i]);
 			exit(0);
 		}
 		else
-		{
-			if (cmd[i]->builtin)
-			{
-				builtin_execution(env, cmd, i);
-				save_exitstatus(cmd, i);
-			}
-			if (i < (*cmd)->nr_cmds)
-				close(cmd[i]->pipefd[1]);
-		}
+			builtin_execution(env_list, env, cmd, i);
+		if (i < (*cmd)->nr_cmds)
+			close(cmd[i]->pipefd[1]);
+		if (!cmd[i]->builtin)
+            waitpid((*cmd)->pid[i], &status, 0);
 		i++;
 	}
 	save_exitstatus(cmd, i);
 }
-
-//i need to do smth that re-redirects the fds after use, and i think it's better to so it in the functions themselves
 
 void	parse_and_exec(char *s, t_env *env)
 {
@@ -113,3 +105,12 @@ void	parse_and_exec(char *s, t_env *env)
 	clear_single_cmd_list(cmd->cmd_list);
 	free(cmd);
 }
+
+//deal with the freaking pointers darling
+//WORKING HISTORY ASAP PLS BABE
+// free everything babyyyyy
+// lexer??
+// put the exit status in the env
+// sabe exit statuses CORRECTLY
+// what in the world is up with ft_strcmp?
+// ambiguous redirects????
