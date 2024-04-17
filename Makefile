@@ -6,7 +6,7 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/05 12:52:42 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/17 12:55:39 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -65,7 +65,6 @@ EXEC_FILES	=	exec.c \
 
 HEADER		=	./inc/minishell.h
 LIBFT_ROOT	:=	./inc/libft/
-# RDLINE_ROOT	:=	./inc/readline/
 RDLINE_ROOT	:=	/opt/homebrew/opt/readline/lib/
 DIR_OBJ		:=	temp/
 INC_ROOT	:=	inc/m
@@ -96,9 +95,6 @@ PARSER_OBJ	= $(addprefix $(DIR_OBJ),$(PARSER_SRC:.c=.o))
 LIB_A		:=	/opt/homebrew/opt/readline/lib/libreadline.a /opt/homebrew/opt/readline/lib/libhistory.a \
 				./inc/libft/libft.a 
 
-# LIB_A		:=	./inc/readline/libreadline.a \
-# 				./inc/libft/libft.a ./inc/readline/libhistory.a
-
 LIB_ADD_DIR	:=	-L$(RDLINE_ROOT) -L$(LIBFT_ROOT)
 
 LIB_SEARCH	:=	-lreadline -lhistory -ltermcap -lft
@@ -106,9 +102,19 @@ LIB_SEARCH	:=	-lreadline -lhistory -ltermcap -lft
 HEADERS		:=	$(INC_ROOT)
 HEADERS		+=	$(addsuffix $(INC_ROOT),$(LIBFT_ROOT))
 
+#Gross but gets the job done
+ifeq ($(HOME), /Users/pfontenl)
+	RDLINE_ROOT	=	./inc/readline/
+	LIB_A =			./inc/readline/libreadline.a \
+ 					./inc/libft/libft.a ./inc/readline/libhistory.a
+	LIB_ADD_DIR	=	-L$(RDLINE_ROOT) -L$(LIBFT_ROOT)
+endif
+
 #RULES
+mac:	all
 
 all : temp libraries $(NAME)
+	
 
 libraries:
 	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
