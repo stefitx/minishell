@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:41:04 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/30 11:41:24 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/17 17:54:43 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void	env_add_var(t_env **env, char *name, char *val)
 	t_env	*new;
 	t_env	*cursor;
 
+	if (!env || !name || !*name)
+		return ;
 	new = ft_calloc(1, sizeof(t_env));
 	if (!new)
 		return ;
