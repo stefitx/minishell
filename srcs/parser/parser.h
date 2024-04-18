@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/18 12:51:48 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 18:25:27 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,7 +157,6 @@ void						ref_token_list_clear(t_ref_token *head);
 
 // str_node_utils.c
 t_str_node					*create_str_node(char *s);
-t_str_node					*clone_str_node(t_str_node *node);
 t_str_node					*clone_str_node_list(t_str_node *node);
 t_str_node					*find_last_str_node(t_str_node *head);
 void						add_str_node(t_str_node **head, t_str_node *node);
