@@ -6,7 +6,7 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/17 12:55:39 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/18 12:43:25 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,7 +20,7 @@ COLOR_CYAN=\033[1;36m
 PREFIX=$(COLOR_YELLOW)[MINISHELL]$(COLOR_NONE)  
 
 CC		=	cc
-CFLAGS	=	-Wall -Wextra -Werror #-fsanitize=address
+CFLAGS	=	-Wall -Wextra -Werror -fsanitize=address
 INCLUDE	=	-I./inc -I./readline
 RM		=	rm -fr
 

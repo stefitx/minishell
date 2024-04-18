@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:13:56 by atudor            #+#    #+#             */
-/*   Updated: 2024/03/04 15:13:58 by atudor           ###   ########.fr       */
+/*   Updated: 2024/04/18 12:44:58 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	builtin_execution(t_env *env_list, char **env, t_xcmd **cmd, int i)
 	int orig_stdin = dup(STDIN_FILENO);
 	int orig_stdout = dup(STDOUT_FILENO);
 
+	(void)env_list;
 	redirections(cmd, i);
 	xcmd = cmd[i];
 	if (strcmp(xcmd->cmd[0], "cd") == 0)
@@ -46,7 +47,7 @@ void	builtin_execution(t_env *env_list, char **env, t_xcmd **cmd, int i)
 	else if (strcmp(xcmd->cmd[0], "exit") == 0)
 		ft_exit(xcmd);
 	else if (strcmp(xcmd->cmd[0], "export") == 0)
-		ft_export(xcmd->cmd, env_list, env);
+		// ft_export(xcmd->cmd, env_list, env);
 	// else if (strcmp(xcmd->cmd[0], "pwd") == 0)
 	// 	ft_pwd();
 	// else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
@@ -100,6 +101,9 @@ void	parse_and_exec(char *s, t_env *env)
 	cmd = build_commands(tokens);
 	token_list_clear(raw_tokens);
 	ref_token_list_clear(tokens);
+	if (!cmd->cmd_list)
+		return ;
+	add_history(s);
 	xcmd = init_exe_cmd(cmd);
 	redir_and_execute(env, xcmd);
 	clear_single_cmd_list(cmd->cmd_list);
@@ -107,7 +111,7 @@ void	parse_and_exec(char *s, t_env *env)
 }
 
 //deal with the freaking pointers darling
-//WORKING HISTORY ASAP PLS BABE
+//WORKING HISTORY ASAP PLS BABE (Done :D dunno if these were meant for me lmao)
 // free everything babyyyyy
 // lexer??
 // put the exit status in the env
