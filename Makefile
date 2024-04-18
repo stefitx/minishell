@@ -6,7 +6,7 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/18 12:43:25 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/18 19:09:12 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -117,10 +117,7 @@ ifeq ($(HOME), /Users/pfontenl)
 endif
 
 #RULES
-mac:	all
-
-all : temp libraries $(NAME)
-	
+all: temp libraries $(NAME)
 
 libraries:
 	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
@@ -139,22 +136,22 @@ $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
 	@$(CC) $(CFLAGS) -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
 	@printf "$(PREFIX)$(COLOR_CYAN)Compiled $< to $@!$(COLOR_NONE)\n"
 
-temp	:
+temp:
 	@mkdir -p $(DIR_OBJ)
 
-clean	:
+clean:
 	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
 	@$(RM) $(DIR_OBJ)
 	@echo "$(PREFIX)$(COLOR_RED)Objects deleted successfully!$(COLOR_NONE)"
 
-fclean	: clean
+fclean: clean
 	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
 	@$(RM) $(NAME)
 	@echo "$(PREFIX)$(COLOR_RED)Minishell deleted successfully!$(COLOR_NONE)"
 # 	@$(MAKE) -C $(RDLINE_ROOT) clean --no-print-directory
 
-re		: fclean all
+re: fclean all
 
-.PHONY : all clean fclean re libraries rdline
+.PHONY: all clean fclean re libraries rdline
 
 .SILENT:

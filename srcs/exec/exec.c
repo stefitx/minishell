@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:13:56 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/18 12:53:31 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 18:28:57 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,11 +104,11 @@ void	parse_and_exec(char *s, t_env *env)
 	free(cmd);
 }
 
-//deal with the freaking pointers darling
-//WORKING HISTORY ASAP PLS BABE (Done :D dunno if these were meant for me lmao)
+// deal with the freaking pointers darling
+// WORKING HISTORY ASAP PLS BABE (Done :D dunno if these were meant for me lmao)
 // free everything babyyyyy
 // lexer??
 // put the exit status in the env
 // sabe exit statuses CORRECTLY
-// what in the world is up with ft_strcmp?
+// what in the world is up with ft_strcmp? (Returns 0 (false) if they're equal, returns a non-zero value otherwise (counter-intuitive, I know))
 // ambiguous redirects????

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/17 17:57:05 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 19:09:21 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,21 +130,26 @@ int	ft_strcmp(const char *line, const char *s)
 
 //had to comment out the whole function bc it wouldn't compile
 
-static void	sig_handler_idle(int signal)
+static void	rl_blank_line(void)
 {
 	int		i;
 	char	*temp;
 
+	temp = ft_strdup(rl_line_buffer);
+	i = 0;
+	while (i++ < 2)
+		ft_strappend(&temp, " ");
+	rl_on_new_line();
+	rl_replace_line(temp, 1);
+	free(temp);
+	rl_redisplay();
+}
+
+static void	sig_handler_idle(int signal)
+{
 	if (signal == SIGINT || signal == SIGQUIT)
 	{
-		temp = ft_strdup(rl_line_buffer);
-		i = 0;
-		while (i++ < 2)
-			ft_strappend(&temp, " ");
-		rl_on_new_line();
-		rl_replace_line(temp, 1);
-		free(temp);
-		rl_redisplay();
+		rl_blank_line();
 		if (signal == SIGINT)
 		{
 			write(STDOUT_FILENO, "\n", 1);
@@ -177,15 +182,14 @@ int	main(int argc, char **argv, char **env)
 	sig_idle(&sigact);
 	our_env = NULL;
 	env_init(&our_env, env);
-	// env test, ignore
-	// char **a = env_to_arr(our_env);
-	// while (*a)
-	// 	ft_putendl_fd(*a++, 1);
 	while (1)
 	{
 		line = readline("shortking👑$ ");
 		if (!line)
+		{
+			write(STDOUT_FILENO, "exit\n", 5);
 			exit(0);
+		}
 		parse_and_exec(line, our_env);
 		//parse_cmd(line);
 		free(line);
