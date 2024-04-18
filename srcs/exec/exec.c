@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:13:56 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/18 12:44:58 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:53:31 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,14 +93,8 @@ void	parse_and_exec(char *s, t_env *env)
 {
 	t_xcmd			**xcmd;
 	t_command		*cmd;
-	t_token			*raw_tokens;
-	t_ref_token		*tokens;
 
-	raw_tokens = split_tokens(s);
-	tokens = refine_tokens(raw_tokens);
-	cmd = build_commands(tokens);
-	token_list_clear(raw_tokens);
-	ref_token_list_clear(tokens);
+	cmd = parse_command(s, env);
 	if (!cmd->cmd_list)
 		return ;
 	add_history(s);

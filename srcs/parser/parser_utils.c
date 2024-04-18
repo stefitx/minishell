@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 17:04:17 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/27 11:47:27 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:48:31 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,9 @@ int	is_control_char(char c, char quote)
 	return (is_space_char(c) || ft_strchr("$<>|\"'", c));
 }
 
-char	*get_env(char *var)
+char	*get_env(char *var, t_env *env)
 {
 	if (!var)
 		return (NULL);
-	if (ft_strncmp(var, "?", 2) == 0)
-		return ("0");
-	return (getenv(var));
+	return (env_get_var(env, var)->val);
 }

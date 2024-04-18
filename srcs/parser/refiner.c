@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 13:22:04 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/30 11:58:03 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:52:26 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,12 @@ static void	handle_text_token(t_token *raw_token, t_refiner_data *data);
 static void	handle_var_token(t_token *raw_token, t_refiner_data *data);
 static void	handle_unquoted_var(t_refiner_data *data);
 
-t_ref_token	*refine_tokens(t_token *raw_tokens)
+t_ref_token	*refine_tokens(t_token *raw_tokens, t_env *env)
 {
 	t_refiner_data	data;
 
 	ft_bzero(&data, sizeof(t_refiner_data));
+	data.env = env;
 	while (raw_tokens)
 	{
 		if (raw_tokens->token_type == TOKEN_TEXT
@@ -80,7 +81,7 @@ static void	handle_var_token(t_token *raw_token, t_refiner_data *data)
 	ft_strappend(&data->og, raw_token->content);
 	ft_strappend(&data->og_quoted, "$");
 	ft_strappend(&data->og_quoted, raw_token->content);
-	data->expansion = get_env(raw_token->content);
+	data->expansion = get_env(raw_token->content, data->env);
 	if (data->expansion)
 	{
 		if (raw_token->quote_status != QUOTE_NONE)
@@ -88,7 +89,7 @@ static void	handle_var_token(t_token *raw_token, t_refiner_data *data)
 			if (!data->expanded)
 				add_str_node(&data->expanded, create_str_node(""));
 			ft_strappend(&find_last_str_node(data->expanded)->str,
-				get_env(raw_token->content));
+				get_env(raw_token->content, data->env));
 		}
 		else
 			handle_unquoted_var(data);

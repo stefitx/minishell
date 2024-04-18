@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 12:06:35 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/05 12:09:09 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:51:34 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ t_command	*build_commands(t_ref_token *tokens)
 	return (data.cmd_set);
 }
 
-t_command	*parse_command(char *s)
+t_command	*parse_command(char *s, t_env *env)
 {
 	t_token		*raw_tokens;
 	t_ref_token	*tokens;
@@ -66,7 +66,7 @@ t_command	*parse_command(char *s)
 		token_list_clear(raw_tokens);
 		return (NULL);
 	}
-	tokens = refine_tokens(raw_tokens);
+	tokens = refine_tokens(raw_tokens, env);
 	cmd = build_commands(tokens);
 	token_list_clear(raw_tokens);
 	ref_token_list_clear(tokens);

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/11 19:33:06 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:54:23 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,55 +121,3 @@ int	syntax_check(t_token *tokens)
 				38), 1);
 	return (0);
 }
-
-// public static void SyntaxCheck(LinkedList<Token> _tokenList)
-// {
-//     LinkedListNode<Token> cursor = _tokenList.First;
-//     LinkedListNode<Token> prevToken = null;
-//     while (cursor != null)
-//     {
-//         if (cursor.Value.tokenType != TokenTypes.Space)
-//         {
-//             if (cursor.Value.tokenType == TokenTypes.Pipe)
-//             {
-//                 if (prevToken == null)
-//                     throw new Exception("Syntax Error: Pipe At Start Of Command!");
-//                 else if (prevToken.Value.tokenType == TokenTypes.Pipe)
-//                     throw new Exception("Syntax Error: Empty Command Between Pipes!");
-//                 else if (prevToken.Value.tokenType == TokenTypes.Redir)
-//                     throw new Exception("Syntax Error: Incomplete Redirection!");
-//             }
-//             else if (cursor.Value.tokenType == TokenTypes.Redir)
-//             {
-//                 if (prevToken.Value.tokenType == TokenTypes.Redir)
-//                     throw new Exception("Syntax Error: Incomplete Redirection!");
-//             }
-//             prevToken = cursor;
-//         }
-//         cursor = cursor.Next;
-//     }
-//     if (prevToken != null)
-//     {
-//         if (prevToken.Value.tokenType == TokenTypes.Pipe)
-//             throw new Exception("Syntax Error: Pipe At End Of Command!");
-//         else if (prevToken.Value.tokenType == TokenTypes.Redir)
-//             throw new Exception("Syntax Error: Incomplete Redirection At End Of Command!");
-//     }
-// }
-
-// int	main(int argn, char **args)
-// {
-// 	t_token	*tokens;
-// 	char	*types[] = {"Space", "Text", "Quote", "Variable", "Redir", "Pipe"};
-// 	char	*quotes[] = {"None", "Single", "Double"};
-// 	if (argn != 2)
-// 		return (1);
-// 	tokens = SplitTokens(args[1]);
-// 	while (tokens)
-// 	{
-// 		printf("`%s` (Type: %s) (Quote: %s)\n", tokens->content,
-// 			types[tokens->token_type], quotes[tokens->quote_status]);
-// 		tokens = tokens->next;
-// 	}
-// 	return (0);
-// }

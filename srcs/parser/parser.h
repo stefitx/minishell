@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/17 13:11:09 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/18 12:51:48 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PARSER_H
 
 # include "../../inc/libft/libft.h"
+# include "../env/env.h"
 
 // Tokenizer
 enum						e_token_types
@@ -112,6 +113,7 @@ typedef struct s_refiner_data
 	char					*expansion;
 	t_str_node				*expanded;
 	t_ref_token				*ref_tokens;
+	t_env					*env;
 }							t_refiner_data;
 
 // Command Builder
@@ -205,14 +207,14 @@ char						**ft_split_set(char const *s, char *c);
 char						*get_ifs_set(void);
 int							is_space_char(char c);
 int							is_control_char(char c, char quote);
-char						*get_env(char *var);
+char						*get_env(char *var, t_env *env);
 
 // tokenizer.c
 t_token						*split_tokens(char *cmd);
 int							syntax_check(t_token *tokens);
 
 // refiner.c
-t_ref_token					*refine_tokens(t_token *raw_tokens);
+t_ref_token					*refine_tokens(t_token *raw_tokens, t_env *env);
 
 // refiner_utils.c
 void						add_ref_text_token(t_refiner_data *data);
@@ -220,8 +222,8 @@ void						add_ref_redir_token(char *content,
 								t_refiner_data *data);
 
 // command_builder.c
-t_command					*parse_command(char *s);
+t_command					*parse_command(char *s, t_env *env);
 // sorry i had to add it or else it wouldnt compile
-t_command					*build_commands(t_ref_token *tokens);
+// t_command					*build_commands(t_ref_token *tokens);
 
 #endif
