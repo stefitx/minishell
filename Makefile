@@ -6,7 +6,7 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/18 19:09:12 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/19 17:33:04 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -127,9 +127,8 @@ $(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
 	@echo "$(PREFIX)$(COLOR_GREEN)Minishell built successfully!$(COLOR_NONE)"
 
-rdline: temp $(RDLINE_ROOT)libreadline.a
-# 	@cd $(RDLINE_ROOT) && ./configure
-# 	@make -C $(RDLINE_ROOT)
+rdline: $(RDLINE_ROOT)libreadline.a
+	cd $(RDLINE_ROOT); ./configure; make
 
 $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
 	@mkdir -p $(dir $@)
