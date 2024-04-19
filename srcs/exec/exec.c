@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:13:56 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/18 18:28:57 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 17:22:25 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,11 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 void	builtin_execution(t_env *env_list, char **env, t_xcmd **cmd, int i)
 {
 	t_xcmd	*xcmd;
-	int orig_stdin = dup(STDIN_FILENO);
-	int orig_stdout = dup(STDOUT_FILENO);
+	int		orig_stdin;
+	int		orig_stdout;
 
+	orig_stdin = dup(STDIN_FILENO);
+	orig_stdout = dup(STDOUT_FILENO);
 	(void)env_list;
 	redirections(cmd, i);
 	xcmd = cmd[i];
@@ -48,11 +50,11 @@ void	builtin_execution(t_env *env_list, char **env, t_xcmd **cmd, int i)
 		ft_exit(xcmd);
 	else if (strcmp(xcmd->cmd[0], "export") == 0)
 		// ft_export(xcmd->cmd, env_list, env);
-	// else if (strcmp(xcmd->cmd[0], "pwd") == 0)
-	// 	ft_pwd();
-	// else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
-	// 	ft_unset(cmd->cmd, env);
-	dup2(orig_stdin, STDIN_FILENO);
+		// else if (strcmp(xcmd->cmd[0], "pwd") == 0)
+		// 	ft_pwd();
+		// else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
+		// 	ft_unset(cmd->cmd, env);
+		dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
 	close(orig_stdin);
 	close(orig_stdout);
@@ -60,9 +62,9 @@ void	builtin_execution(t_env *env_list, char **env, t_xcmd **cmd, int i)
 
 void	redir_and_execute(t_env *env_list, t_xcmd **cmd)
 {
-	int				i;
-	char			**env;
-	int				status;
+	int		i;
+	char	**env;
+	int		status;
 
 	i = 0;
 	env = env_to_arr(env_list);
@@ -83,7 +85,7 @@ void	redir_and_execute(t_env *env_list, t_xcmd **cmd)
 		if (i < (*cmd)->nr_cmds)
 			close(cmd[i]->pipefd[1]);
 		if (!cmd[i]->builtin)
-            waitpid((*cmd)->pid[i], &status, 0);
+			waitpid((*cmd)->pid[i], &status, 0);
 		i++;
 	}
 	save_exitstatus(cmd, i);
@@ -91,11 +93,11 @@ void	redir_and_execute(t_env *env_list, t_xcmd **cmd)
 
 void	parse_and_exec(char *s, t_env *env)
 {
-	t_xcmd			**xcmd;
-	t_command		*cmd;
+	t_xcmd		**xcmd;
+	t_command	*cmd;
 
 	cmd = parse_command(s, env);
-	if (!cmd->cmd_list)
+	if (!cmd || !cmd->cmd_list)
 		return ;
 	add_history(s);
 	xcmd = init_exe_cmd(cmd);
