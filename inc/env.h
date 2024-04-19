@@ -6,14 +6,14 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:39:26 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/18 18:27:02 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 18:40:31 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef ENV_H
 # define ENV_H
 
-# include "../../inc/libft/libft.h"
+# include "libft/libft.h"
 
 typedef struct s_env
 {

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 13:22:04 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/18 12:52:26 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 18:27:27 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ static void	handle_unquoted_var(t_refiner_data *data)
 	char	**split_str;
 	int		i;
 
-	split_str = ft_split_set(data->expansion, get_ifs_set());
+	split_str = ft_split_set(data->expansion, get_ifs_set(data->env));
 	i = 0;
 	while (split_str[i])
 	{
@@ -118,7 +118,7 @@ static void	handle_unquoted_var(t_refiner_data *data)
 		free(split_str[i++]);
 	}
 	free(split_str);
-	data->add_new = data->expansion && ft_strchr(get_ifs_set(),
+	data->add_new = data->expansion && ft_strchr(get_ifs_set(data->env),
 			data->expansion[ft_strlen(data->expansion) - 1]);
 }
 

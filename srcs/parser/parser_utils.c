@@ -6,17 +6,17 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 17:04:17 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/18 12:48:31 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 18:43:43 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 
-char	*get_ifs_set(void)
+char	*get_ifs_set(t_env *env)
 {
 	char	*ifs;
 
-	ifs = getenv("IFS");
+	ifs = get_env("IFS", env);
 	if (!ifs)
 		ifs = " \t\n";
 	if (!ifs[0])
@@ -42,5 +42,7 @@ char	*get_env(char *var, t_env *env)
 {
 	if (!var)
 		return (NULL);
-	return (env_get_var(env, var)->val);
+	if (env_get_var(env, var))
+		return (env_get_var(env, var)->val);
+	return (NULL);
 }

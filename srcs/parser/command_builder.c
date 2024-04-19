@@ -6,11 +6,28 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 12:06:35 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/18 12:51:34 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 18:09:51 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
+
+static t_text_token	*copy_text_token(t_text_token *token)
+{
+	t_text_token	*new;
+	t_str_node		*cursor;
+
+	new = text_token_clone(token);
+	cursor = new->expanded;
+	while (cursor)
+	{
+		ft_strappend(&new->expanded_full, cursor->str);
+		cursor = cursor->next;
+		if (cursor)
+			ft_strappend(&new->expanded_full, " ");
+	}
+	return (new);
+}
 
 static void	main_loop(t_ref_token *token, t_cmd_builder_data *data)
 {
@@ -25,9 +42,9 @@ static void	main_loop(t_ref_token *token, t_cmd_builder_data *data)
 	else if (token->token_type == REF_TOKEN_TEXT)
 	{
 		if (data->prev_redir)
-			data->prev_redir->text_token = text_token_clone(token->text_token);
+			data->prev_redir->text_token = copy_text_token(token->text_token);
 		else
-			text_token_append(&data->args, text_token_clone(token->text_token));
+			text_token_append(&data->args, copy_text_token(token->text_token));
 	}
 	else
 	{

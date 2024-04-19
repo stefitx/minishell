@@ -6,15 +6,15 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/18 18:25:27 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 18:40:38 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PARSER_H
 # define PARSER_H
 
-# include "../../inc/libft/libft.h"
-# include "../env/env.h"
+# include "libft/libft.h"
+# include "env.h"
 
 // Tokenizer
 enum						e_token_types
@@ -62,6 +62,7 @@ typedef struct s_text_token
 	char					*original;
 	char					*original_quoted;
 	t_str_node				*expanded;
+	char					*expanded_full;
 	int						in_quotes;
 	struct s_text_token		*next;
 }							t_text_token;
@@ -203,7 +204,7 @@ void						ft_strappend(char **s, char *add);
 char						**ft_split_set(char const *s, char *c);
 
 // parser_utils.c
-char						*get_ifs_set(void);
+char						*get_ifs_set(t_env *env);
 int							is_space_char(char c);
 int							is_control_char(char c, char quote);
 char						*get_env(char *var, t_env *env);

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/28 12:09:13 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 18:04:50 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,5 +61,6 @@ void	text_token_list_clear(t_text_token *head)
 	free(head->original);
 	free(head->original_quoted);
 	clear_str_node_list(head->expanded);
+	free(head->expanded_full);
 	free(head);
 }

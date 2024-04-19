@@ -6,7 +6,7 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/19 17:45:42 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/19 18:39:12 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -107,6 +107,8 @@ LIB_SEARCH	:=	-lreadline -lhistory -ltermcap -lft
 
 HEADERS		:=	$(INC_ROOT)
 HEADERS		+=	$(addsuffix $(INC_ROOT),$(LIBFT_ROOT))
+HEADERS		+=	$(addsuffix $(INC_ROOT),env.h)
+HEADERS		+=	$(addsuffix $(INC_ROOT),parser.h)
 
 #Gross but gets the job done
 ifeq ($(HOME), /Users/pfontenl)
@@ -131,7 +133,9 @@ $(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 libft:
 	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
 
-rdline: $(RDLINE_ROOT)libreadline.a
+$(RDLINE_ROOT)libreadline.a: rdline
+
+rdline:	$(RDLINE_ROOT)libreadline.a
 	cd $(RDLINE_ROOT) && ./configure && make --no-print-directory
 
 $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)

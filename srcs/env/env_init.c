@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/30 11:42:36 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 18:36:12 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,4 +29,7 @@ void	env_init(t_env **env, char **og_env)
 		og_env++;
 	}
 	env_add_var(env, ft_strdup("?"), ft_strdup("0"));
+	env_add_var(env, ft_strdup("IFS"), NULL);
+	if (getenv("IFS"))
+		env_set_var(env, "IFS", ft_strdup(getenv("IFS")));
 }

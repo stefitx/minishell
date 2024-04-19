@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:57:03 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/18 18:28:15 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 18:41:20 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@
 # include <readline/history.h>
 
 # include "./libft/libft.h"
-# include "../srcs/parser/parser.h"
+# include "parser.h"
 # include "../srcs/exec/exec.h"
-# include "../srcs/env/env.h"
+# include "env.h"
 # include "../srcs/built-ins/builtins.h"
 
 #endif

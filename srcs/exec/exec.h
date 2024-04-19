@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec.h                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
+/*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:13:56 by atudor            #+#    #+#             */
-/*   Updated: 2024/03/04 15:13:58 by atudor           ###   ########.fr       */
+/*   Updated: 2024/04/19 18:41:50 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <sys/stat.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include "../../srcs/env/env.h"
+# include "../../inc/env.h"
 
 //Executor
 typedef struct s_xdata
