@@ -6,7 +6,7 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/19 17:36:17 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/19 17:45:42 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -119,38 +119,38 @@ endif
 #RULES
 all: temp libraries $(NAME)
 
-libraries:	rdline
-	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
-	# @$(MAKE) rdline --no-print-directory
+temp:
+	@mkdir -p $(DIR_OBJ)
+
+libraries: libft rdline
 
 $(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
 	@echo "$(PREFIX)$(COLOR_GREEN)Minishell built successfully!$(COLOR_NONE)"
 
+libft:
+	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
+
 rdline: $(RDLINE_ROOT)libreadline.a
-	cd $(RDLINE_ROOT) && ./configure && make
+	cd $(RDLINE_ROOT) && ./configure && make --no-print-directory
 
 $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
 	@printf "$(PREFIX)$(COLOR_CYAN)Compiled $< to $@!$(COLOR_NONE)\n"
 
-temp:
-	@mkdir -p $(DIR_OBJ)
-
 clean:
 	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
+	@$(MAKE) -C $(RDLINE_ROOT) clean --no-print-directory
 	@$(RM) $(DIR_OBJ)
 	@echo "$(PREFIX)$(COLOR_RED)Objects deleted successfully!$(COLOR_NONE)"
 
 fclean: clean
-	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
 	@$(RM) $(NAME)
 	@echo "$(PREFIX)$(COLOR_RED)Minishell deleted successfully!$(COLOR_NONE)"
-# 	@$(MAKE) -C $(RDLINE_ROOT) clean --no-print-directory
 
 re: fclean all
 
-.PHONY: all clean fclean re libraries rdline
+.PHONY: all clean fclean re libraries libft rdline
 
 .SILENT:
