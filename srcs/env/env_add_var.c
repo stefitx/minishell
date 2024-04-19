@@ -6,11 +6,11 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:41:04 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/17 17:54:43 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:30:40 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "env.h"
+#include "../../inc/env.h"
 
 void	env_add_var(t_env **env, char *name, char *val)
 {

@@ -6,11 +6,11 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:43:38 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/30 11:43:44 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:30:27 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "env.h"
+#include "../../inc/env.h"
 
 size_t	env_len(t_env *env)
 {

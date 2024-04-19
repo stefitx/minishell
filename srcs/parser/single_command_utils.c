@@ -6,11 +6,11 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 17:35:05 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/28 12:19:46 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:36:50 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
+#include "../../inc/parser.h"
 
 t_single_cmd	*create_single_cmd(t_text_token *args, t_redir_token *redirs)
 {

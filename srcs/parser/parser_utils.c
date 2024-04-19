@@ -6,11 +6,11 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 17:04:17 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 18:43:43 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:36:50 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
+#include "../../inc/parser.h"
 
 char	*get_ifs_set(t_env *env)
 {

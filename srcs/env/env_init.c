@@ -6,11 +6,11 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 18:36:12 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:30:10 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "env.h"
+#include "../../inc/env.h"
 
 void	env_init(t_env **env, char **og_env)
 {

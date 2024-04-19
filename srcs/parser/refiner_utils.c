@@ -6,11 +6,11 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 12:17:29 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/03/28 12:27:18 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/19 19:36:50 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parser.h"
+#include "../../inc/parser.h"
 
 void	add_ref_text_token(t_refiner_data *data)
 {
