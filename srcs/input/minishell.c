@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/19 19:33:46 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/20 12:21:30 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,7 @@ static void	parse_cmd(char *s, t_env *env)
 				else
 					printf("Expanded: (null)\n");
 				printf("Expanded Full: %s\n", cursor2->expanded_full);
+				printf("Expanded Joined: %s\n", cursor2->expanded_joined);
 				cursor2 = cursor2->next;
 			}
 		}
@@ -108,6 +109,7 @@ static void	parse_cmd(char *s, t_env *env)
 				else
 					printf("  Expanded: (null)\n");
 				printf("Expanded Full: %s\n", cursor3->text_token->expanded_full);
+				printf("Expanded Joined: %s\n", cursor3->text_token->expanded_joined);
 				cursor3 = cursor3->next;
 			}
 		}

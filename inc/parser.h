@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:40:18 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 18:40:38 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/20 12:34:12 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ typedef struct s_text_token
 	char					*original_quoted;
 	t_str_node				*expanded;
 	char					*expanded_full;
+	char					*expanded_joined;
 	int						in_quotes;
 	struct s_text_token		*next;
 }							t_text_token;
@@ -113,6 +114,7 @@ typedef struct s_refiner_data
 	int						add_new;
 	char					*expansion;
 	t_str_node				*expanded;
+	char					*expanded_full;
 	t_ref_token				*ref_tokens;
 	t_env					*env;
 }							t_refiner_data;

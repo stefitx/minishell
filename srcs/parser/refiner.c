@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 13:22:04 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 19:36:50 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/20 12:33:18 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ static void	handle_text_token(t_token *raw_token, t_refiner_data *data)
 {
 	ft_strappend(&data->og, raw_token->content);
 	ft_strappend(&data->og_quoted, raw_token->content);
+	ft_strappend(&data->expanded_full, raw_token->content);
 	if (data->add_new)
 	{
 		data->add_new = 0;
@@ -84,6 +85,7 @@ static void	handle_var_token(t_token *raw_token, t_refiner_data *data)
 	data->expansion = get_env(raw_token->content, data->env);
 	if (data->expansion)
 	{
+		ft_strappend(&data->expanded_full, data->expansion);
 		if (raw_token->quote_status != QUOTE_NONE)
 		{
 			if (!data->expanded)

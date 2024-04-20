@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/25 12:06:35 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 19:33:30 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/20 12:32:46 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,10 @@ static t_text_token	*copy_text_token(t_text_token *token)
 	cursor = new->expanded;
 	while (cursor)
 	{
-		ft_strappend(&new->expanded_full, cursor->str);
+		ft_strappend(&new->expanded_joined, cursor->str);
 		cursor = cursor->next;
 		if (cursor)
-			ft_strappend(&new->expanded_full, " ");
+			ft_strappend(&new->expanded_joined, " ");
 	}
 	return (new);
 }
