@@ -64,7 +64,7 @@ char	*access_path(char **cmd, char **env)
 		if (access(cmd[0], X_OK) == -1)
 		{
 			ft_putstr_fd(cmd[0], 2);
-			ft_putstr_fd(": Permission denied", 2);
+			ft_putstr_fd(": Permission denied\n", 2);
 			exit(126);
 		}
 		return (cmd[0]);
@@ -79,12 +79,20 @@ char	*access_path(char **cmd, char **env)
 	return (NULL);
 }
 
-void	execution(char **env, t_xcmd *cmd)
+void	execution(t_data *data, t_xcmd *cmd)
 {
+	char	**env;
+	int		i;
+
+	env = env_to_arr(data->env_list);
 	cmd->path = access_path(cmd->cmd, env);
 	if (execve(cmd->path, cmd->cmd, env) == -1)
 	{
 		free(cmd->path);
+		i = 0;
+		while (env[i])
+			free(env[i++]);
+		free(env);
 		perror("Command execution failed");
 		exit(EXIT_FAILURE);
 	}

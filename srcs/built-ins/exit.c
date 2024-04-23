@@ -28,7 +28,7 @@ static int	ft_isnumber(char *str)
 	return (1);
 }
 
-void	ft_exit(t_xcmd *xcmd)
+void	ft_exit(t_xcmd *xcmd, int *flag)
 {
 	int	i;
 
@@ -42,11 +42,16 @@ void	ft_exit(t_xcmd *xcmd)
 			{
 				ft_putstr_fd("exit\n", 2);
 				ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-				exit(1);
+				if (*flag)
+					return ;
+				xcmd->exit_status = 1;
 			}
 			else
 			{
-				ft_putstr_fd("exit\n", 2);
+				ft_putstr_fd("exit\n", 1);
+				if (*flag)
+					return ;
+				//xcmd->exit_status = (unsigned int)i;
 				exit((unsigned int)i);
 			}
 		}
@@ -56,11 +61,15 @@ void	ft_exit(t_xcmd *xcmd)
 			ft_putstr_fd("minishell: exit: ", 2);
 			ft_putstr_fd(xcmd->cmd[1], 2);
 			ft_putstr_fd(": numeric argument required\n", 2);
-			exit(255);
+			if (*flag)
+				return ;
+			xcmd->exit_status = 255;
 		}
 	}
 	else
 	{
+		if (*flag)
+			return ;
 		write(STDOUT_FILENO, "exit\n", 5);
 		exit(0);
 	}

@@ -75,6 +75,7 @@ void	in_redir(t_xcmd *cmd)
 			cmd->fd_in = open(cmd->infile[i], O_RDONLY);
 		if (cmd->fd_in < 0)
 		{
+			write(2, "minishell: ", 11);
 			perror(cmd->infile[i]);
 			exit(EXIT_FAILURE);
 		}
@@ -84,10 +85,11 @@ void	in_redir(t_xcmd *cmd)
 	close(cmd->fd_in);
 }
 
-void	pipe_redir(t_xcmd **cmd, int i)
+void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 {
 	if (cmd[i]->nr_cmds > 1)
 	{
+		(*flag) = 1;
 		if (cmd[i]->cmd_id == 0)
 		{
 			dup2(cmd[i]->pipefd[1], 1);
@@ -106,15 +108,11 @@ void	pipe_redir(t_xcmd **cmd, int i)
 	}
 }
 
-void	redirections(t_xcmd **cmd, int i)
+void	redirections(t_xcmd **cmd, int i, int *flag)
 {
-	pipe_redir(cmd, i);
+	pipe_redir(cmd, i, flag);
 	if (cmd[i]->nr_redir_in > 0)
-	{
 		in_redir(cmd[i]);
-	}
 	if (cmd[i]->nr_redir_out > 0)
-	{
 		out_redir(cmd[i]);
-	}
 }

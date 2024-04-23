@@ -23,7 +23,9 @@ void	env_add_var(t_env **env, char *name, char *val)
 	if (!new)
 		return ;
 	new->name = name;
+	//printf("name: %s\n", new->name);
 	new->val = val;
+	//printf("val: %s\n", new->val);
 	new->next = NULL;
 	if (*env)
 	{

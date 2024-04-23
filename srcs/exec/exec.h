@@ -24,13 +24,15 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include "../../inc/env.h"
+# include "../../inc/minishell.h"
+# include "../built-ins/builtins.h"
 
 //Executor
-typedef struct s_xdata
+typedef struct s_data
 {
-	struct s_cmd	**cmd_arr;
-	pid_t			*pid;
-}	t_xdata;
+	t_env			*env_list;
+	t_export		*export_arr;
+}	t_data;
 
 typedef struct s_xcmd
 {
@@ -58,15 +60,15 @@ void	exec_cmd(char **env, char *command);
 void	fill_path(t_xcmd *xcmd);
 
 // exec
-void	parse_and_exec(char *s, t_env *env);
-void	redir_and_execute(t_env *env_list, t_xcmd **cmd);
+void	parse_and_exec(char *s, t_data *data);
+void	redir_and_execute(t_xcmd **cmd, t_data *data);
 
 // exec_utils
 void	pipe_error(int *pipefd);
 
 // pipexstuff
 char	**find_path(char **env, char *s);
-void	execution(char **env, t_xcmd *cmd);
+void	execution(t_data *data, t_xcmd *cmd);
 
 // init_xcmd
 void	fill_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
@@ -83,7 +85,28 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
 int		check_builtin(char **xcmd);
 
 // redirections
-void	redirections(t_xcmd **cmd, int i);
+void	redirections(t_xcmd **cmd, int i, int *flag);
 
 char	**get_cmd_array(t_single_cmd *cmd);
+
+// cd
+void	ft_cd(t_xcmd *cmd, char **env);
+
+// echo
+void	ft_echo(t_xcmd *cmd);
+
+// env
+
+void	ft_env(t_xcmd *cmd, char **env);
+
+// exit
+void	ft_exit(t_xcmd *xcmd, int *flag);
+
+// export
+void	ft_export(t_xcmd *xcmd, t_data *data);
+void	init_export(t_export **export_arr);
+
+// pwd
+
+// unset
 #endif
