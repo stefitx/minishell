@@ -31,7 +31,7 @@
 typedef struct s_data
 {
 	t_env			*env_list;
-	t_export		*export_arr;
+	t_export		*export_list;
 }	t_data;
 
 typedef struct s_xcmd
@@ -97,7 +97,7 @@ void	ft_echo(t_xcmd *cmd);
 
 // env
 
-void	ft_env(t_xcmd *cmd, char **env);
+void	ft_env(t_xcmd *cmd, t_data *data);
 
 // exit
 void	ft_exit(t_xcmd *xcmd, int *flag);
@@ -105,7 +105,12 @@ void	ft_exit(t_xcmd *xcmd, int *flag);
 // export
 void	ft_export(t_xcmd *xcmd, t_data *data);
 void	init_export(t_export **export_arr);
-
+// export_utils
+int	already_exists(t_data *data, char *name);
+int	is_addition(char *str);
+int	is_invalid(char *str);
+void	init_export(t_export **export_arr);
+int has_equal_sign(char *str);
 // pwd
 
 // unset

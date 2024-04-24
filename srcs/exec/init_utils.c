@@ -75,11 +75,20 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 
 int	check_builtin(char **xcmd)
 {
-	if (ft_strcmp(xcmd[0], "cd") || ft_strcmp(xcmd[0], "pwd")
-		|| ft_strcmp(xcmd[0], "echo") || ft_strcmp(xcmd[0], "export")
-		|| ft_strcmp(xcmd[0], "unset") || ft_strcmp(xcmd[0], "env") 
-		|| ft_strcmp(xcmd[0], "exit"))
+	if (ft_strcmp(xcmd[0], "cd") != 0)
 		return (1);
+	if (ft_strcmp(xcmd[0], "echo") != 0)
+		return (1);
+	if (ft_strcmp(xcmd[0], "env") != 0)
+		return (1);
+	if (ft_strcmp(xcmd[0], "exit") != 0)
+		return (1);
+	if (ft_strcmp(xcmd[0], "export") != 0)
+		return (1);
+	if (ft_strcmp(xcmd[0], "pwd") != 0)
+		return (1);
+	if (ft_strcmp(xcmd[0], "unset") != 0)
+			return (1);
 	else
 		return (0);
 }

@@ -19,7 +19,7 @@ char	**env_to_arr(t_env *env)
 
 	i = 0;
 	env_arr = ft_calloc(env_len(env) - 1, sizeof(char *));
-	while (env)
+	while (env->next)
 	{
 		if (ft_strncmp(env->name, "?", 2) != 0
 			&& ft_strncmp(env->name, "IFS", 4) != 0)

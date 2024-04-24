@@ -48,7 +48,7 @@ void	builtin_execution(t_data *data, t_xcmd **cmd, int i)
 	else if (ft_strcmp(xcmd->cmd[0], "echo") != 0)
 		ft_echo(xcmd);
 	else if (ft_strcmp(xcmd->cmd[0], "env") != 0)
-		ft_env(xcmd, env);
+		ft_env(xcmd, data);
 	else if (ft_strcmp(xcmd->cmd[0], "exit") != 0)
 	{
 		dup2(orig_stdin, STDIN_FILENO);
@@ -56,7 +56,9 @@ void	builtin_execution(t_data *data, t_xcmd **cmd, int i)
 		ft_exit(xcmd, &flag);
 	}
 	else if (ft_strcmp(xcmd->cmd[0], "export") != 0)
+	{
 		ft_export(xcmd, data);
+	}
 		// else if (strcmp(xcmd->cmd[0], "pwd") == 0)
 		// 	ft_pwd();
 		// else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
@@ -130,6 +132,12 @@ void	parse_and_exec(char *s, t_data *data)
 */
 
 
-// shortking👑$ 1 < exit
-// exit: No such file or directory
-// exit: No such file or directory
+// ok so we have 3 cases: a=b, a=, a
+// free export arr in the end
+// shortking👑$ export b
+// is not addition
+// new->name: 
+// new->value: ""
+// new->str: b
+// found in export list
+// [1]    61259 segmentation fault  ./minishell

@@ -187,7 +187,7 @@ int	main(int argc, char **argv, char **env)
 	export_arr = NULL;
 	init_export(&export_arr);
 	data.env_list = our_env;
-	data.export_arr = export_arr;
+	data.export_list = export_arr;
 	while (1)
 	{
 		line = readline("shortking👑$ ");

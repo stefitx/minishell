@@ -29,9 +29,10 @@
 
 typedef struct s_export
 {
-	char	*name;
-	char	*value;
-	char	*str;
+	char			*name;
+	char			*value;
+	char			*str;
+	struct s_export	*next;
 }	t_export;
 
 #endif

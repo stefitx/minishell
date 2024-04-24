@@ -12,16 +12,22 @@
 
 #include "../../inc/minishell.h"
 
-void	ft_env(t_xcmd *cmd, char **env)
+void	ft_env(t_xcmd *cmd, t_data *data)
 {
-	int	i;
+	t_env *cursor;
 
-	i = 0;
-	while (env[i] && env[i][0] != '?')
+	cursor = data->env_list;
+	while (cursor)
 	{
-		ft_putstr_fd(env[i], 1);
-		ft_putstr_fd("\n", 1);
-		i++;
+		if (ft_strcmp(cursor->name, "?") == 0
+			&& ft_strcmp(cursor->name, "IFS") == 0)
+			{
+				ft_putstr_fd(cursor->name, 1);
+				ft_putstr_fd("=", 1);
+				ft_putstr_fd(cursor->val, 1);
+				ft_putstr_fd("\n", 1);
+			}
+		cursor = cursor->next;
 	}
 	cmd->exit_status = 0;
 }

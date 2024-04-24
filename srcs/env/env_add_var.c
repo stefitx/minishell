@@ -17,15 +17,13 @@ void	env_add_var(t_env **env, char *name, char *val)
 	t_env	*new;
 	t_env	*cursor;
 
-	if (!env || !name || !*name)
+	if (!env || !name || !*name || !val)
 		return ;
 	new = ft_calloc(1, sizeof(t_env));
 	if (!new)
 		return ;
 	new->name = name;
-	//printf("name: %s\n", new->name);
 	new->val = val;
-	//printf("val: %s\n", new->val);
 	new->next = NULL;
 	if (*env)
 	{
