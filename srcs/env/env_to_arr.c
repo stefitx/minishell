@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:46:13 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 19:30:20 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/25 20:03:14 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char	**env_to_arr(t_env *env)
 	char	**env_arr;
 
 	i = 0;
-	env_arr = ft_calloc(env_len(env) - 1, sizeof(char *));
+	env_arr = ft_calloc(env_len(env), sizeof(char *));
 	while (env->next)
 	{
 		if (ft_strncmp(env->name, "?", 2) != 0

@@ -6,7 +6,7 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/20 12:39:35 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/25 19:21:09 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -41,7 +41,8 @@ BUILTIN_FILES = cd.c \
 				echo.c \
 				env.c \
 				exit.c \
-				# export.c \
+				export.c \
+				export_utils.c \
 				# pwd.c \
 				# unset.c
 # EXPANSOR_FILES	=
