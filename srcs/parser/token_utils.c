@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/16 13:41:52 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 19:36:50 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/26 13:45:51 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ t_token	*token_create(char *s, enum e_token_types type, char quote)
 	token->token_type = type;
 	if (quote == '\'')
 		token->quote_status = QUOTE_SINGLE;
-	if (quote == '"')
+	else if (quote == '"')
 		token->quote_status = QUOTE_DOUBLE;
 	else
 		token->quote_status = QUOTE_NONE;

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/26 17:04:17 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 19:36:50 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/26 13:39:41 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	is_control_char(char c, char quote)
 	if (quote == '\'')
 		return (c == '\'');
 	if (quote == '"')
-		return (ft_strchr("\"$", c) != NULL);
+		return (c == '"' || c == '$');
 	return (is_space_char(c) || ft_strchr("$<>|\"'", c));
 }
 

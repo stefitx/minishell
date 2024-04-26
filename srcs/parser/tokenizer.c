@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/26 13:28:03 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/26 13:45:48 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	handle_quote(char *cmd, t_tokenizer_data *data)
 {
 	if (data->quote == cmd[data->i])
 		data->quote = '\0';
-	else
+	else if (!data->quote)
 		data->quote = cmd[data->i];
 	token_append(&data->tokens, ft_substr(cmd, data->i++, 1), TOKEN_QUOTE,
 		data->quote);
@@ -24,7 +24,7 @@ static void	handle_quote(char *cmd, t_tokenizer_data *data)
 
 static void	handle_control_char(char *cmd, t_tokenizer_data *data)
 {
-	if (ft_strchr("\"'", cmd[data->i]))
+	if (cmd[data->i] == '\'' || cmd[data->i] == '"')
 		handle_quote(cmd, data);
 	else if (cmd[data->i] == '$' && data->quote != '\'')
 	{

@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/26 13:00:33 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/26 13:35:03 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,6 @@ static void	parse_cmd(char *s, t_env *env)
 		return ;
 	cursor = cmd->cmd_list;
 	cursor4 = cmd->pipes;
-	if (cursor)
-		add_history(s);
 	while (cursor)
 	{
 		if (cursor->args)
