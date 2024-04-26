@@ -6,7 +6,7 @@
 #    By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/03 16:38:51 by atudor            #+#    #+#              #
-#    Updated: 2024/04/25 19:21:09 by pfontenl         ###   ########.fr        #
+#    Updated: 2024/04/26 13:11:59 by pfontenl         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,9 @@ ENV_FILES =	env_add_var.c \
 			env_len.c \
 			env_set_var.c \
 			env_to_arr.c \
-			env_unset_var.c
+			env_unset_var.c \
+			env_valid_name_substr.c \
+			env_valid_name.c
 INPUT_FILES	= minishell.c
 BUILTIN_FILES = cd.c \
 				echo.c \

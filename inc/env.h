@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/30 11:39:26 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 18:40:31 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/26 13:11:35 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,12 @@ typedef struct s_env
 	struct s_env	*next;
 }					t_env;
 
-void				env_add_var(t_env **env, char *name, char *val);
 void				env_init(t_env **env, char **og_env);
 size_t				env_len(t_env *env);
+int					env_valid_name(char *s);
+int					env_valid_name_substr(char *s, unsigned int start,
+						size_t len);
+void				env_add_var(t_env **env, char *name, char *val);
 t_env				*env_get_var(t_env *var, char *name);
 void				env_set_var(t_env **env, char *name, char *val);
 void				env_unset_var(t_env **env, char *name);

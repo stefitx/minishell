@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/17 12:28:45 by pfontenl          #+#    #+#             */
-/*   Updated: 2024/04/19 19:36:50 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/26 13:28:03 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ static void	handle_control_char(char *cmd, t_tokenizer_data *data)
 	else if (cmd[data->i] == '$' && data->quote != '\'')
 	{
 		data->start = ++data->i;
-		while (cmd[data->i] && (ft_isalnum(cmd[data->i]) || cmd[data->i] == '_'
-				|| (cmd[data->i] == '?' && data->start == data->i)))
+		while (cmd[data->i] && env_valid_name_substr(cmd,
+				(unsigned int)data->start, (size_t)(data->i - data->start + 1)))
 			data->i++;
 		if (data->i == data->start)
 			token_append(&data->tokens, ft_strdup("$"), TOKEN_TEXT,
@@ -91,8 +91,8 @@ static int	syntax_check_loop(t_token *tokens, enum e_token_types *last_token,
 					"Syntax Error: Unfinished Redirection\n", 38), 1);
 	}
 	if (tokens->token_type == TOKEN_REDIR && *last_token == TOKEN_REDIR)
-		return (write(STDERR_FILENO,
-				"Syntax Error: Unfinished Redirection\n", 38), 1);
+		return (write(STDERR_FILENO, "Syntax Error: Unfinished Redirection\n",
+				38), 1);
 	if (tokens->token_type != TOKEN_SPACE)
 		*last_token = tokens->token_type;
 	return (0);
