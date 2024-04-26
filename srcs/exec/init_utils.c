@@ -90,5 +90,8 @@ int	check_builtin(char **xcmd)
 	if (ft_strcmp(xcmd[0], "unset") != 0)
 			return (1);
 	else
+	{
+		//printf("Command not builtin: %s\n", xcmd[0]);
 		return (0);
+	}
 }

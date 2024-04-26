@@ -51,9 +51,9 @@ void	add_node(t_data *data, t_export *new, char c)
 		else
 			data->export_list->next = new;
 	}
-	else
+	else if (new->value)
 	{
-		if (c == '+' && cursor2->next->value && ft_strcmp(cursor2->next->value, "\"\"") == 0)
+		if (c == '+' && cursor2->next->value)
 		{
 			temp2 = ft_strjoin(cursor2->next->value, new->value);
 			new->value = temp2;
@@ -65,7 +65,7 @@ void	add_node(t_data *data, t_export *new, char c)
 	env_set_var(&data->env_list, new->name, new->value);
 }
 
-t_export	*create_new_node(char *str)
+t_export	*create_new_node(char *str, char *full_str)
 {
 	t_export	*new;
 	int equal_pos = has_equal_sign(str);
@@ -73,6 +73,8 @@ t_export	*create_new_node(char *str)
 	new = (t_export *)malloc(sizeof(t_export));
 	if (!new)
 		return (NULL);
+
+	else
 	if (equal_pos == 0)
 	{
 		new->name = ft_strdup(str);
@@ -84,14 +86,9 @@ t_export	*create_new_node(char *str)
 			new->name = ft_substr(str, 0, equal_pos);
 		else
 			new->name = ft_substr(str, 0, equal_pos - 1);
-		new->value = ft_strdup(str + equal_pos + 1);
-		if (str[equal_pos + 1] == '\0')
-		{
-			free(new->value);
-			new->value = ft_strdup("\"\"");
-		}
+		new->value = ft_strdup(full_str + equal_pos + 1);
 	}
-	new->str = ft_strdup(str);
+	new->str = ft_strdup(full_str);
 	new->next = NULL;
 	return (new);
 }
@@ -101,7 +98,7 @@ int	no_arg_export(t_xcmd *xcmd, t_data *data)
 	t_env	*cursor;
 	t_export	*cursor2;
 
-	if (xcmd->cmd[1] == NULL)
+	if (xcmd->expanded_full[1] == NULL)
 	{
 		if (data->env_list)
 		{
@@ -136,38 +133,92 @@ int	no_arg_export(t_xcmd *xcmd, t_data *data)
 	return (0);
 }
 
+
+void print_invalid_identifier(char* cmd, int* exit_status)
+{
+    ft_putstr_fd("export: `", 2);
+    ft_putstr_fd(cmd, 2);
+    ft_putstr_fd("`: not a valid identifier\n", 2);
+    *exit_status = 1;
+}
+
+char determine_node_type(t_data* data, char* expanded_full)
+{
+    if (!already_exists(data, expanded_full)
+        || (already_exists(data, expanded_full)
+        && !is_addition(expanded_full)))
+        return 'x';
+    else if (is_addition(expanded_full)
+        && already_exists(data, expanded_full))
+        return '+';
+    return 'x';
+}
+
 void	ft_export(t_xcmd *xcmd, t_data *data)
 {
 	int			i;
+	int			j;
 	t_export	*new;
 	char		c;
 
 	if (no_arg_export(xcmd, data))
 		return ;
-	i = 1;
-	while (xcmd->cmd[i])
+
+	for (i = 1, j = 1; xcmd->cmd[i]; i++)
 	{
-		if (!is_invalid(xcmd->cmd[i]))
+		if (is_invalid(xcmd->expanded_full[1]))
 		{
-			new = create_new_node(xcmd->cmd[i]);
-			if (!already_exists(data, xcmd->cmd[i])
-				|| (already_exists(data, xcmd->cmd[i])
-				&& !is_addition(xcmd->cmd[i])))
-				c = 'x';
-			else if (is_addition(xcmd->cmd[i])
-				&& already_exists(data, xcmd->cmd[i]))
-				c = '+';
+			print_invalid_identifier(xcmd->cmd[i], &xcmd->exit_status);
+			continue;
+		}
+		while (!is_invalid(xcmd->expanded_full[j]))
+		{
+			new = create_new_node(xcmd->cmd[i], xcmd->expanded_full[j]);
+			c = determine_node_type(data, xcmd->expanded_full[j]);
 			add_node(data, new, c);
+			j++;
 		}
-		else
-		{
-			ft_putstr_fd("export: `", 2);
-			ft_putstr_fd(xcmd->cmd[i], 2);
-			ft_putstr_fd("': not a valid identifier\n", 2);
-			xcmd->exit_status = 1;
-		}
-		i++;
 	}
 }
+
+
+// void	ft_export(t_xcmd *xcmd, t_data *data)
+// {
+// 	int			i;
+// 	int			j;
+// 	t_export	*new;
+// 	char		c;
+
+// 	if (no_arg_export(xcmd, data))
+// 		return ;
+// 	i = 1;
+// 	j = 1;
+// 	while (xcmd->cmd[i])
+// 	{
+// 		while (!is_invalid(xcmd->expanded_full[j]))
+// 		{
+// 			if (xcmd->expanded_full[j] == NULL)
+// 				return ;
+// 			new = create_new_node(xcmd->cmd[i], xcmd->expanded_full[j]);
+// 			if (!already_exists(data, xcmd->expanded_full[j])
+// 				|| (already_exists(data, xcmd->expanded_full[j])
+// 				&& !is_addition(xcmd->expanded_full[j])))
+// 				c = 'x';
+// 			else if (is_addition(xcmd->expanded_full[j])
+// 				&& already_exists(data, xcmd->expanded_full[j]))
+// 				c = '+';
+// 			add_node(data, new, c);
+// 			j++;
+// 		}
+// 		if (is_invalid(xcmd->expanded_full[1]))
+// 		{
+// 			ft_putstr_fd("export: `", 2);
+// 			ft_putstr_fd(xcmd->cmd[i], 2);
+// 			ft_putstr_fd("`: not a valid identifier\n", 2);
+// 			xcmd->exit_status = 1;
+// 		}
+// 		i++;
+// 	}
+// }
 
 //update env

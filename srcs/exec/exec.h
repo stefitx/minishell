@@ -39,6 +39,8 @@ typedef struct s_xcmd
 	int		cmd_id;
 	int		nr_cmds;
 	char	**cmd;
+	//int		is_var;
+	char	**expanded_full;
 	int		builtin;
 	char	*path;
 	int		nr_redir_out;

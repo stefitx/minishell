@@ -93,8 +93,11 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 			execution(data, cmd[i]);
 			exit(0);
 		}
-		else if (cmd[i]->builtin)
+		if (cmd[i]->builtin)
+		{
+			//printf("builtin\n");
 			builtin_execution(data, cmd, i);
+		}
 		if (i < (*cmd)->nr_cmds)
 			close(cmd[i]->pipefd[1]);
 		if (!cmd[i]->builtin)
@@ -114,6 +117,12 @@ void	parse_and_exec(char *s, t_data *data)
 		return ;
 	add_history(s);
 	xcmd = init_exe_cmd(cmd);
+	// int i = 0;
+	// while (xcmd[0]->expanded_full[i])
+	// {
+	// 	printf("cmd[%d]: %s\n", i, xcmd[0]->expanded_full[i]);
+	// 	i++;
+	// }
 	redir_and_execute(xcmd, data);
 	clear_single_cmd_list(cmd->cmd_list);
 	free(cmd);
