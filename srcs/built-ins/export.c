@@ -20,10 +20,14 @@ t_export	*get_existing_node_position(t_data *data, char *name)
 	if (!data || !data->export_list || !name)
 		return (NULL);
 	cursor = data->export_list;
-	while (cursor->next)
+	while (cursor)
 	{
-		if (cursor->next->name && !ft_strncmp(cursor->next->name, name, ft_strlen(name)))
-			return (cursor);
+		if (cursor->next)
+		{
+			if (cursor->next->name
+				&& !ft_strncmp(cursor->next->name, name, ft_strlen(name)))
+				return (cursor);
+		}
 		cursor = cursor->next;
 	}
 	return (NULL);
@@ -86,52 +90,48 @@ t_export	*create_new_node(char *str, char *full_str)
 			new->name = ft_substr(str, 0, equal_pos);
 		else
 			new->name = ft_substr(str, 0, equal_pos - 1);
-		new->value = ft_strdup(full_str + equal_pos + 1);
+		if (full_str[equal_pos + 1] == '\0')
+			new->value = NULL;
+		else 
+			new->value = ft_strdup(full_str + equal_pos + 1);
 	}
 	new->str = ft_strdup(full_str);
 	new->next = NULL;
 	return (new);
 }
 
-int	no_arg_export(t_xcmd *xcmd, t_data *data)
-{
-	t_env	*cursor;
-	t_export	*cursor2;
+int no_arg_export(t_xcmd *xcmd, t_data *data) {
+    t_env *env_cursor;
+    t_export *export_cursor;
 
-	if (xcmd->expanded_full[1] == NULL)
-	{
-		if (data->env_list)
-		{
-			cursor = data->env_list;
-			while (cursor->name[0] != '?')
-			{
-				ft_putstr_fd("declare -x ", 1);
-				ft_putstr_fd(cursor->name, 1);
-				ft_putstr_fd("=", 1);
-				ft_putstr_fd(cursor->val, 1);
-				ft_putstr_fd("\n", 1);
-				cursor = cursor->next;
-			}
-		}
-		cursor2 = data->export_list->next;
-		while (cursor2)
-		{
-			ft_putstr_fd("declare -x ", 1);
-			ft_putstr_fd(cursor2->name, 1);
-			if (cursor2->value)
-			{
-				ft_putstr_fd("=", 1);
-				ft_putstr_fd("\"", 1);
-				ft_putstr_fd(cursor2->value, 1);
-				ft_putstr_fd("\"", 1);
-			}
-			ft_putstr_fd("\n", 1);
-			cursor2 = cursor2->next;
-		}
-		return (1);
-	}
-	return (0);
+    if (xcmd->expanded_full[1] == NULL) {
+        if (data->env_list) {
+            env_cursor = data->env_list;
+            while (env_cursor) {
+                if (env_cursor->name && env_cursor->val && env_cursor->name[0] != '?') {  // Ensure both name and val are not NULL
+                    printf("declare -x %s=\"%s\"\n", env_cursor->name, env_cursor->val);
+                }
+                env_cursor = env_cursor->next;
+            }
+        }
+
+        // Handle export list
+        export_cursor = data->export_list;
+        while (export_cursor) {
+            if (export_cursor->name) {  // Ensure name is not NULL
+                printf("declare -x %s", export_cursor->name);
+                if (export_cursor->value) {
+                    printf("=\"%s\"", export_cursor->value);
+                }
+                printf("\n");
+            }
+            export_cursor = export_cursor->next;
+        }
+        return 1;
+    }
+    return 0;
 }
+
 
 
 void print_invalid_identifier(char* cmd, int* exit_status)
@@ -154,34 +154,6 @@ char determine_node_type(t_data* data, char* expanded_full)
     return 'x';
 }
 
-void	ft_export(t_xcmd *xcmd, t_data *data)
-{
-	int			i;
-	int			j;
-	t_export	*new;
-	char		c;
-
-	if (no_arg_export(xcmd, data))
-		return ;
-
-	for (i = 1, j = 1; xcmd->cmd[i]; i++)
-	{
-		if (is_invalid(xcmd->expanded_full[1]))
-		{
-			print_invalid_identifier(xcmd->cmd[i], &xcmd->exit_status);
-			continue;
-		}
-		while (!is_invalid(xcmd->expanded_full[j]))
-		{
-			new = create_new_node(xcmd->cmd[i], xcmd->expanded_full[j]);
-			c = determine_node_type(data, xcmd->expanded_full[j]);
-			add_node(data, new, c);
-			j++;
-		}
-	}
-}
-
-
 // void	ft_export(t_xcmd *xcmd, t_data *data)
 // {
 // 	int			i;
@@ -191,34 +163,64 @@ void	ft_export(t_xcmd *xcmd, t_data *data)
 
 // 	if (no_arg_export(xcmd, data))
 // 		return ;
-// 	i = 1;
-// 	j = 1;
-// 	while (xcmd->cmd[i])
+
+// 	for (i = 1, j = 1; xcmd->cmd[i]; i++)
 // 	{
-// 		while (!is_invalid(xcmd->expanded_full[j]))
-// 		{
-// 			if (xcmd->expanded_full[j] == NULL)
-// 				return ;
-// 			new = create_new_node(xcmd->cmd[i], xcmd->expanded_full[j]);
-// 			if (!already_exists(data, xcmd->expanded_full[j])
-// 				|| (already_exists(data, xcmd->expanded_full[j])
-// 				&& !is_addition(xcmd->expanded_full[j])))
-// 				c = 'x';
-// 			else if (is_addition(xcmd->expanded_full[j])
-// 				&& already_exists(data, xcmd->expanded_full[j]))
-// 				c = '+';
-// 			add_node(data, new, c);
-// 			j++;
-// 		}
 // 		if (is_invalid(xcmd->expanded_full[1]))
 // 		{
-// 			ft_putstr_fd("export: `", 2);
-// 			ft_putstr_fd(xcmd->cmd[i], 2);
-// 			ft_putstr_fd("`: not a valid identifier\n", 2);
-// 			xcmd->exit_status = 1;
+// 			print_invalid_identifier(xcmd->cmd[i], &xcmd->exit_status);
+// 			continue;
 // 		}
-// 		i++;
+// 		while (!is_invalid(xcmd->expanded_full[j]))
+// 		{
+// 			new = create_new_node(xcmd->cmd[i], xcmd->expanded_full[j]);
+// 			c = determine_node_type(data, xcmd->expanded_full[j]);
+// 			add_node(data, new, c);
+// 			j++;
+// 			i++;
+// 		}
 // 	}
+// 	xcmd->exit_status = 0;
 // }
 
-//update env
+
+void	ft_export(t_xcmd *xcmd, t_data *data)
+{
+	int			i;
+	int			j;
+	t_export	*new;
+	char		c;
+
+	if (no_arg_export(xcmd, data))
+		return ;
+	i = 1;
+	j = 1;
+	while (xcmd->cmd[i])
+	{
+		if (!is_invalid(xcmd->expanded_full[j]))
+		{
+			if (xcmd->expanded_full[j] == NULL)
+				return ;
+			new = create_new_node(xcmd->cmd[i], xcmd->expanded_full[j]);
+			if (!already_exists(data, xcmd->expanded_full[j])
+				|| (already_exists(data, xcmd->expanded_full[j])
+				&& !is_addition(xcmd->expanded_full[j])))
+				c = 'x';
+			else if (is_addition(xcmd->expanded_full[j])
+				&& already_exists(data, xcmd->expanded_full[j]))
+				c = '+';
+			add_node(data, new, c);
+		}
+		if (is_invalid(xcmd->expanded_full[j]))
+		{
+			ft_putstr_fd("export: `", 2);
+			ft_putstr_fd(xcmd->expanded_full[j], 2);
+			ft_putstr_fd("`: not a valid identifier\n", 2);
+			xcmd->exit_status = 1;
+		}
+		i++;
+		j++;
+	}
+}
+
+// //update env

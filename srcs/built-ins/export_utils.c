@@ -86,7 +86,7 @@ void	init_export(t_export **export_arr)
 	t_export	*temp;
 
 	temp = malloc(sizeof(t_export) * 1);
-	temp->name = NULL;
+	temp->name = "?";
 	temp->value = NULL;
 	temp->str = NULL;
 	temp->next = NULL;

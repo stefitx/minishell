@@ -56,13 +56,11 @@ void	builtin_execution(t_data *data, t_xcmd **cmd, int i)
 		ft_exit(xcmd, &flag);
 	}
 	else if (ft_strcmp(xcmd->cmd[0], "export") != 0)
-	{
 		ft_export(xcmd, data);
-	}
-		// else if (strcmp(xcmd->cmd[0], "pwd") == 0)
-		// 	ft_pwd();
-		// else if (ft_strcmp(cmd->cmd[0], "unset") == 0)
-		// 	ft_unset(cmd->cmd, env);
+	else if (ft_strcmp(xcmd->cmd[0], "pwd") != 0)
+		ft_pwd(cmd[i]);
+	else if (ft_strcmp(xcmd->cmd[0], "unset") != 0)
+		ft_unset(cmd[i], data);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
 	close(orig_stdin);
@@ -141,12 +139,4 @@ void	parse_and_exec(char *s, t_data *data)
 */
 
 
-// ok so we have 3 cases: a=b, a=, a
-// free export arr in the end
-// shortking👑$ export b
-// is not addition
-// new->name: 
-// new->value: ""
-// new->str: b
-// found in export list
-// [1]    61259 segmentation fault  ./minishell
+// add exit status in all builtins

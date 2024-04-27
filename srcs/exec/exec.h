@@ -107,13 +107,19 @@ void	ft_exit(t_xcmd *xcmd, int *flag);
 // export
 void	ft_export(t_xcmd *xcmd, t_data *data);
 void	init_export(t_export **export_arr);
+t_export	*get_existing_node_position(t_data *data, char *name);
+
 // export_utils
 int	already_exists(t_data *data, char *name);
 int	is_addition(char *str);
 int	is_invalid(char *str);
 void	init_export(t_export **export_arr);
 int has_equal_sign(char *str);
+
 // pwd
+void	ft_pwd(t_xcmd *xcmd);
 
 // unset
+void	ft_unset(t_xcmd *xcmd, t_data *data);
+
 #endif
