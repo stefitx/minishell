@@ -6,14 +6,14 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/16 14:25:53 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/18 12:42:48 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/27 15:38:27 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
-#include "../../inc/minishell.h"
+# include "../../inc/minishell.h"
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>

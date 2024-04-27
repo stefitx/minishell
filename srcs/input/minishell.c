@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/26 13:35:03 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/04/27 15:44:15 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,10 @@ static void	parse_cmd(char *s, t_env *env)
 				}
 				else
 					printf("  Expanded: (null)\n");
-				printf("Expanded Full: %s\n", cursor3->text_token->expanded_full);
-				printf("Expanded Joined: %s\n", cursor3->text_token->expanded_joined);
+				printf("Expanded Full: %s\n",
+					cursor3->text_token->expanded_full);
+				printf("Expanded Joined: %s\n",
+					cursor3->text_token->expanded_joined);
 				cursor3 = cursor3->next;
 			}
 		}
@@ -140,8 +142,8 @@ static void	rl_blank_line(void)
 		ft_strappend(&temp, " ");
 	rl_on_new_line();
 	rl_replace_line(temp, 1);
-	free(temp);
 	rl_redisplay();
+	free(temp);
 }
 
 static void	sig_handler_idle(int signal)
@@ -156,6 +158,8 @@ static void	sig_handler_idle(int signal)
 			rl_on_new_line();
 			rl_redisplay();
 		}
+		else if (ft_strlen(rl_line_buffer) <= 2)
+			rl_replace_line("", 1);
 	}
 }
 
