@@ -86,7 +86,6 @@ void	execution(t_data *data, t_xcmd *cmd)
 
 	env = env_to_arr(data->env_list);
 	cmd->path = access_path(cmd->cmd, env);
-	printf("path: %s\n", cmd->path);
 	if (execve(cmd->path, cmd->cmd, env) == -1)
 	{
 		free(cmd->path);

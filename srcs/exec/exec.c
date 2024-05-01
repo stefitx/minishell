@@ -12,66 +12,58 @@
 
 #include "../../inc/minishell.h"
 
-void	save_exitstatus(t_xcmd **cmd, int i)
+void	save_exitstatus(t_xcmd **cmd, t_data *data, int i)
 {
-	int	status;
+	//int	status;
+	int last_cmd;
 
-	i = 0;
-	while (i < (*cmd)->nr_cmds)
-	{
-		if (!(*cmd)->builtin)
-		{
-			waitpid((*cmd)->pid[i], &status, 0);
-			if (WIFEXITED(status))
-				(*cmd)[i].exit_status = WEXITSTATUS(status);
-		}
-		i++;
-	}
+	(void)i;
+	last_cmd = (*cmd)->nr_cmds - 1;
+	env_set_var(&data->env_list, "?", ft_itoa((*cmd)[last_cmd].exit_status));
 }
 
-void	builtin_execution(t_data *data, t_xcmd **cmd, int i)
+int	builtin_menu(t_xcmd **xcmd, int i, t_data *data)
+{
+	if (ft_strcmp(xcmd[i]->cmd[0], "exit") == 0)
+	{
+		if (ft_strcmp(xcmd[i]->cmd[0], "cd") != 0)
+			ft_cd(xcmd[i], data->env_list);
+		else if (ft_strcmp(xcmd[i]->cmd[0], "echo") != 0)
+			ft_echo(xcmd[i]);
+		else if (ft_strcmp(xcmd[i]->cmd[0], "env") != 0)
+			ft_env(xcmd[i], data);
+		else if (ft_strcmp(xcmd[i]->cmd[0], "export") != 0)
+			ft_export(xcmd[i], data);
+		else if (ft_strcmp(xcmd[i]->cmd[0], "pwd") != 0)
+			ft_pwd(xcmd[i]);
+		else if (ft_strcmp(xcmd[i]->cmd[0], "unset") != 0)
+			ft_unset(xcmd[i], data);
+		return (1);
+	}
+	else
+		return (0);
+}
+
+void	builtin_execution(t_data *data, t_xcmd **xcmd, int i)
 {
 	int		orig_stdin;
 	int		orig_stdout;
-	char	**env;
-	t_xcmd	*xcmd;
 	int		flag;
 
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
-	env = env_to_arr(data->env_list);
-	xcmd = cmd[i];
 	flag = 0;
-	redirections(cmd, i, &flag);
-	if (ft_strcmp(xcmd->cmd[0], "cd") != 0)
-		ft_cd(xcmd, env);
-	else if (ft_strcmp(xcmd->cmd[0], "echo") != 0)
-		ft_echo(xcmd);
-	else if (ft_strcmp(xcmd->cmd[0], "env") != 0)
-		ft_env(xcmd, data);
-	else if (ft_strcmp(xcmd->cmd[0], "exit") != 0)
+	redirections(xcmd, i, &flag);
+	if (!builtin_menu(xcmd, i, data) && ft_strcmp(xcmd[i]->cmd[0], "exit") != 0)
 	{
 		dup2(orig_stdin, STDIN_FILENO);
 		dup2(orig_stdout, STDOUT_FILENO);
-		ft_exit(xcmd, &flag);
+		ft_exit(xcmd[i], &flag);
 	}
-	else if (ft_strcmp(xcmd->cmd[0], "export") != 0)
-		ft_export(xcmd, data);
-	else if (ft_strcmp(xcmd->cmd[0], "pwd") != 0)
-		ft_pwd(cmd[i]);
-	else if (ft_strcmp(xcmd->cmd[0], "unset") != 0)
-		ft_unset(cmd[i], data);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
 	close(orig_stdin);
 	close(orig_stdout);
-	i = 0;
-	while (env[i])
-	{
-		free(env[i]);
-		i++;
-	}
-	free(env);
 }
 
 void	redir_and_execute(t_xcmd **cmd, t_data *data)
@@ -92,17 +84,18 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 			exit(0);
 		}
 		if (cmd[i]->builtin)
-		{
-			//printf("builtin\n");
 			builtin_execution(data, cmd, i);
-		}
 		if (i < (*cmd)->nr_cmds)
 			close(cmd[i]->pipefd[1]);
 		if (!cmd[i]->builtin)
+		{
 			waitpid((*cmd)->pid[i], &status, 0);
+			cmd[i]->exit_status = WEXITSTATUS(status);
+			printf("exit status: %d\n", cmd[i]->exit_status);
+		}
 		i++;
 	}
-	save_exitstatus(cmd, i);
+	save_exitstatus(cmd, data, i);
 }
 
 void	parse_and_exec(char *s, t_data *data)
@@ -115,28 +108,13 @@ void	parse_and_exec(char *s, t_data *data)
 		return ;
 	add_history(s);
 	xcmd = init_exe_cmd(cmd);
-	// int i = 0;
-	// while (xcmd[0]->expanded_full[i])
-	// {
-	// 	printf("cmd[%d]: %s\n", i, xcmd[0]->expanded_full[i]);
-	// 	i++;
-	// }
 	redir_and_execute(xcmd, data);
 	clear_single_cmd_list(cmd->cmd_list);
 	free(cmd);
 }
 
 /*
-- deal with the freaking pointers darling
-- WORKING HISTORY ASAP PLS BABE (Done :D dunno if these were meant for me lmao)
-- free everything babyyyyy
+- free everything!
 - lexer??
-- put the exit status in the env
-- sabe exit statuses CORRECTLY
-- what in the world is up with ft_strcmp? (Returns 0 (false) if they're equal,
-	returns a non-zero value otherwise (counter-intuitive, I know))
 - ambiguous redirects????
 */
-
-
-// add exit status in all builtins

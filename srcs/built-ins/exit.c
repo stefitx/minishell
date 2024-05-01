@@ -32,6 +32,8 @@ void	ft_exit(t_xcmd *xcmd, int *flag)
 {
 	int	i;
 
+	if (xcmd->exit_status != 0)
+		return ;
 	i = 0;
 	if (xcmd->cmd[1])
 	{

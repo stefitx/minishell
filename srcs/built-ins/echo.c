@@ -37,6 +37,8 @@ void	ft_echo(t_xcmd *cmd)
 	i = 1;
 	n_flag = 0;
 	count = 0;
+	if (cmd->exit_status != 0)
+		return ;
 	if (cmd->cmd[1] && ft_strncmp(cmd->cmd[i], "-n", 2) == 0)
 	{
 		n_flag = check_n_flag(cmd->cmd[1]);

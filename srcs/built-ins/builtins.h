@@ -31,7 +31,7 @@ typedef struct s_export
 {
 	char			*name;
 	char			*value;
-	char			*str;
+	int				add;
 	struct s_export	*next;
 }	t_export;
 

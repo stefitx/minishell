@@ -15,7 +15,7 @@
 void	env_set_var(t_env **env, char *name, char *val)
 {
 	t_env	*var;
-
+	
 	var = env_get_var(*env, name);
 	if (!var)
 		env_add_var(env, name, val);

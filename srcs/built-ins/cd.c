@@ -12,8 +12,38 @@
 
 #include "../inc/minishell.h"
 
-void	ft_cd(t_xcmd *cmd, char **env)
+void		change_directories(t_xcmd *cmd, t_env *env_list)
 {
+	char	**env;
+	char	**home_path;
+	int		i;
+
+	env = env_to_arr(env_list);
+	home_path= find_path(env, "HOME=");
+	if (home_path == NULL || *home_path == NULL)
+	{
+		ft_putstr_fd("minishell: cd: HOME not set\n", 2);
+		cmd->exit_status = 1;
+		return ;
+	}
+	else
+	{
+		chdir(home_path[0]);
+		cmd->exit_status = 44;
+	}
+	i = 0;
+	while (env[i])
+	{
+		free(env[i]);
+		i++;
+	}
+	free(env);
+}
+
+void	ft_cd(t_xcmd *cmd, t_env *env_list)
+{
+	if (cmd->exit_status != 0)
+		return ;
     if (cmd->cmd[1] != NULL)
     {
         if (chdir(cmd->cmd[1]) != 0) 
@@ -25,16 +55,5 @@ void	ft_cd(t_xcmd *cmd, char **env)
         }
     }
     else
-    {
-        char **home_path = NULL;
-		home_path= find_path(env, "HOME=");
-        if (home_path == NULL || *home_path == NULL)
-		{
-			ft_putstr_fd("minishell: cd: HOME not set\n", 2);
-			cmd->exit_status = 1;
-			return;
-		}
-		else
-			chdir(home_path[0]);
-    }
+		change_directories(cmd, env_list);
 }

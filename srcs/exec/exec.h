@@ -92,7 +92,7 @@ void	redirections(t_xcmd **cmd, int i, int *flag);
 char	**get_cmd_array(t_single_cmd *cmd);
 
 // cd
-void	ft_cd(t_xcmd *cmd, char **env);
+void	ft_cd(t_xcmd *cmd, t_env *env_list);
 
 // echo
 void	ft_echo(t_xcmd *cmd);

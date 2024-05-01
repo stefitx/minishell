@@ -54,8 +54,6 @@ void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid)
 	cursor = cursor->next;
 }
 
-//if it's a variable that needs expanding, use the full expanded value
-
 char	**get_cmd_array(t_single_cmd *cmd)
 {
 	t_text_token	*t_text_token;
@@ -94,23 +92,13 @@ char	**get_cmd_array(t_single_cmd *cmd)
 			{
 				
 				if (t_str_node->str != NULL)
-				{
-					//printf("t_str_node->str: %s\n", t_str_node->str);
 					args[i++] = ft_strdup(t_str_node->str);
-				}
 				t_str_node = t_str_node->next;
 			}
 		}
-		//printf("here\n");
 		t_text_token = t_text_token->next;
 	}
 	args[i] = NULL;
-	// int j = 0;
-	// while (args[j])
-	// {
-	// 	//printf("args[%d]: %s\n", j, args[j]);
-	// 	j++;
-	// }
 	return (args);
 }
 
@@ -125,10 +113,7 @@ char	**get_expanded_full(t_single_cmd *cmd)
 	while (t_text_token)
 	{
 		if (t_text_token->expanded_full != NULL)
-		{
-			// printf("t_text_token->expanded_full: %s\n", t_text_token->expanded_full);
 			i++;
-		}
 		t_text_token = t_text_token->next;
 	}
 	expanded_full = malloc(sizeof(char *) * (i + 1));
@@ -139,10 +124,7 @@ char	**get_expanded_full(t_single_cmd *cmd)
 	while (t_text_token)
 	{
 		if (t_text_token->expanded_full != NULL)
-		{
-			//printf("t_text_token->expanded_full: %s\n", t_text_token->expanded_full);
 			expanded_full[i++] = ft_strdup(t_text_token->expanded_full);
-		}
 		t_text_token = t_text_token->next;
 	}
 	expanded_full[i] = NULL;
@@ -180,12 +162,6 @@ t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
 		if (t_single_cmd)
 		{
 			xcmd[i]->expanded_full = get_expanded_full(t_single_cmd);
-			// int j = 0;
-			// while (xcmd[i]->expanded_full[j])
-			// {
-			// 	printf("expanded_full[%d]: %s\n", j, xcmd[i]->expanded_full[j]);
-			// 	j++;
-			// }
 			xcmd[i]->cmd = get_cmd_array(t_single_cmd);
 		}
 		xcmd[i]->cmd_id = i;

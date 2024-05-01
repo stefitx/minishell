@@ -41,19 +41,6 @@ void	count_args(t_text_token *text, char ***args)
 	(*args) = malloc(sizeof(char *) * (i + 1));
 }
 
-void	allocate_cmd_and_pid(t_xcmd **xcmd, int nr_cmds)
-{
-	(*xcmd) = malloc(sizeof(t_xcmd *) * nr_cmds);
-	// if (!(*xcmd))
-	// 	exit(EXIT_FAILURE);
-	(*xcmd)->pid = malloc(sizeof(pid_t) * nr_cmds);
-	if (!(*xcmd)->pid)
-	{
-		free(*xcmd);
-		//exit(EXIT_FAILURE);
-	}
-}
-
 void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 {
 	t_redir_token	*temp;
@@ -90,8 +77,5 @@ int	check_builtin(char **xcmd)
 	if (ft_strcmp(xcmd[0], "unset") != 0)
 			return (1);
 	else
-	{
-		//printf("Command not builtin: %s\n", xcmd[0]);
 		return (0);
-	}
 }

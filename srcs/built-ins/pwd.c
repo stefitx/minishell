@@ -18,6 +18,8 @@ void	ft_pwd(t_xcmd *xcmd)
 	char	*pwd;
 
 	pwd = getcwd(NULL, 0);
+	if (xcmd->exit_status != 0)
+		return ;
 	if (!pwd)
 	{
 		ft_putstr_fd("minishell: pwd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n", 2);

@@ -16,11 +16,14 @@ void	ft_env(t_xcmd *cmd, t_data *data)
 {
 	t_env *cursor;
 
+	if (cmd->exit_status != 0)
+		return ;
 	cursor = data->env_list;
 	while (cursor)
 	{
 		if (ft_strcmp(cursor->name, "?") == 0
-			&& ft_strcmp(cursor->name, "IFS") == 0)
+			&& ft_strcmp(cursor->name, "IFS") == 0
+			&& cursor->val)
 			{
 				ft_putstr_fd(cursor->name, 1);
 				ft_putstr_fd("=", 1);

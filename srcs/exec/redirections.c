@@ -50,8 +50,13 @@ void	out_redir(t_xcmd *cmd)
 			cmd->fd_o = open(cmd->out[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (cmd->fd_o < 0)
 		{
+			write(2, "minishell: ", 11);
 			perror(cmd->out[i]);
-			exit(EXIT_FAILURE);
+			cmd->exit_status = 1;
+			if (!cmd->builtin)
+				exit(1);
+			if (cmd->builtin)
+				return ;
 		}
 		i++;
 	}
@@ -77,7 +82,11 @@ void	in_redir(t_xcmd *cmd)
 		{
 			write(2, "minishell: ", 11);
 			perror(cmd->infile[i]);
-			exit(EXIT_FAILURE);
+			cmd->exit_status = 1;
+			if (!cmd->builtin)
+				exit(EXIT_FAILURE);
+			else if (cmd->builtin)
+				return ;
 		}
 		i++;
 	}
