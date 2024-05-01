@@ -53,7 +53,7 @@ void	ft_exit(t_xcmd *xcmd, int *flag)
 				ft_putstr_fd("exit\n", 1);
 				if (*flag)
 					return ;
-				//xcmd->exit_status = (unsigned int)i;
+				xcmd->exit_status = (unsigned int)i;
 				exit((unsigned int)i);
 			}
 		}
@@ -66,6 +66,7 @@ void	ft_exit(t_xcmd *xcmd, int *flag)
 			if (*flag)
 				return ;
 			xcmd->exit_status = 255;
+			exit(255);
 		}
 	}
 	else

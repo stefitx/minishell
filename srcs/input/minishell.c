@@ -194,7 +194,8 @@ int	main(int argc, char **argv, char **env)
 			write(STDOUT_FILENO, "exit\n", 5);
 			exit(0);
 		}
-		//parse_cmd(line, our_env);
+	//	parse_cmd(line, our_env);
+
 		parse_and_exec(line, &data);
 		free(line);
 	}

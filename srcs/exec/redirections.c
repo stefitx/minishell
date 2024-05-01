@@ -34,29 +34,60 @@ int	eval_heredoc(char *limiter)
 	return (heredoc_fd[0]);
 }
 
-void	out_redir(t_xcmd *cmd)
+int	ambiguous_redir(char **redir, t_xcmd *cmd)
 {
 	int	i;
 
 	i = 0;
+	while (redir && redir[i] != NULL)
+		i++;
+	if (i != 1 || redir == NULL)
+	{
+		write(2, "minishell: ", 11);
+		write(2, "ambiguous redirect\n", 19);
+		cmd->exit_status = 1;
+		if (!cmd->builtin)
+			exit(1);
+		return (1);
+	}
+	return (0);
+}
+
+void	out_redir(t_xcmd *cmd)
+{
+	int	i;
+	int		j;
+	char	*temp;
+
+	i = 0;
 	while (i < cmd->nr_redir_out)
 	{
-		if (cmd->out[i][0] == '\n')
+		if (ambiguous_redir(cmd->out[i], cmd))
+			return ;
+		j = 0;
+		while (cmd->out[i][j] != NULL)
 		{
-			cmd->out[i] = ft_strtrim(cmd->infile[i], " \n");
-			cmd->fd_o = open(cmd->out[i], O_WRONLY | O_CREAT | O_APPEND, 0644);
-		}
-		else
-			cmd->fd_o = open(cmd->out[i], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		if (cmd->fd_o < 0)
-		{
-			write(2, "minishell: ", 11);
-			perror(cmd->out[i]);
-			cmd->exit_status = 1;
-			if (!cmd->builtin)
-				exit(1);
-			if (cmd->builtin)
-				return ;
+			if (cmd->out[i][j][0] == '\n')
+			{
+				temp = ft_strtrim(cmd->out[i][j], " \n");
+				free(cmd->out[i][j]);
+				cmd->out[i][j] = temp;
+				free(temp);
+				cmd->fd_o = open(cmd->out[i][j], O_WRONLY | O_CREAT | O_APPEND, 0644);
+			}
+			else
+				cmd->fd_o = open(cmd->out[i][j], O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (cmd->fd_o < 0)
+			{
+				write(2, "minishell: ", 11);
+				perror(cmd->out[i][j]);
+				cmd->exit_status = 1;
+				if (!cmd->builtin)
+					exit(1);
+				if (cmd->builtin)
+					return ;
+			}
+			j++;
 		}
 		i++;
 	}
@@ -66,27 +97,40 @@ void	out_redir(t_xcmd *cmd)
 
 void	in_redir(t_xcmd *cmd)
 {
-	int	i;
+	int		i;
+	int		j;
+	char	*temp;
+	char	**redirs;
 
 	i = 0;
 	while (cmd->infile[i] != NULL && i < cmd->nr_redir_in)
 	{
-		if (cmd->infile[i][0] == '\n')
+		redirs = cmd->infile[i];
+		if (ambiguous_redir(redirs, cmd))
+			return ;
+		j = 0;
+		while (redirs[j] != NULL)
 		{
-			cmd->infile[i] = ft_strtrim(cmd->infile[i], " \n");
-			cmd->fd_in = eval_heredoc(cmd->infile[i]);
-		}
-		else
-			cmd->fd_in = open(cmd->infile[i], O_RDONLY);
-		if (cmd->fd_in < 0)
-		{
-			write(2, "minishell: ", 11);
-			perror(cmd->infile[i]);
-			cmd->exit_status = 1;
-			if (!cmd->builtin)
-				exit(EXIT_FAILURE);
-			else if (cmd->builtin)
-				return ;
+			if (redirs[j][0] == '\n')
+			{
+				temp = ft_strtrim(redirs[j], " \n");
+				free(redirs[j]);
+				redirs[j] = temp;
+				cmd->fd_in = eval_heredoc(redirs[j]);
+			}
+			else
+				cmd->fd_in = open(redirs[j], O_RDONLY);
+			if (cmd->fd_in < 0)
+			{
+				write(2, "minishell: ", 11);
+				perror(redirs[j]);
+				cmd->exit_status = 1;
+				if (!cmd->builtin)
+					exit(EXIT_FAILURE);
+				else if (cmd->builtin)
+					return ;
+			}
+			j++;
 		}
 		i++;
 	}

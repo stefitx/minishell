@@ -45,9 +45,9 @@ typedef struct s_xcmd
 	char	*path;
 	int		nr_redir_out;
 	int		nr_redir_in;
-	char	**infile;
+	char	***infile;
 	int		fd_in;
-	char	**out;
+	char	***out;
 	int		fd_o;
 	int		pipefd[2];
 	pid_t	*pid;
