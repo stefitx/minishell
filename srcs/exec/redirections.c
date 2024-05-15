@@ -63,7 +63,10 @@ void	out_redir(t_xcmd *cmd)
 	while (i < cmd->nr_redir_out)
 	{
 		if (ambiguous_redir(cmd->out[i], cmd))
+		{
+			printf("in outfile\n");
 			return ;
+		}
 		j = 0;
 		while (cmd->out[i][j] != NULL)
 		{
@@ -103,11 +106,16 @@ void	in_redir(t_xcmd *cmd)
 	char	**redirs;
 
 	i = 0;
-	while (cmd->infile[i] != NULL && i < cmd->nr_redir_in)
+	while (i < cmd->nr_redir_in)
 	{
-		redirs = cmd->infile[i];
-		if (ambiguous_redir(redirs, cmd))
+		if (ambiguous_redir(cmd->infile[i], cmd))
+		{
+			printf("in infile\n");
 			return ;
+		}
+		if (cmd->infile[i] != NULL)
+		{
+		redirs = cmd->infile[i];
 		j = 0;
 		while (redirs[j] != NULL)
 		{
@@ -131,6 +139,7 @@ void	in_redir(t_xcmd *cmd)
 					return ;
 			}
 			j++;
+		}
 		}
 		i++;
 	}

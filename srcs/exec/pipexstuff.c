@@ -59,6 +59,13 @@ char	*access_path(char **cmd, char **env)
 	char	**split_path;
 
 	split_path = find_path(env, "PATH=");
+	if (split_path == NULL)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd[0], 2);
+		ft_putstr_fd(": no such file or directory\n", 2);
+		exit(127);
+	}
 	if (access(cmd[0], F_OK) == 0)
 	{
 		if (access(cmd[0], X_OK) == -1)
@@ -72,7 +79,7 @@ char	*access_path(char **cmd, char **env)
 	path = construct_command_path(split_path, cmd[0]);
 	if (path != NULL)
 		return (path);
-	ft_putstr_fd("zsh: ", 2);
+	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd[0], 2);
 	ft_putstr_fd(": command not found\n", 2);
 	exit(127);
@@ -86,6 +93,7 @@ void	execution(t_data *data, t_xcmd *cmd)
 
 	env = env_to_arr(data->env_list);
 	cmd->path = access_path(cmd->cmd, env);
+	printf("executing: %s\n", cmd->path);
 	if (execve(cmd->path, cmd->cmd, env) == -1)
 	{
 		free(cmd->path);

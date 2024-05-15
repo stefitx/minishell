@@ -62,6 +62,8 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 
 int	check_builtin(char **xcmd)
 {
+	if (xcmd[0] == NULL || xcmd == NULL)
+		return (0);
 	if (ft_strcmp(xcmd[0], "cd") != 0)
 		return (1);
 	if (ft_strcmp(xcmd[0], "echo") != 0)

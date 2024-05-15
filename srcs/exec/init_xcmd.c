@@ -66,90 +66,138 @@ int	count_redir_strings(t_redir_token *parse_redir, enum e_redir_types redir_typ
 
 // }
 
-void	fill_redirs(t_xcmd *x, t_redir_token *parse_redir)
+// void	fill_redirs(t_xcmd *x, t_redir_token *parse_redir)
+// {
+// 	t_redir_token	*temp;
+// 	t_str_node	*text;
+// 	int				i;
+// 	int				j;
+// 	int				k;
+
+// 	i = 0;
+// 	j = 0;
+// 	temp = parse_redir;
+
+// 	x->infile = malloc(sizeof(char **) * (x->nr_redir_in + 1));
+// 	x->out = malloc(sizeof(char **) * (x->nr_redir_out + 1));
+// 	while (temp)
+// 	{
+// 		if (temp->redir_type == REDIR_INFILE)
+// 		{
+// 			x->infile[i] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, REDIR_INFILE) + 1));
+// 			if (temp->text_token->expanded)
+// 			{
+// 				text = temp->text_token->expanded;
+// 				k = 0;
+// 				while (text && text->str)
+// 				{
+// 					x->infile[i][k++] = ft_strdup(text->str);
+// 					text = text->next;
+// 				}
+// 				x->infile[i][k] = NULL;
+// 				i++;
+// 			}
+// 		}
+// 		else if (temp->redir_type == REDIR_HEREDOC)
+// 		{
+// 			x->infile[i] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, REDIR_HEREDOC) + 1));
+// 			if (temp->text_token->expanded)
+// 			{
+// 				text = temp->text_token->expanded;
+// 				k = 0;
+// 				while (text && text->str)
+// 				{
+// 					x->infile[i][k++] = ft_strjoin("\n", text->str);
+// 					text = text->next;
+// 				}
+// 				x->infile[i][k] = NULL;
+// 				i++;
+// 			}
+// 		}
+// 		else if (temp->redir_type == REDIR_OUTFILE)
+// 		{
+// 			x->out[j] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, REDIR_OUTFILE) + 1));
+// 			if (temp->text_token->expanded)
+// 			{
+// 				text = temp->text_token->expanded;
+// 				k = 0;
+// 				while (text && text->str)
+// 				{
+// 					x->out[j][k++] = ft_strdup(text->str);
+// 					text = text->next;
+// 				}
+// 				x->out[i][k] = NULL;
+// 				j++;
+// 			}
+// 		}
+// 		else if (temp->redir_type == REDIR_APPEND)
+// 		{
+// 			x->out[j] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, REDIR_APPEND) + 1));
+// 			if (temp->text_token->expanded)
+// 			{
+// 				text = temp->text_token->expanded;
+// 				k = 0;
+// 				while (text && text->str)
+// 				{
+// 					x->out[j][k++] = ft_strdup(text->str);
+// 					text = text->next;
+// 				}
+// 				x->out[i][k] = NULL;
+// 				j++;
+// 			}
+// 		}
+// 		temp = temp->next;
+// 	}
+// 	x->infile[i] = NULL;
+// 	x->out[j] = NULL;
+// }
+
+void fill_redir(t_xcmd *x, t_redir_token *parse_redir, int redir_type, int *index)
 {
-	t_redir_token	*temp;
-	t_str_node	*text;
-	int				i;
-	int				j;
-	int				k;
+    t_str_node *text;
+    int k = 0;
 
-	i = 0;
-	j = 0;
-	temp = parse_redir;
+    x->infile[*index] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, redir_type) + 1));
+    if (parse_redir->text_token->expanded)
+    {
+        text = parse_redir->text_token->expanded;
+        while (text && text->str)
+        {
+            x->infile[*index][k++] = (redir_type == REDIR_HEREDOC) ? ft_strjoin("\n", text->str) : ft_strdup(text->str);
+            text = text->next;
+        }
+        x->infile[*index][k] = NULL;
+        (*index)++;
+    }
+}
 
-	x->infile = malloc(sizeof(char **) * (x->nr_redir_in + 1));
-	x->out = malloc(sizeof(char **) * (x->nr_redir_out + 1));
-	while (temp)
-	{
-		if (temp->redir_type == REDIR_INFILE)
-		{
-			x->infile[i] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, REDIR_INFILE) + 1));
-			if (temp->text_token->expanded)
-			{
-				text = temp->text_token->expanded;
-				k = 0;
-				while (text && text->str)
-				{
-					x->infile[i][k++] = ft_strdup(text->str);
-					text = text->next;
-				}
-				x->infile[i][k] = NULL;
-				i++;
-			}
-		}
-		else if (temp->redir_type == REDIR_HEREDOC)
-		{
-			x->infile[i] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, REDIR_HEREDOC) + 1));
-			if (temp->text_token->expanded)
-			{
-				text = temp->text_token->expanded;
-				k = 0;
-				while (text && text->str)
-				{
-					x->infile[i][k++] = ft_strjoin("\n", text->str);
-					text = text->next;
-				}
-				x->infile[i][k] = NULL;
-				i++;
-			}
-		}
-		else if (temp->redir_type == REDIR_OUTFILE)
-		{
-			x->out[j] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, REDIR_OUTFILE) + 1));
-			if (temp->text_token->expanded)
-			{
-				text = temp->text_token->expanded;
-				k = 0;
-				while (text && text->str)
-				{
-					x->out[j][k++] = ft_strdup(text->str);
-					text = text->next;
-				}
-				x->out[i][k] = NULL;
-				j++;
-			}
-		}
-		else if (temp->redir_type == REDIR_APPEND)
-		{
-			x->out[j] = malloc(sizeof(char *) * (count_redir_strings(parse_redir, REDIR_APPEND) + 1));
-			if (temp->text_token->expanded)
-			{
-				text = temp->text_token->expanded;
-				k = 0;
-				while (text && text->str)
-				{
-					x->out[j][k++] = ft_strdup(text->str);
-					text = text->next;
-				}
-				x->out[i][k] = NULL;
-				j++;
-			}
-		}
-		temp = temp->next;
-	}
-	x->infile[i] = NULL;
-	x->out[j] = NULL;
+void fill_redirs(t_xcmd *x, t_redir_token *parse_redir)
+{
+    t_redir_token *temp;
+    int i = 0;
+    int j = 0;
+
+    temp = parse_redir;
+    x->infile = malloc(sizeof(char **) * (x->nr_redir_in + 1));
+    x->out = malloc(sizeof(char **) * (x->nr_redir_out + 1));
+
+    while (temp)
+    {
+        switch (temp->redir_type)
+        {
+            case REDIR_INFILE:
+            case REDIR_HEREDOC:
+                fill_redir(x, temp, temp->redir_type, &i);
+                break;
+            case REDIR_OUTFILE:
+            case REDIR_APPEND:
+                fill_redir(x, temp, temp->redir_type, &j);
+                break;
+        }
+        temp = temp->next;
+    }
+    x->infile[i] = NULL;
+    x->out[j] = NULL;
 }
 
 void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid)
@@ -158,12 +206,20 @@ void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid)
 
 	xcmd->nr_cmds = nr_cmds;
 	xcmd->exit_status = 0;
+	xcmd->nr_redir_in = 0;
+	xcmd->nr_redir_out = 0;
 	xcmd->builtin = check_builtin(xcmd->cmd);
 	check_redirs = cursor->redirs;
 	if (check_redirs != NULL)
+	{
+		printf("redirs not null\n");
 		count_redirs(xcmd, check_redirs);
+	}
 	if (xcmd->nr_redir_in > 0 || xcmd->nr_redir_out > 0)
+	{
+		printf("redirs not null222222\n");
 		fill_redirs(xcmd, check_redirs);
+	}
 	xcmd->pid = pid;
 	cursor = cursor->next;
 }

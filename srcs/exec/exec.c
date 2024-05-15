@@ -117,6 +117,13 @@ void	parse_and_exec(char *s, t_data *data)
 - lexer??
 - ambiguous redirects????
 
+- heredocs get evluated first, before any syntax error or any commands
+$? < $? | <$? <$?
+
+
+
+
+
 shortking👑$ echo "Hello, World" > $gyufi
 AddressSanitizer:DEADLYSIGNAL
 =================================================================
