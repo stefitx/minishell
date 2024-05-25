@@ -23,6 +23,7 @@
 # include <sys/stat.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <dirent.h>
 
 # include "./libft/libft.h"
 # include "parser.h"

@@ -33,10 +33,7 @@ void	add_node(t_data *data, t_export *new)
 
 void	equal_sign(int equal_pos, char *full_str, char *str, t_export *new)
 {
-	if (full_str[equal_pos + 1] == '\0' && equal_pos == 0)
-		new->value = NULL;
-	else 
-		new->value = ft_strdup(full_str + equal_pos + 1);
+	new->value = ft_strdup(full_str + equal_pos + 1);
 	if (!is_addition(str))
 		new->name = ft_substr(str, 0, equal_pos);
 	else if (is_addition(str))
@@ -57,9 +54,12 @@ t_export	*create_new_node(char *str, char *full_str)
 	if (!new)
 		return (NULL);
 	new->add = 0;
-	if (equal_pos == 0)
+	if (full_str[equal_pos + 1] == '\0' && equal_pos == 0)
+	{
 		new->name = ft_strdup(str);
-	else if (equal_pos >= 0)
+		new->value = NULL;
+	}
+	else if (equal_pos > 0)
 		equal_sign(equal_pos, full_str, str, new);
 	return (new);
 }
@@ -78,9 +78,13 @@ int	no_arg_export(t_xcmd *xcmd, t_data *data)
 				{
 					ft_putstr_fd("declare -x ", 1);
 					ft_putstr_fd(cursor->name, 1);
-					ft_putstr_fd("=\"", 1);
-					ft_putstr_fd(cursor->val, 1);
-					ft_putstr_fd("\"\n", 1);
+					if (cursor->val)
+					{
+						ft_putstr_fd("=\"", 1);
+						ft_putstr_fd(cursor->val, 1);
+						ft_putstr_fd("\"", 1);
+					}
+					ft_putstr_fd("\n", 1);
 				}
 				cursor = cursor->next;
 			}

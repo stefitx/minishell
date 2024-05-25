@@ -20,7 +20,7 @@ t_pipe_token	*create_pipe_token(void)
 	token = ft_calloc(1, sizeof(t_pipe_token));
 	if (!token)
 		return (NULL);
-	pipe(fds);
+	// pipe(fds);
 	token->fd_in = fds[0];
 	token->fd_out = fds[1];
 	token->next = NULL;

@@ -19,6 +19,7 @@ void	env_add_var(t_env **env, char *name, char *val)
 
 	if (!env || !name || !*name)
 		return ;
+
 	new = ft_calloc(1, sizeof(t_env));
 	if (!new)
 		return ;

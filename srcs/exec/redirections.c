@@ -63,11 +63,10 @@ void	out_redir(t_xcmd *cmd)
 	while (i < cmd->nr_redir_out)
 	{
 		if (ambiguous_redir(cmd->out[i], cmd))
-		{
-			printf("in outfile\n");
 			return ;
-		}
 		j = 0;
+		// if (cmd->out)
+		// 	dprintf(1, "Hola\n");
 		while (cmd->out[i][j] != NULL)
 		{
 			if (cmd->out[i][j][0] == '\n')
@@ -109,10 +108,7 @@ void	in_redir(t_xcmd *cmd)
 	while (i < cmd->nr_redir_in)
 	{
 		if (ambiguous_redir(cmd->infile[i], cmd))
-		{
-			printf("in infile\n");
 			return ;
-		}
 		if (cmd->infile[i] != NULL)
 		{
 		redirs = cmd->infile[i];
@@ -156,16 +152,27 @@ void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 		{
 			dup2(cmd[i]->pipefd[1], 1);
 			close(cmd[i]->pipefd[1]);
+			close(cmd[i]->pipefd[0]);
 		}
 		else if (cmd[i]->cmd_id > 0)
 		{
 			dup2(cmd[i - 1]->pipefd[0], 0);
 			close(cmd[i - 1]->pipefd[0]);
+			// if (i == cmd[i]->nr_cmds - 1)
+			// 	close(cmd[i]->pipefd[0]);
+			// else
+			// {
+			// 	dup2(cmd[i]->pipefd[1], 1);
+			// 	close(cmd[i]->pipefd[1]);
+			// 	//close(cmd[i]->pipefd[0]);
+			// }
+			close(cmd[i]->pipefd[0]);
 			if (i < cmd[i]->nr_cmds - 1)
 			{
 				dup2(cmd[i]->pipefd[1], 1);
 				close(cmd[i]->pipefd[1]);
 			}
+			
 		}
 	}
 }
@@ -173,6 +180,9 @@ void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 void	redirections(t_xcmd **cmd, int i, int *flag)
 {
 	pipe_redir(cmd, i, flag);
+	(void)flag;
+	// close(cmd[i]->pipefd[0]);
+	// close(cmd[i]->pipefd[1]);
 	if (cmd[i]->nr_redir_in > 0)
 		in_redir(cmd[i]);
 	if (cmd[i]->nr_redir_out > 0)

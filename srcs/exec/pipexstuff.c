@@ -53,26 +53,48 @@ char	*construct_command_path(char **split_path, char *command)
 	return (NULL);
 }
 
+void	check_if_directory(char **split_path, char **cmd)
+{
+	DIR*	dir;
+
+	if (cmd[0] != NULL)
+	{
+		dir = opendir(cmd[0]);
+		if (ft_strchr(cmd[0], '/') != NULL)
+		{
+			if (dir || errno != ENOTDIR)
+			{
+				closedir(dir);
+				ft_putstr_fd(cmd[0], 2);
+				ft_putstr_fd(": is a directory\n", 2);
+				exit(126);
+			}
+		}
+		else if (split_path == NULL || errno == ENOTDIR)
+		{
+			closedir(dir);
+			ft_putstr_fd("minishell: ", 2);
+			ft_putstr_fd(cmd[0], 2);
+			ft_putstr_fd(": no such file or directory\n", 2);
+			exit(127);
+		}
+	}
+}
+
 char	*access_path(char **cmd, char **env)
 {
 	char	*path;
 	char	**split_path;
 
 	split_path = find_path(env, "PATH=");
-	if (split_path == NULL)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd[0], 2);
-		ft_putstr_fd(": no such file or directory\n", 2);
-		exit(127);
-	}
+	check_if_directory(split_path, cmd);
 	if (access(cmd[0], F_OK) == 0)
 	{
-		if (access(cmd[0], X_OK) == -1)
+		if (access(cmd[0], X_OK) == -1)	
 		{
-			ft_putstr_fd(cmd[0], 2);
-			ft_putstr_fd(": Permission denied\n", 2);
-			exit(126);
+			ft_putstr_fd("minishell: ", 2);
+			perror(cmd[0]);
+			exit(EXIT_FAILURE);
 		}
 		return (cmd[0]);
 	}
@@ -91,9 +113,10 @@ void	execution(t_data *data, t_xcmd *cmd)
 	char	**env;
 	int		i;
 
+	if (cmd->cmd[0] == NULL || !cmd->cmd || !cmd->cmd[0][0])
+		exit(0);
 	env = env_to_arr(data->env_list);
 	cmd->path = access_path(cmd->cmd, env);
-	printf("executing: %s\n", cmd->path);
 	if (execve(cmd->path, cmd->cmd, env) == -1)
 	{
 		free(cmd->path);

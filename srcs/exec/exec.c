@@ -67,34 +67,103 @@ void	builtin_execution(t_data *data, t_xcmd **xcmd, int i)
 
 void	redir_and_execute(t_xcmd **cmd, t_data *data)
 {
+	int		orig_stdin;
+	int		orig_stdout;
+
 	int		i;
 	int		status;
 
+	orig_stdin = dup(STDIN_FILENO);
+	orig_stdout = dup(STDOUT_FILENO);
+	printf("orig_stdin = %d\n", orig_stdin);
+	printf("orig_stdout = %d\n", orig_stdout);
+	i = 0;
+	while (i < (*cmd)->nr_cmds)
+	{
+		if (cmd[i]->builtin)
+		{
+			builtin_execution(data, cmd, i);
+			//close(cmd[i]->pipefd[1]);
+			i++;
+			continue;
+		}
+		else
+		{
+			if (i < (*cmd)->nr_cmds - 1)
+		{
+			pipe_error(cmd[i]->pipefd);
+			printf("pipe %d created: WRITE = %d\n", i, cmd[i]->pipefd[1]);
+			printf("pipe %d created: READ = %d\n", i, cmd[i]->pipefd[0]);
+			//printf("pipe %d created\n", i);
+		}
+			(*cmd)->pid[i] = fork();
+			if ((*cmd)->pid[i] == 0)
+			{
+				signal(SIGINT, SIG_DFL);
+				redirections(cmd, i, &status);
+				
+				close(cmd[i]->pipefd[1]);
+				//close(cmd[i]->pipefd[0]);
+				//close(cmd[i - 1]->pipefd[0]);
+				if (i > 0)
+				{
+					close(cmd[i - 1]->pipefd[0]);
+					close(cmd[i - 1]->pipefd[1]);
+				}
+				if (i == (*cmd)->nr_cmds - 1)
+					close(cmd[i]->pipefd[0]);
+				// return;
+				execution(data, cmd[i]);
+				exit(0);
+			}
+		}
+
+		if (cmd[i]->fd_in != -3)
+			close(cmd[i]->fd_in);
+		if (cmd[i]->fd_o != -3)
+			close(cmd[i]->fd_o);
+		//close(cmd[i]->pipefd[1]);
+		//close(cmd[i]->pipefd[0]);
+		// close(cmd[i - 1]->pipefd[0]);
+
+		if (i > 0)
+		{
+			close(cmd[i - 1]->pipefd[0]); //DONT TOUCH
+			close(cmd[i - 1]->pipefd[1]);
+			printf("pipe %d closed\n", cmd[i - 1]->pipefd[0]);
+			printf("pipe %d closed\n", cmd[i - 1]->pipefd[1]);
+		}
+			// printf("exit status: %d\n", cmd[i]->exit_status);
+		i++;
+	}
+		// int j = i - 1;
+		// while(j > 0)
+		// {
+			// close(4);
+			// close(3);
+		// 	printf("pipe %d closed\n", cmd[j]->pipefd[0]);
+		// 	printf("pipe %d closed\n", cmd[j]->pipefd[1]);
+		// 	j--;
+		// }
 	i = 0;
 	while (i < (*cmd)->nr_cmds)
 	{
 		if (!cmd[i]->builtin)
-			(*cmd)->pid[i] = fork();
-		if ((*cmd)->pid[i] == 0 && !cmd[i]->builtin)
-		{
-			signal(SIGINT, SIG_DFL);
-			redirections(cmd, i, &status);
-			execution(data, cmd[i]);
-			exit(0);
-		}
-		if (cmd[i]->builtin)
-			builtin_execution(data, cmd, i);
-		if (i < (*cmd)->nr_cmds)
-			close(cmd[i]->pipefd[1]);
-		if (!cmd[i]->builtin)
 		{
 			waitpid((*cmd)->pid[i], &status, 0);
-			cmd[i]->exit_status = WEXITSTATUS(status);
-			// printf("exit status: %d\n", cmd[i]->exit_status);
+			if (WIFEXITED(status))
+				cmd[i]->exit_status = WEXITSTATUS(status);
+			printf("exit status: %d\n", cmd[i]->exit_status);
 		}
 		i++;
 	}
-	save_exitstatus(cmd, data, i);
+	dup2(orig_stdin, STDIN_FILENO);
+	dup2(orig_stdout, STDOUT_FILENO);
+	close(orig_stdin);
+	close(orig_stdout);
+	//wait3(NULL, 0, NULL);
+	//env_set_var(&data->env_list, "?", ft_itoa((*cmd)[i].exit_status));
+	//save_exitstatus(cmd, data, i);
 }
 
 void	parse_and_exec(char *s, t_data *data)
@@ -114,42 +183,20 @@ void	parse_and_exec(char *s, t_data *data)
 
 /*
 - free everything!
-- lexer??
-- ambiguous redirects????
 
-- heredocs get evluated first, before any syntax error or any commands
 $? < $? | <$? <$?
 
+ls -la > out | wc out >> out they cant write to the same file?? or
+whats happening is: they act at the same time but why isnt the first one overwritten
+ls -la > out | wc out > out
 
+fork builtins if more than one command
 
+initialize all fds to -3
 
+close dem pipes pls
 
-shortking👑$ echo "Hello, World" > $gyufi
-AddressSanitizer:DEADLYSIGNAL
-=================================================================
-==17398==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x000100733c58 bp 0x00016f6d69a0 sp 0x00016f6d66f0 T0)
-==17398==The signal is caused by a READ memory access.
-==17398==Hint: address points to the zero page.
-    #0 0x100733c58 in fill_redirs+0x690 (minishell:arm64+0x10000bc58)
-    #1 0x100734344 in fill+0x31c (minishell:arm64+0x10000c344)
-    #2 0x1007351e8 in allocate_and_fill+0x544 (minishell:arm64+0x10000d1e8)
-    #3 0x1007352fc in init_exe_cmd+0x48 (minishell:arm64+0x10000d2fc)
-    #4 0x1007334c0 in parse_and_exec+0xe8 (minishell:arm64+0x10000b4c0)
-    #5 0x10072d738 in main+0x374 (minishell:arm64+0x100005738)
-    #6 0x18eaf50dc  (<unknown module>)
+also free everything
 
-==17398==Register values:
- x[0] = 0x0000000103404f10   x[1] = 0x0000000000000010   x[2] = 0x0000000000000000   x[3] = 0x0000000103404f20  
- x[4] = 0x0000000103404f20   x[5] = 0x0000000000000001   x[6] = 0x000000016eedc000   x[7] = 0x0000000000000001  
- x[8] = 0x0000000000000000   x[9] = 0x0000000000000000  x[10] = 0x0000000103404f18  x[11] = 0x000000700001ffff  
-x[12] = 0x000000016f6d5f00  x[13] = 0xb282da96c51b7fad  x[14] = 0x0000000000007e01  x[15] = 0x0000000000000006  
-x[16] = 0x00000001010a8ad8  x[17] = 0x00000001010e80b8  x[18] = 0x0000000000000000  x[19] = 0x000000016f6d6d80  
-x[20] = 0x000000010072d3c4  x[21] = 0x000000016f6d6ea0  x[22] = 0x0000000100b5d910  x[23] = 0x000000016f6d6f20  
-x[24] = 0x000000016f6d6f60  x[25] = 0x000000018eb745bb  x[26] = 0x0000000000000000  x[27] = 0x0000000000000000  
-x[28] = 0x0000000000000000     fp = 0x000000016f6d69a0     lr = 0x0000000100733744     sp = 0x000000016f6d66f0  
-AddressSanitizer can not provide additional info.
-SUMMARY: AddressSanitizer: SEGV (minishell:arm64+0x10000bc58) in fill_redirs+0x690
-==17398==ABORTING
-
-
+not all write ends are closed
 */

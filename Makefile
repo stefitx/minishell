@@ -20,8 +20,8 @@ COLOR_CYAN=\033[1;36m
 PREFIX=$(COLOR_YELLOW)[MINISHELL]$(COLOR_NONE)  
 
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror #-fsanitize=address
-INCLUDE	=	-I./inc -I./readline
+CFLAGS	=	-Wall -Wextra -Werror -g -fsanitize=address
+INCLUDE	=	-I./inc -I./readline 
 RM		=	rm -fr
 
 NAME	=	minishell
@@ -139,7 +139,7 @@ libft:
 $(RDLINE_ROOT)libreadline.a: rdline
 
 rdline:	$(RDLINE_ROOT)libreadline.a
-	cd $(RDLINE_ROOT) && ./configure && make --no-print-directory
+	#cd $(RDLINE_ROOT) && ./configure && make --no-print-directory
 
 $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
 	@mkdir -p $(dir $@)

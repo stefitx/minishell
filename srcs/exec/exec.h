@@ -28,7 +28,7 @@
 # include "../built-ins/builtins.h"
 
 //Executor
-typedef struct s_data
+typedef struct s
 {
 	t_env			*env_list;
 	t_export		*export_list;
