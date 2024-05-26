@@ -49,6 +49,8 @@ typedef struct s_xcmd
 	int		fd_in;
 	char	***out;
 	int		fd_o;
+	int		nr_heredoc;
+	char	**heredoc;
 	int		pipefd[2];
 	pid_t	*pid;
 	int		exit_status;

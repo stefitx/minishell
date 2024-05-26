@@ -42,18 +42,19 @@ void	ft_exit(t_xcmd *xcmd, int *flag)
 			i = ft_atoi(xcmd->cmd[1]);
 			if (xcmd->cmd[2])
 			{
-				ft_putstr_fd("exit\n", 2);
+				if (!*flag)
+					ft_putstr_fd("exit\n", 2);
 				ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-				if (*flag)
-					return ;
+				// if (*flag)
+				// 	return ;
 				xcmd->exit_status = 1;
 			}
 			else
 			{
 				ft_putstr_fd("exit\n", 1);
+				xcmd->exit_status = (unsigned int)i;
 				if (*flag)
 					return ;
-				xcmd->exit_status = (unsigned int)i;
 				exit((unsigned int)i);
 			}
 		}
@@ -63,9 +64,9 @@ void	ft_exit(t_xcmd *xcmd, int *flag)
 			ft_putstr_fd("minishell: exit: ", 2);
 			ft_putstr_fd(xcmd->cmd[1], 2);
 			ft_putstr_fd(": numeric argument required\n", 2);
+			xcmd->exit_status = 255;
 			if (*flag)
 				return ;
-			xcmd->exit_status = 255;
 			exit(255);
 		}
 	}

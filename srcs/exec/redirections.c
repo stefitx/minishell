@@ -158,14 +158,6 @@ void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 		{
 			dup2(cmd[i - 1]->pipefd[0], 0);
 			close(cmd[i - 1]->pipefd[0]);
-			// if (i == cmd[i]->nr_cmds - 1)
-			// 	close(cmd[i]->pipefd[0]);
-			// else
-			// {
-			// 	dup2(cmd[i]->pipefd[1], 1);
-			// 	close(cmd[i]->pipefd[1]);
-			// 	//close(cmd[i]->pipefd[0]);
-			// }
 			close(cmd[i]->pipefd[0]);
 			if (i < cmd[i]->nr_cmds - 1)
 			{
@@ -180,9 +172,6 @@ void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 void	redirections(t_xcmd **cmd, int i, int *flag)
 {
 	pipe_redir(cmd, i, flag);
-	(void)flag;
-	// close(cmd[i]->pipefd[0]);
-	// close(cmd[i]->pipefd[1]);
 	if (cmd[i]->nr_redir_in > 0)
 		in_redir(cmd[i]);
 	if (cmd[i]->nr_redir_out > 0)

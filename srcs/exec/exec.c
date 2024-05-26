@@ -75,36 +75,26 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
-	printf("orig_stdin = %d\n", orig_stdin);
-	printf("orig_stdout = %d\n", orig_stdout);
 	i = 0;
 	while (i < (*cmd)->nr_cmds)
 	{
-		if (cmd[i]->builtin)
+		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
+		|| ft_strcmp(cmd[i]->cmd[0], "exit") != 0)
 		{
 			builtin_execution(data, cmd, i);
-			//close(cmd[i]->pipefd[1]);
-			i++;
-			continue;
 		}
 		else
 		{
 			if (i < (*cmd)->nr_cmds - 1)
-		{
-			pipe_error(cmd[i]->pipefd);
-			printf("pipe %d created: WRITE = %d\n", i, cmd[i]->pipefd[1]);
-			printf("pipe %d created: READ = %d\n", i, cmd[i]->pipefd[0]);
-			//printf("pipe %d created\n", i);
-		}
+				pipe_error(cmd[i]->pipefd);
 			(*cmd)->pid[i] = fork();
 			if ((*cmd)->pid[i] == 0)
 			{
 				signal(SIGINT, SIG_DFL);
 				redirections(cmd, i, &status);
-				
+				if (cmd[i]->builtin)
+					builtin_menu(cmd, i, data);
 				close(cmd[i]->pipefd[1]);
-				//close(cmd[i]->pipefd[0]);
-				//close(cmd[i - 1]->pipefd[0]);
 				if (i > 0)
 				{
 					close(cmd[i - 1]->pipefd[0]);
@@ -112,21 +102,12 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 				}
 				if (i == (*cmd)->nr_cmds - 1)
 					close(cmd[i]->pipefd[0]);
-				// return;
-				execution(data, cmd[i]);
+				if (!cmd[i]->builtin)
+					execution(data, cmd[i]);
 				exit(0);
 			}
 		}
-
-		if (cmd[i]->fd_in != -3)
-			close(cmd[i]->fd_in);
-		if (cmd[i]->fd_o != -3)
-			close(cmd[i]->fd_o);
-		//close(cmd[i]->pipefd[1]);
-		//close(cmd[i]->pipefd[0]);
-		// close(cmd[i - 1]->pipefd[0]);
-
-		if (i > 0)
+		if (i > 0 && (*cmd)->nr_cmds > 1)
 		{
 			close(cmd[i - 1]->pipefd[0]); //DONT TOUCH
 			close(cmd[i - 1]->pipefd[1]);
@@ -136,15 +117,6 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 			// printf("exit status: %d\n", cmd[i]->exit_status);
 		i++;
 	}
-		// int j = i - 1;
-		// while(j > 0)
-		// {
-			// close(4);
-			// close(3);
-		// 	printf("pipe %d closed\n", cmd[j]->pipefd[0]);
-		// 	printf("pipe %d closed\n", cmd[j]->pipefd[1]);
-		// 	j--;
-		// }
 	i = 0;
 	while (i < (*cmd)->nr_cmds)
 	{
@@ -190,13 +162,9 @@ ls -la > out | wc out >> out they cant write to the same file?? or
 whats happening is: they act at the same time but why isnt the first one overwritten
 ls -la > out | wc out > out
 
-fork builtins if more than one command
-
-initialize all fds to -3
-
-close dem pipes pls
-
 also free everything
 
-not all write ends are closed
+fix heredoc
+fix exitstatus
+refractor ugly redir function
 */
