@@ -12,28 +12,6 @@
 
 #include "../../inc/minishell.h"
 
-int	eval_heredoc(char *limiter)
-{
-	int		heredoc_fd[2];
-	char	*line;
-
-	pipe_error(heredoc_fd);
-	while (1)
-	{
-		line = readline("> ");
-		if (!line || ft_strcmp(line, limiter))
-		{
-			free(line);
-			break ;
-		}
-		write(heredoc_fd[1], line, ft_strlen(line));
-		write(heredoc_fd[1], "\n", 1);
-		free(line);
-	}
-	close(heredoc_fd[1]);
-	return (heredoc_fd[0]);
-}
-
 int	ambiguous_redir(char **redir, t_xcmd *cmd)
 {
 	int	i;
@@ -65,17 +43,16 @@ void	out_redir(t_xcmd *cmd)
 		if (ambiguous_redir(cmd->out[i], cmd))
 			return ;
 		j = 0;
-		// if (cmd->out)
-		// 	dprintf(1, "Hola\n");
 		while (cmd->out[i][j] != NULL)
 		{
 			if (cmd->out[i][j][0] == '\n')
 			{
+				printf("here\n");
 				temp = ft_strtrim(cmd->out[i][j], " \n");
 				free(cmd->out[i][j]);
 				cmd->out[i][j] = temp;
-				free(temp);
 				cmd->fd_o = open(cmd->out[i][j], O_WRONLY | O_CREAT | O_APPEND, 0644);
+				free(temp);			
 			}
 			else
 				cmd->fd_o = open(cmd->out[i][j], O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -101,7 +78,6 @@ void	in_redir(t_xcmd *cmd)
 {
 	int		i;
 	int		j;
-	char	*temp;
 	char	**redirs;
 
 	i = 0;
@@ -111,31 +87,23 @@ void	in_redir(t_xcmd *cmd)
 			return ;
 		if (cmd->infile[i] != NULL)
 		{
-		redirs = cmd->infile[i];
-		j = 0;
-		while (redirs[j] != NULL)
-		{
-			if (redirs[j][0] == '\n')
+			redirs = cmd->infile[i];
+			j = 0;
+			while (redirs[j] != NULL)
 			{
-				temp = ft_strtrim(redirs[j], " \n");
-				free(redirs[j]);
-				redirs[j] = temp;
-				cmd->fd_in = eval_heredoc(redirs[j]);
-			}
-			else
 				cmd->fd_in = open(redirs[j], O_RDONLY);
-			if (cmd->fd_in < 0)
-			{
-				write(2, "minishell: ", 11);
-				perror(redirs[j]);
-				cmd->exit_status = 1;
-				if (!cmd->builtin)
-					exit(EXIT_FAILURE);
-				else if (cmd->builtin)
-					return ;
+				if (cmd->fd_in < 0)
+				{
+					write(2, "minishell: ", 11);
+					perror(redirs[j]);
+					cmd->exit_status = 1;
+					if (!cmd->builtin)
+						exit(EXIT_FAILURE);
+					else if (cmd->builtin)
+						return ;
+				}
+				j++;
 			}
-			j++;
-		}
 		}
 		i++;
 	}

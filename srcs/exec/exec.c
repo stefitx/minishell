@@ -21,6 +21,65 @@ void	save_exitstatus(t_xcmd **cmd, t_data *data, int i)
 	env_set_var(&data->env_list, "?", ft_itoa((*cmd)[last_cmd].exit_status));
 }
 
+int	eval_heredoc(char ***heredoc, int nr_heredoc)
+{
+	int		heredoc_fd[2];
+	char	*line;
+	char	*limiter;
+	int		i;
+	int		j;
+
+	i = 0;
+	j = 0;
+	while (i < nr_heredoc)
+	{
+		j = 0;
+		if (heredoc[i][j])
+			limiter = heredoc[i][j];
+		else
+			limiter = NULL;
+		pipe_error(heredoc_fd);
+		j++;
+		while (1)
+		{
+			line = readline("> ");
+			if (!line || ft_strcmp(line, limiter))
+			{
+				free(line);
+				break ;
+			}
+			write(heredoc_fd[1], line, ft_strlen(line));
+			write(heredoc_fd[1], "\n", 1);
+			free(line);
+		}
+		while (heredoc[i][j])
+		{
+			if (j != 0)
+			{
+				close(heredoc_fd[0]);
+				close(heredoc_fd[1]);
+			}
+			pipe_error(heredoc_fd);
+			while (1)
+			{
+				line = readline("> ");
+				if (!line || ft_strcmp(line, limiter))
+				{
+					free(line);
+					break ;
+				}
+				write(heredoc_fd[1], line, ft_strlen(line));
+				write(heredoc_fd[1], "\n", 1);
+				free(line);
+			}
+			j++;
+		}
+		i++;
+	}
+	close(heredoc_fd[1]);
+	return (heredoc_fd[0]);
+}
+
 int	builtin_menu(t_xcmd **xcmd, int i, t_data *data)
 {
 	if (ft_strcmp(xcmd[i]->cmd[0], "exit") == 0)
@@ -52,6 +111,8 @@ void	builtin_execution(t_data *data, t_xcmd **xcmd, int i)
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
 	flag = 0;
+	if (xcmd[i]->nr_heredoc > 0)
+		dup2(eval_heredoc(xcmd[i]->heredoc, xcmd[i]->nr_heredoc), STDIN_FILENO);
 	redirections(xcmd, i, &flag);
 	if (!builtin_menu(xcmd, i, data) && ft_strcmp(xcmd[i]->cmd[0], "exit") != 0)
 	{
@@ -69,6 +130,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 {
 	int		orig_stdin;
 	int		orig_stdout;
+	int		heredoc_fd = 0;
 
 	int		i;
 	int		status;
@@ -80,9 +142,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	{
 		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
 		|| ft_strcmp(cmd[i]->cmd[0], "exit") != 0)
-		{
 			builtin_execution(data, cmd, i);
-		}
 		else
 		{
 			if (i < (*cmd)->nr_cmds - 1)
@@ -91,6 +151,11 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 			if ((*cmd)->pid[i] == 0)
 			{
 				signal(SIGINT, SIG_DFL);
+				if (cmd[i]->nr_heredoc > 0)
+				{
+					heredoc_fd = eval_heredoc(cmd[i]->heredoc, cmd[i]->nr_heredoc);
+					dup2(heredoc_fd, STDIN_FILENO);
+				}
 				redirections(cmd, i, &status);
 				if (cmd[i]->builtin)
 					builtin_menu(cmd, i, data);
@@ -107,6 +172,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 				exit(0);
 			}
 		}
+
 		if (i > 0 && (*cmd)->nr_cmds > 1)
 		{
 			close(cmd[i - 1]->pipefd[0]); //DONT TOUCH
@@ -114,6 +180,8 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 			printf("pipe %d closed\n", cmd[i - 1]->pipefd[0]);
 			printf("pipe %d closed\n", cmd[i - 1]->pipefd[1]);
 		}
+		if (cmd[i]->nr_heredoc > 0)
+			close(heredoc_fd);
 			// printf("exit status: %d\n", cmd[i]->exit_status);
 		i++;
 	}
