@@ -12,14 +12,22 @@
 
 #include "../../inc/minishell.h"
 
-int	ambiguous_redir(char **redir, t_xcmd *cmd)
+int	ambiguous_redir(t_text_token *redir, t_xcmd *cmd)
 {
 	int	i;
+	t_text_token	*temp;
+	t_str_node		*temp2;
 
 	i = 0;
-	while (redir && redir[i] != NULL)
-		i++;
-	if (i != 1 || redir == NULL)
+	temp = redir;
+	temp2 = temp->expanded;
+	while (temp2)
+	{
+		if (temp2->str)
+			i++;
+		temp2 = temp2->next;
+	}
+	if (i != 1 || redir->expanded->str == NULL)
 	{
 		write(2, "minishell: ", 11);
 		write(2, "ambiguous redirect\n", 19);
@@ -33,42 +41,34 @@ int	ambiguous_redir(char **redir, t_xcmd *cmd)
 
 void	out_redir(t_xcmd *cmd)
 {
-	int	i;
-	int		j;
-	char	*temp;
+	t_redir_token	*temp;
 
-	i = 0;
-	while (i < cmd->nr_redir_out)
+	temp = cmd->redirs;
+	while (temp && temp->text_token)
 	{
-		if (ambiguous_redir(cmd->out[i], cmd))
-			return ;
-		j = 0;
-		while (cmd->out[i][j] != NULL)
+		if (temp->redir_type == REDIR_OUTFILE || temp->redir_type == REDIR_APPEND)
 		{
-			if (cmd->out[i][j][0] == '\n')
+			if (ambiguous_redir(temp->text_token, cmd))
+				return ;
+			if (temp->text_token && temp->text_token->expanded)
 			{
-				printf("here\n");
-				temp = ft_strtrim(cmd->out[i][j], " \n");
-				free(cmd->out[i][j]);
-				cmd->out[i][j] = temp;
-				cmd->fd_o = open(cmd->out[i][j], O_WRONLY | O_CREAT | O_APPEND, 0644);
-				free(temp);			
+				if (temp->redir_type == REDIR_APPEND)
+					cmd->fd_o = open(temp->text_token->expanded->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				else
+					cmd->fd_o = open(temp->text_token->expanded->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				if (cmd->fd_o < 0)
+				{
+					write(2, "minishell: ", 11);
+					perror(temp->text_token->expanded->str);
+					cmd->exit_status = 1;
+					if (!cmd->builtin)
+						exit(1);
+					if (cmd->builtin)
+						return ;
+				}
 			}
-			else
-				cmd->fd_o = open(cmd->out[i][j], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (cmd->fd_o < 0)
-			{
-				write(2, "minishell: ", 11);
-				perror(cmd->out[i][j]);
-				cmd->exit_status = 1;
-				if (!cmd->builtin)
-					exit(1);
-				if (cmd->builtin)
-					return ;
-			}
-			j++;
 		}
-		i++;
+		temp = temp->next;
 	}
 	dup2(cmd->fd_o, STDOUT_FILENO);
 	close(cmd->fd_o);
@@ -76,36 +76,31 @@ void	out_redir(t_xcmd *cmd)
 
 void	in_redir(t_xcmd *cmd)
 {
-	int		i;
-	int		j;
-	char	**redirs;
+	t_redir_token	*temp;
 
-	i = 0;
-	while (i < cmd->nr_redir_in)
+	temp = cmd->redirs;
+	while (temp && temp->text_token)
 	{
-		if (ambiguous_redir(cmd->infile[i], cmd))
-			return ;
-		if (cmd->infile[i] != NULL)
+		if (temp->redir_type == REDIR_INFILE)
 		{
-			redirs = cmd->infile[i];
-			j = 0;
-			while (redirs[j] != NULL)
+			if (ambiguous_redir(temp->text_token, cmd))
+				return ;
+			if (temp->text_token && temp->text_token->expanded)
 			{
-				cmd->fd_in = open(redirs[j], O_RDONLY);
+				cmd->fd_in = open(temp->text_token->expanded->str, O_RDONLY);
 				if (cmd->fd_in < 0)
 				{
 					write(2, "minishell: ", 11);
-					perror(redirs[j]);
+					perror(temp->text_token->expanded->str);
 					cmd->exit_status = 1;
 					if (!cmd->builtin)
-						exit(EXIT_FAILURE);
-					else if (cmd->builtin)
+						exit(1);
+					if (cmd->builtin)
 						return ;
 				}
-				j++;
 			}
 		}
-		i++;
+		temp = temp->next;
 	}
 	dup2(cmd->fd_in, STDIN_FILENO);
 	close(cmd->fd_in);

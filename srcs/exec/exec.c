@@ -21,44 +21,25 @@ void	save_exitstatus(t_xcmd **cmd, t_data *data, int i)
 	env_set_var(&data->env_list, "?", ft_itoa((*cmd)[last_cmd].exit_status));
 }
 
-int	eval_heredoc(char ***heredoc, int nr_heredoc)
+int	eval_heredoc(t_redir_token *redir_list)
 {
 	int		heredoc_fd[2];
 	char	*line;
 	char	*limiter;
-	int		i;
-	int		j;
+	t_redir_token	*heredoc;
 
-	i = 0;
-	j = 0;
-	while (i < nr_heredoc)
+	heredoc = redir_list;
+	heredoc_fd[0] = -3;
+	while (heredoc && heredoc->text_token)
 	{
-		j = 0;
-		if (heredoc[i][j])
-			limiter = heredoc[i][j];
-		else
-			limiter = NULL;
-		pipe_error(heredoc_fd);
-		j++;
-		while (1)
+		if (heredoc->redir_type == REDIR_HEREDOC)
 		{
-			line = readline("> ");
-			if (!line || ft_strcmp(line, limiter))
-			{
-				free(line);
-				break ;
-			}
-			write(heredoc_fd[1], line, ft_strlen(line));
-			write(heredoc_fd[1], "\n", 1);
-			free(line);
-		}
-		while (heredoc[i][j])
-		{
-			if (j != 0)
+			if (heredoc_fd[0] != -3)
 			{
 				close(heredoc_fd[0]);
 				close(heredoc_fd[1]);
 			}
+			limiter = heredoc->text_token->expanded->str;
 			pipe_error(heredoc_fd);
 			while (1)
 			{
@@ -72,9 +53,8 @@ int	eval_heredoc(char ***heredoc, int nr_heredoc)
 				write(heredoc_fd[1], "\n", 1);
 				free(line);
 			}
-			j++;
 		}
-		i++;
+		heredoc = heredoc->next;
 	}
 	close(heredoc_fd[1]);
 	return (heredoc_fd[0]);
@@ -112,7 +92,7 @@ void	builtin_execution(t_data *data, t_xcmd **xcmd, int i)
 	orig_stdout = dup(STDOUT_FILENO);
 	flag = 0;
 	if (xcmd[i]->nr_heredoc > 0)
-		dup2(eval_heredoc(xcmd[i]->heredoc, xcmd[i]->nr_heredoc), STDIN_FILENO);
+		dup2(eval_heredoc(xcmd[i]->redirs), STDIN_FILENO);
 	redirections(xcmd, i, &flag);
 	if (!builtin_menu(xcmd, i, data) && ft_strcmp(xcmd[i]->cmd[0], "exit") != 0)
 	{
@@ -153,7 +133,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 				signal(SIGINT, SIG_DFL);
 				if (cmd[i]->nr_heredoc > 0)
 				{
-					heredoc_fd = eval_heredoc(cmd[i]->heredoc, cmd[i]->nr_heredoc);
+					heredoc_fd = eval_heredoc(cmd[i]->redirs);
 					dup2(heredoc_fd, STDIN_FILENO);
 				}
 				redirections(cmd, i, &status);
@@ -232,7 +212,51 @@ ls -la > out | wc out > out
 
 also free everything
 
-fix heredoc
 fix exitstatus
-refractor ugly redir function
+
+
+
+export b=$a
+=================================================================
+==5322==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x603000003478 at pc 0x000106dee22c bp 0x7ffee8e18c80 sp 0x7ffee8e18c78
+READ of size 8 at 0x603000003478 thread T0
+    #0 0x106dee22b in ft_export export.c:120
+    #1 0x106deff4c in builtin_menu exec.c:94
+    #2 0x106df05a8 in builtin_execution exec.c:117
+    #3 0x106df0c39 in redir_and_execute exec.c:145
+    #4 0x106df2333 in parse_and_exec exec.c:219
+    #5 0x106deb762 in main minishell.c:199
+    #6 0x7fff68b02cc8 in start+0x0 (libdyld.dylib:x86_64+0x1acc8)
+
+bash-3.2$ export a= b=
+bash-3.2$ export a= b=
+env -i ./minishell
+shortking👑$ export
+shortking👑$ export hola
+
+ env -i ./minishell
+shortking👑$ export
+shortking👑$ ls 
+AddressSanitizer:DEADLYSIGNAL
+=================================================================
+==7990==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000040 (pc 0x7fff68d025ad bp 0x7ffeeb1426f0 sp 0x7ffeeb1426c8 T0)
+==7990==The signal is caused by a READ memory access.
+==7990==Hint: address points to the zero page.
+    #0 0x7fff68d025ad in pthread_mutex_lock+0x0 (/usr/lib/system/libsystem_pthread.dylib:x86_64+0x15ad)
+    #1 0x104acf32b in check_if_directory+0x22b (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x10001232b)
+    #2 0x104acf3f0 in access_path+0x30 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x1000123f0)
+    #3 0x104acf835 in execution+0x225 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x100012835)
+    #4 0x104ac87f3 in redir_and_execute+0x1033 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x10000b7f3)
+    #5 0x104ac9333 in parse_and_exec+0xd3 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x10000c333)
+    #6 0x104ac2762 in main+0x2c2 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x100005762)
+    #7 0x7fff68b02cc8 in start+0x0 (/usr/lib/system/libdyld.dylib:x86_64+0x1acc8)
+
+
+	PWD
+	OLDPWD
+	SHLVL
+
+
+
+	FIX MAKEFILE
 */

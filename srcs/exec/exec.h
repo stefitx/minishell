@@ -28,7 +28,7 @@
 # include "../built-ins/builtins.h"
 
 //Executor
-typedef struct s
+typedef struct s_data
 {
 	t_env			*env_list;
 	t_export		*export_list;
@@ -36,24 +36,21 @@ typedef struct s
 
 typedef struct s_xcmd
 {
-	int		cmd_id;
-	int		nr_cmds;
-	char	**cmd;
-	//int		is_var;
-	char	**expanded_full;
-	int		builtin;
-	char	*path;
-	int		nr_redir_out;
-	int		nr_redir_in;
-	char	***infile;
-	int		fd_in;
-	char	***out;
-	int		fd_o;
-	int		nr_heredoc;
-	char	***heredoc;
-	int		pipefd[2];
-	pid_t	*pid;
-	int		exit_status;
+	int				cmd_id;
+	int				nr_cmds;
+	char			**cmd;
+	char			**expanded_full;
+	int				builtin;
+	char			*path;
+	int				nr_redir_out;
+	int				nr_redir_in;
+	t_redir_token	*redirs;
+	int				fd_in;
+	int				fd_o;
+	int				nr_heredoc;
+	int				pipefd[2];
+	pid_t			*pid;
+	int				exit_status;
 }	t_xcmd;
 
 int		ft_strcmp(const char *line, const char *s);

@@ -18,6 +18,8 @@ int	ft_strcmp(const char *line, const char *s)
 	size_t	len_line;
 	size_t	len_s;
 
+	if (!line || !s)
+		return (-1);
 	len_s = ft_strlen(s);
 	len_line = ft_strlen(line);
 	if (len_line != len_s)
