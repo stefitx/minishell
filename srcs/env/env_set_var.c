@@ -20,7 +20,7 @@ void	env_set_var(t_env **env, char *name, char *val)
 	if (!var)
 		env_add_var(env, name, val);
 	else
-	{ 
+	{
 		if (var && var->val != NULL && val != NULL)
 		{
 			free(var->val);

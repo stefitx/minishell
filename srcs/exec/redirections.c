@@ -44,6 +44,8 @@ void	out_redir(t_xcmd *cmd)
 	t_redir_token	*temp;
 
 	temp = cmd->redirs;
+	if (cmd->fd_o != -3)
+		close(cmd->fd_o);
 	while (temp && temp->text_token)
 	{
 		if (temp->redir_type == REDIR_OUTFILE || temp->redir_type == REDIR_APPEND)
@@ -53,9 +55,15 @@ void	out_redir(t_xcmd *cmd)
 			if (temp->text_token && temp->text_token->expanded)
 			{
 				if (temp->redir_type == REDIR_APPEND)
+				{
+					write(2, "append\n", 7);
 					cmd->fd_o = open(temp->text_token->expanded->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
+				}
 				else
+				{
+					write(2, "out\n", 4);
 					cmd->fd_o = open(temp->text_token->expanded->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+				}
 				if (cmd->fd_o < 0)
 				{
 					write(2, "minishell: ", 11);
@@ -79,6 +87,8 @@ void	in_redir(t_xcmd *cmd)
 	t_redir_token	*temp;
 
 	temp = cmd->redirs;
+	if (cmd->fd_in != -3)
+		close(cmd->fd_in);
 	while (temp && temp->text_token)
 	{
 		if (temp->redir_type == REDIR_INFILE)
@@ -105,6 +115,7 @@ void	in_redir(t_xcmd *cmd)
 	dup2(cmd->fd_in, STDIN_FILENO);
 	close(cmd->fd_in);
 }
+
 
 void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 {

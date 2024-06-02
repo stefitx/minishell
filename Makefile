@@ -139,7 +139,7 @@ libft:
 $(RDLINE_ROOT)libreadline.a: rdline
 
 rdline:	$(RDLINE_ROOT)libreadline.a
-	# cd $(RDLINE_ROOT) && ./configure && make --no-print-directory
+	cd $(RDLINE_ROOT) && ./configure && make --no-print-directory
 
 $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
 	@mkdir -p $(dir $@)

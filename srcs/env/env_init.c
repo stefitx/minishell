@@ -12,11 +12,30 @@
 
 #include "../../inc/env.h"
 
+void if_no_env(t_env **env)
+{
+	t_env	*cursor;
+	char	*val;
+
+
+	cursor = env_get_var(*env, "SHLVL");
+	if (cursor)
+	{
+		val = ft_itoa(ft_atoi(cursor->val) + 1);
+		env_set_var(env, "SHLVL", ft_strdup(val));
+	}
+	else
+		env_add_var(env, ft_strdup("SHLVL"), ft_strdup("1"));
+	env_set_var(env, ft_strdup("PWD"), getcwd(NULL, 0));
+	//env_set_var(env, ft_strdup("_"), ft_strdup("/usr/bin/env"));
+}
+
 void	env_init(t_env **env, char **og_env)
 {
 	int		i;
 	char	*name;
 	char	*val;
+
 
 	while (*og_env)
 	{
@@ -32,4 +51,5 @@ void	env_init(t_env **env, char **og_env)
 	env_add_var(env, ft_strdup("IFS"), NULL);
 	if (getenv("IFS"))
 		env_set_var(env, "IFS", ft_strdup(getenv("IFS")));
+	if_no_env(env);
 }

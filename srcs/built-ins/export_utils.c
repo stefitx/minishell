@@ -38,8 +38,10 @@ int	is_invalid(char *str)
 		return (1);
 	while (str[i] && str[i] != '=')
 	{
-		if (!ft_isalnum(str[i]) && str[i] != '_' && (str[i] != '+'
-		&& str[i + 1] != '='))
+		if (!ft_isalnum(str[i]) && str[i] != '_' && str[i] != '+'
+		&& str[i] != '=')
+			return (1);
+		if (str[i] == '+' && str[i + 1] != '=')
 			return (1);
 		i++;
 	}

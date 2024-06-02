@@ -122,7 +122,9 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	{
 		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
 		|| ft_strcmp(cmd[i]->cmd[0], "exit") != 0)
+		{
 			builtin_execution(data, cmd, i);
+		}
 		else
 		{
 			if (i < (*cmd)->nr_cmds - 1)
@@ -168,13 +170,11 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	i = 0;
 	while (i < (*cmd)->nr_cmds)
 	{
-		if (!cmd[i]->builtin)
-		{
 			waitpid((*cmd)->pid[i], &status, 0);
 			if (WIFEXITED(status))
 				cmd[i]->exit_status = WEXITSTATUS(status);
 			printf("exit status: %d\n", cmd[i]->exit_status);
-		}
+
 		i++;
 	}
 	dup2(orig_stdin, STDIN_FILENO);
@@ -215,6 +215,9 @@ also free everything
 fix exitstatus
 
 
+export b="   1   4  5"
+shortking👑$ export a=$b
+
 
 export b=$a
 =================================================================
@@ -252,11 +255,11 @@ AddressSanitizer:DEADLYSIGNAL
     #7 0x7fff68b02cc8 in start+0x0 (/usr/lib/system/libdyld.dylib:x86_64+0x1acc8)
 
 
-	PWD
-	OLDPWD
-	SHLVL
+	SHLVL: it doest receive the env var when env -i so shlvl will always be 1!! wrong!!!
+	fix shlvl max
 
-
+	export doesnt update value😭 if there s no value
+	order export
 
 	FIX MAKEFILE
 */

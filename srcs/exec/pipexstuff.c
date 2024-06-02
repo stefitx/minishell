@@ -19,12 +19,16 @@ char	**find_path(char **env, char *s)
 	char	**split_path;
 
 	i = 0;
+	if (env == NULL)
+		return (NULL);
+	printf("env[0] = %s\n", env[0]);
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], s, ft_strlen(s)) == 0)
 			break ;
 		i++;
 	}
+	printf("env[i] = %s\n", env[i]);
 	if (env[i] == NULL)
 		return (NULL);
 	to_split = ft_substr(env[i], ft_strlen(s), ft_strlen(env[i]));
@@ -72,10 +76,11 @@ void	check_if_directory(char **split_path, char **cmd)
 		}
 		else if (split_path == NULL || errno == ENOTDIR)
 		{
-			closedir(dir);
+			if (dir)
+				closedir(dir);
 			ft_putstr_fd("minishell: ", 2);
 			ft_putstr_fd(cmd[0], 2);
-			ft_putstr_fd(": no such file or directory\n", 2);
+			ft_putstr_fd(": No such file or directory\n", 2);
 			exit(127);
 		}
 	}
@@ -87,6 +92,13 @@ char	*access_path(char **cmd, char **env)
 	char	**split_path;
 
 	split_path = find_path(env, "PATH=");
+	// if (split_path == NULL)
+	// {
+	// 	ft_putstr_fd("minishell: ", 2);
+	// 	ft_putstr_fd(cmd[0], 2);
+	// 	ft_putstr_fd(": command not found\n", 2);
+	// 	exit(127);
+	// }
 	check_if_directory(split_path, cmd);
 	if (access(cmd[0], F_OK) == 0)
 	{
