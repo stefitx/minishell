@@ -111,8 +111,10 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	int		orig_stdin;
 	int		orig_stdout;
 	int		heredoc_fd = 0;
+	int		nr_cmds;
 
 	int		i;
+	int		flag;
 	int		status;
 
 	orig_stdin = dup(STDIN_FILENO);
@@ -130,6 +132,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 			if (i < (*cmd)->nr_cmds - 1)
 				pipe_error(cmd[i]->pipefd);
 			(*cmd)->pid[i] = fork();
+			printf("pid before everything: %d\n", (*cmd)->pid[i]);
 			if ((*cmd)->pid[i] == 0)
 			{
 				signal(SIGINT, SIG_DFL);
@@ -138,7 +141,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 					heredoc_fd = eval_heredoc(cmd[i]->redirs);
 					dup2(heredoc_fd, STDIN_FILENO);
 				}
-				redirections(cmd, i, &status);
+				redirections(cmd, i, &flag);
 				if (cmd[i]->builtin)
 					builtin_menu(cmd, i, data);
 				close(cmd[i]->pipefd[1]);
@@ -151,16 +154,17 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 					close(cmd[i]->pipefd[0]);
 				if (!cmd[i]->builtin)
 					execution(data, cmd[i]);
-				exit(0);
+				// exit(0);
 			}
+			
 		}
 
 		if (i > 0 && (*cmd)->nr_cmds > 1)
 		{
 			close(cmd[i - 1]->pipefd[0]); //DONT TOUCH
 			close(cmd[i - 1]->pipefd[1]);
-			printf("pipe %d closed\n", cmd[i - 1]->pipefd[0]);
-			printf("pipe %d closed\n", cmd[i - 1]->pipefd[1]);
+			// printf("pipe %d closed\n", cmd[i - 1]->pipefd[0]);
+			// printf("pipe %d closed\n", cmd[i - 1]->pipefd[1]);
 		}
 		if (cmd[i]->nr_heredoc > 0)
 			close(heredoc_fd);
@@ -170,10 +174,15 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	i = 0;
 	while (i < (*cmd)->nr_cmds)
 	{
-			waitpid((*cmd)->pid[i], &status, 0);
-			if (WIFEXITED(status))
-				cmd[i]->exit_status = WEXITSTATUS(status);
-			printf("exit status: %d\n", cmd[i]->exit_status);
+		printf("after everythinbg pid: %d, i is %d\n", (*cmd)->pid[i], i);
+		status = 0;
+		printf("status: %d\n", status);
+		waitpid((*cmd)->pid[i], &status, 0);
+		printf("%d\n", WNOHANG);
+		printf("%d\n", WUNTRACED);
+		if (WIFEXITED(status))
+			cmd[i]->exit_status = WEXITSTATUS(status);
+		printf("exit status: %d\n", cmd[i]->exit_status);
 
 		i++;
 	}
@@ -182,8 +191,33 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	close(orig_stdin);
 	close(orig_stdout);
 	//wait3(NULL, 0, NULL);
-	//env_set_var(&data->env_list, "?", ft_itoa((*cmd)[i].exit_status));
+	nr_cmds = (*cmd)->nr_cmds;
+	env_set_var(&data->env_list, "?", ft_itoa((*cmd)[nr_cmds-1].exit_status));
 	//save_exitstatus(cmd, data, i);
+}
+
+void	free_xcmd(t_xcmd **xcmd, int size)
+{
+	int	i;
+
+	i = 0;
+	if (!xcmd || !*xcmd)
+		return ;
+	while (i < size && xcmd[i])
+	{
+		if (xcmd[i])
+		{
+			if (xcmd[i]->cmd)
+				free_arr(xcmd[i]->cmd);
+			if (xcmd[i]->expanded_full)
+				free_arr(xcmd[i]->expanded_full);
+			// if (xcmd[i]->pid)
+			// 	free(xcmd[i]->pid);
+			free(xcmd[i]);
+			i++;
+		}
+	}
+	free(xcmd);
 }
 
 void	parse_and_exec(char *s, t_data *data)
@@ -199,67 +233,31 @@ void	parse_and_exec(char *s, t_data *data)
 	redir_and_execute(xcmd, data);
 	clear_single_cmd_list(cmd->cmd_list);
 	free(cmd);
+	free_xcmd(xcmd, (*xcmd)->nr_cmds);
 }
 
 /*
-- free everything!
+
 
 $? < $? | <$? <$?
 
-ls -la > out | wc out >> out they cant write to the same file?? or
-whats happening is: they act at the same time but why isnt the first one overwritten
-ls -la > out | wc out > out
-
-also free everything
-
 fix exitstatus
+order export
+export a=b
+atudor@cbr13s5:~/Desktop/gitminishell$ echo $a | unset a
+atudor@cbr13s5:~/Desktop/gitminishell$ echo $?
+0
+
+atudor@cbr13s5:~/Desktop/gitminishell$ exit 258
+exit
+atudor@cbr13s5 ~/Desktop/gitminishell
+ % echo $?
+2
+	mpanic tester
 
 
-export b="   1   4  5"
-shortking👑$ export a=$b
 
-
-export b=$a
-=================================================================
-==5322==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x603000003478 at pc 0x000106dee22c bp 0x7ffee8e18c80 sp 0x7ffee8e18c78
-READ of size 8 at 0x603000003478 thread T0
-    #0 0x106dee22b in ft_export export.c:120
-    #1 0x106deff4c in builtin_menu exec.c:94
-    #2 0x106df05a8 in builtin_execution exec.c:117
-    #3 0x106df0c39 in redir_and_execute exec.c:145
-    #4 0x106df2333 in parse_and_exec exec.c:219
-    #5 0x106deb762 in main minishell.c:199
-    #6 0x7fff68b02cc8 in start+0x0 (libdyld.dylib:x86_64+0x1acc8)
-
-bash-3.2$ export a= b=
-bash-3.2$ export a= b=
-env -i ./minishell
-shortking👑$ export
-shortking👑$ export hola
-
- env -i ./minishell
-shortking👑$ export
-shortking👑$ ls 
-AddressSanitizer:DEADLYSIGNAL
-=================================================================
-==7990==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000040 (pc 0x7fff68d025ad bp 0x7ffeeb1426f0 sp 0x7ffeeb1426c8 T0)
-==7990==The signal is caused by a READ memory access.
-==7990==Hint: address points to the zero page.
-    #0 0x7fff68d025ad in pthread_mutex_lock+0x0 (/usr/lib/system/libsystem_pthread.dylib:x86_64+0x15ad)
-    #1 0x104acf32b in check_if_directory+0x22b (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x10001232b)
-    #2 0x104acf3f0 in access_path+0x30 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x1000123f0)
-    #3 0x104acf835 in execution+0x225 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x100012835)
-    #4 0x104ac87f3 in redir_and_execute+0x1033 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x10000b7f3)
-    #5 0x104ac9333 in parse_and_exec+0xd3 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x10000c333)
-    #6 0x104ac2762 in main+0x2c2 (/Users/atudor/Desktop/gitminishell/./minishell:x86_64+0x100005762)
-    #7 0x7fff68b02cc8 in start+0x0 (/usr/lib/system/libdyld.dylib:x86_64+0x1acc8)
-
-
-	SHLVL: it doest receive the env var when env -i so shlvl will always be 1!! wrong!!!
-	fix shlvl max
-
-	export doesnt update value😭 if there s no value
-	order export
-
+when syntax error, history doesn't work
+	- free everything!
 	FIX MAKEFILE
 */

@@ -21,14 +21,12 @@ char	**find_path(char **env, char *s)
 	i = 0;
 	if (env == NULL)
 		return (NULL);
-	printf("env[0] = %s\n", env[0]);
 	while (env[i])
 	{
 		if (ft_strncmp(env[i], s, ft_strlen(s)) == 0)
 			break ;
 		i++;
 	}
-	printf("env[i] = %s\n", env[i]);
 	if (env[i] == NULL)
 		return (NULL);
 	to_split = ft_substr(env[i], ft_strlen(s), ft_strlen(env[i]));
@@ -92,13 +90,13 @@ char	*access_path(char **cmd, char **env)
 	char	**split_path;
 
 	split_path = find_path(env, "PATH=");
-	// if (split_path == NULL)
-	// {
-	// 	ft_putstr_fd("minishell: ", 2);
-	// 	ft_putstr_fd(cmd[0], 2);
-	// 	ft_putstr_fd(": command not found\n", 2);
-	// 	exit(127);
-	// }
+	if (split_path == NULL)
+	{
+		ft_putstr_fd("minishell: ", 2);
+		ft_putstr_fd(cmd[0], 2);
+		ft_putstr_fd(": command not found\n", 2);
+		exit(127);
+	}
 	check_if_directory(split_path, cmd);
 	if (access(cmd[0], F_OK) == 0)
 	{
@@ -117,7 +115,6 @@ char	*access_path(char **cmd, char **env)
 	ft_putstr_fd(cmd[0], 2);
 	ft_putstr_fd(": command not found\n", 2);
 	exit(127);
-	return (NULL);
 }
 
 void	execution(t_data *data, t_xcmd *cmd)
@@ -129,6 +126,7 @@ void	execution(t_data *data, t_xcmd *cmd)
 		exit(0);
 	env = env_to_arr(data->env_list);
 	cmd->path = access_path(cmd->cmd, env);
+	printf("we come here\n");
 	if (execve(cmd->path, cmd->cmd, env) == -1)
 	{
 		free(cmd->path);

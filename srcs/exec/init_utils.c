@@ -60,9 +60,9 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 			xcmd->nr_heredoc++;
 		temp = temp->next;
 	}
-	printf("nr_redir_in: %d\n", xcmd->nr_redir_in);
-	printf("nr_redir_out: %d\n", xcmd->nr_redir_out);
-	printf("nr_heredoc: %d\n", xcmd->nr_heredoc);
+	// printf("nr_redir_in: %d\n", xcmd->nr_redir_in);
+	// printf("nr_redir_out: %d\n", xcmd->nr_redir_out);
+	// printf("nr_heredoc: %d\n", xcmd->nr_heredoc);
 }
 
 int	check_builtin(char **xcmd)

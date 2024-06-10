@@ -43,7 +43,6 @@ void	equal_sign(int equal_pos, char *full_str, char *str, t_export *new)
 	}
 }
 
-
 t_export	*create_new_node(char *str, char *full_str)
 {
 	t_export	*new;
@@ -117,7 +116,7 @@ void	ft_export(t_xcmd *xcmd, t_data *data)
 		return ;
 	i = 1;
 	j = 1;
-	while (xcmd->cmd[i])
+	while (xcmd->cmd[i] && xcmd->expanded_full[j])
 	{
 		if (is_invalid(xcmd->expanded_full[1]))
 			print_invalid_identifier(xcmd->cmd[i], &xcmd->exit_status);

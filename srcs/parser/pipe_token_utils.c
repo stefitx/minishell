@@ -15,14 +15,14 @@
 t_pipe_token	*create_pipe_token(void)
 {
 	t_pipe_token	*token;
-	int				fds[2];
+	// int				fds[2];
 
 	token = ft_calloc(1, sizeof(t_pipe_token));
 	if (!token)
 		return (NULL);
 	// pipe(fds);
-	token->fd_in = fds[0];
-	token->fd_out = fds[1];
+	// token->fd_in = fds[0];
+	// token->fd_out = fds[1];
 	token->next = NULL;
 	return (token);
 }

@@ -20,7 +20,7 @@ COLOR_CYAN=\033[1;36m
 PREFIX=$(COLOR_YELLOW)[MINISHELL]$(COLOR_NONE)  
 
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS	=	-Wall -Wextra -Werror -g #-fsanitize=address
 INCLUDE	=	-I./inc -I./readline 
 RM		=	rm -fr
 
@@ -145,6 +145,11 @@ $(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
 	@printf "$(PREFIX)$(COLOR_CYAN)Compiled $< to $@!$(COLOR_NONE)\n"
+
+# $(DIR_OBJ)%.o: $(SRCS_DIR)$(ENV_DIR)%.c Makefile $(LIB_A) $(HEADER)
+# 	@mkdir -p $(dir $@)
+# 	@$(CC) $(CFLAGS) -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
+# 	@printf "$(PREFIX)$(COLOR_CYAN)Compiled $< to $@!$(COLOR_NONE)\n"
 
 clean:
 	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
