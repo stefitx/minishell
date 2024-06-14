@@ -16,6 +16,8 @@ void	env_set_var(t_env **env, char *name, char *val)
 {
 	t_env	*var;
 	
+	//printf("name in env_set_var: %s\n", name);
+	//printf("val in env_set_var: %s\n", val);
 	var = env_get_var(*env, name);
 	if (!var)
 		env_add_var(env, name, val);

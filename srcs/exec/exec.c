@@ -124,15 +124,12 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	{
 		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
 		|| ft_strcmp(cmd[i]->cmd[0], "exit") != 0)
-		{
 			builtin_execution(data, cmd, i);
-		}
 		else
 		{
 			if (i < (*cmd)->nr_cmds - 1)
 				pipe_error(cmd[i]->pipefd);
 			(*cmd)->pid[i] = fork();
-			printf("pid before everything: %d\n", (*cmd)->pid[i]);
 			if ((*cmd)->pid[i] == 0)
 			{
 				signal(SIGINT, SIG_DFL);
@@ -154,11 +151,10 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 					close(cmd[i]->pipefd[0]);
 				if (!cmd[i]->builtin)
 					execution(data, cmd[i]);
-				// exit(0);
+				exit(cmd[i]->exit_status);
 			}
 			
 		}
-
 		if (i > 0 && (*cmd)->nr_cmds > 1)
 		{
 			close(cmd[i - 1]->pipefd[0]); //DONT TOUCH
@@ -166,7 +162,9 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 			// printf("pipe %d closed\n", cmd[i - 1]->pipefd[0]);
 			// printf("pipe %d closed\n", cmd[i - 1]->pipefd[1]);
 		}
-		if (cmd[i]->nr_heredoc > 0)
+		// if (i == (*cmd)->nr_cmds - 1)
+		// 			close(cmd[i]->pipefd[0]);
+		if (cmd[i]->nr_heredoc > 0 && (*cmd)->pid[i] != 0)
 			close(heredoc_fd);
 			// printf("exit status: %d\n", cmd[i]->exit_status);
 		i++;
@@ -174,16 +172,14 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	i = 0;
 	while (i < (*cmd)->nr_cmds)
 	{
-		printf("after everythinbg pid: %d, i is %d\n", (*cmd)->pid[i], i);
+		// printf("after everythinbg pid: %d, i is %d\n", (*cmd)->pid[i], i);
 		status = 0;
-		printf("status: %d\n", status);
+		//printf("status: %d\n", status);
 		waitpid((*cmd)->pid[i], &status, 0);
-		printf("%d\n", WNOHANG);
-		printf("%d\n", WUNTRACED);
+		//printf("we get here\n");
 		if (WIFEXITED(status))
 			cmd[i]->exit_status = WEXITSTATUS(status);
-		printf("exit status: %d\n", cmd[i]->exit_status);
-
+		//printf("exit status: %d\n", cmd[i]->exit_status);
 		i++;
 	}
 	dup2(orig_stdin, STDIN_FILENO);
@@ -192,7 +188,9 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	close(orig_stdout);
 	//wait3(NULL, 0, NULL);
 	nr_cmds = (*cmd)->nr_cmds;
-	env_set_var(&data->env_list, "?", ft_itoa((*cmd)[nr_cmds-1].exit_status));
+	//printf("nr_cmds: %d\n", nr_cmds);
+	//printf("exit status in cmd: %d\n", cmd[nr_cmds-1]->exit_status);
+	env_set_var(&data->env_list, "?", ft_itoa(cmd[nr_cmds-1]->exit_status));
 	//save_exitstatus(cmd, data, i);
 }
 
@@ -230,34 +228,15 @@ void	parse_and_exec(char *s, t_data *data)
 		return ;
 	add_history(s);
 	xcmd = init_exe_cmd(cmd);
-	redir_and_execute(xcmd, data);
 	clear_single_cmd_list(cmd->cmd_list);
 	free(cmd);
+	redir_and_execute(xcmd, data);
 	free_xcmd(xcmd, (*xcmd)->nr_cmds);
 }
 
 /*
-
-
-$? < $? | <$? <$?
-
-fix exitstatus
-order export
-export a=b
-atudor@cbr13s5:~/Desktop/gitminishell$ echo $a | unset a
-atudor@cbr13s5:~/Desktop/gitminishell$ echo $?
-0
-
-atudor@cbr13s5:~/Desktop/gitminishell$ exit 258
-exit
-atudor@cbr13s5 ~/Desktop/gitminishell
- % echo $?
-2
-	mpanic tester
-
-
-
 when syntax error, history doesn't work
-	- free everything!
-	FIX MAKEFILE
+free everything!
+FIX MAKEFILE
+norminette
 */

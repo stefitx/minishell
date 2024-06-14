@@ -62,13 +62,15 @@ void	check_if_directory(char **split_path, char **cmd)
 	if (cmd[0] != NULL)
 	{
 		dir = opendir(cmd[0]);
-		if (ft_strchr(cmd[0], '/') != NULL)
+		if (ft_strchr(cmd[0], '/') != NULL || ft_strcmp(cmd[0], "~") != 0)
 		{
 			if (dir || errno != ENOTDIR)
 			{
 				closedir(dir);
+				ft_putstr_fd("minishell: ", 2);
 				ft_putstr_fd(cmd[0], 2);
 				ft_putstr_fd(": is a directory\n", 2);
+				//env_clear_all();
 				exit(126);
 			}
 		}
@@ -90,13 +92,6 @@ char	*access_path(char **cmd, char **env)
 	char	**split_path;
 
 	split_path = find_path(env, "PATH=");
-	if (split_path == NULL)
-	{
-		ft_putstr_fd("minishell: ", 2);
-		ft_putstr_fd(cmd[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
-		exit(127);
-	}
 	check_if_directory(split_path, cmd);
 	if (access(cmd[0], F_OK) == 0)
 	{
@@ -126,7 +121,6 @@ void	execution(t_data *data, t_xcmd *cmd)
 		exit(0);
 	env = env_to_arr(data->env_list);
 	cmd->path = access_path(cmd->cmd, env);
-	printf("we come here\n");
 	if (execve(cmd->path, cmd->cmd, env) == -1)
 	{
 		free(cmd->path);

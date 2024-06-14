@@ -32,7 +32,7 @@ int	ambiguous_redir(t_text_token *redir, t_xcmd *cmd)
 		write(2, "minishell: ", 11);
 		write(2, "ambiguous redirect\n", 19);
 		cmd->exit_status = 1;
-		if (!cmd->builtin)
+		if (!cmd->builtin && cmd->cmd != NULL && cmd->cmd[0] != NULL)
 			exit(1);
 		return (1);
 	}
@@ -56,12 +56,10 @@ void	out_redir(t_xcmd *cmd)
 			{
 				if (temp->redir_type == REDIR_APPEND)
 				{
-					write(2, "append\n", 7);
 					cmd->fd_o = open(temp->text_token->expanded->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
 				}
 				else
 				{
-					write(2, "out\n", 4);
 					cmd->fd_o = open(temp->text_token->expanded->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 				}
 				if (cmd->fd_o < 0)
@@ -69,7 +67,7 @@ void	out_redir(t_xcmd *cmd)
 					write(2, "minishell: ", 11);
 					perror(temp->text_token->expanded->str);
 					cmd->exit_status = 1;
-					if (!cmd->builtin)
+					if (!cmd->builtin && cmd->cmd != NULL && cmd->cmd[0] != NULL)
 						exit(1);
 					if (cmd->builtin)
 						return ;
@@ -103,7 +101,7 @@ void	in_redir(t_xcmd *cmd)
 					write(2, "minishell: ", 11);
 					perror(temp->text_token->expanded->str);
 					cmd->exit_status = 1;
-					if (!cmd->builtin)
+					if (!cmd->builtin && cmd->cmd != NULL && cmd->cmd[0] != NULL)
 						exit(1);
 					if (cmd->builtin)
 						return ;

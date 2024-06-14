@@ -42,7 +42,7 @@ int	main(void)
 	char uh[20] = "world";
 	char hehe2[20] = "hello";
 	char uh2[20] = "world";
-	//hehe = malloc(20 * sizeof(char));
+	//hehe = ft_malloc(20 * sizeof(char));
 	printf("ft %zu\n", ft_strlcat(hehe, uh, 5));
 	printf("good %zu\n", strlcat(hehe2, uh2, 5));
 	printf("good %s\n", hehe2);

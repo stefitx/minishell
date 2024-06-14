@@ -1,24 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_calloc.c                                        :+:      :+:    :+:   */
+/*   ft_malloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/13 21:01:55 by atudor            #+#    #+#             */
-/*   Updated: 2023/09/13 21:02:44 by atudor           ###   ########.fr       */
+/*   Created: 2024/04/09 23:19:48 by atudor            #+#    #+#             */
+/*   Updated: 2024/04/09 23:19:53 by atudor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_calloc(size_t count, size_t size)
+void	*ft_malloc(size_t size)
 {
 	void	*ptr;
 
-	ptr = ft_malloc(count * size);
+	ptr = ft_malloc(size);
 	if (!ptr)
-		return (NULL);
-	ft_bzero(ptr, count * size);
+	{
+		ft_putstr_fd("Error: malloc failed\n", 2);
+		exit(1);
+	}
 	return (ptr);
 }

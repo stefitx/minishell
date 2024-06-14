@@ -38,7 +38,7 @@ void	count_args(t_text_token *text, char ***args)
 			i++;
 		text = text->next;
 	}
-	(*args) = malloc(sizeof(char *) * (i + 1));
+	(*args) = ft_malloc(sizeof(char *) * (i + 1));
 }
 
 void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
