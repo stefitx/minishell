@@ -23,16 +23,18 @@ void if_no_env(t_env **env)
 	{
 		val = ft_atoi(cursor->val) + 1;
 		if (val >= 1000 || val < 0)
-			env_set_var(env, ft_strdup("SHLVL"), ft_strdup(""));
+			env_set_var(env, "SHLVL", ft_strdup(""));
 		else
-			env_set_var(env, ft_strdup("SHLVL"), ft_itoa(val));
+			env_set_var(env, "SHLVL", ft_itoa(val));
 	}
 	else
 		env_add_var(env, ft_strdup("SHLVL"), ft_strdup("1"));
 	cursor = env_get_var(*env, "PATH");
 	if (!cursor)
 		env_add_var(env, ft_strdup("PATH"), ft_strdup("/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"));
-	env_set_var(env, ft_strdup("PWD"), getcwd(NULL, 0));
+	cursor = env_get_var(*env, "PWD");
+	if (!cursor)
+		env_add_var(env, ft_strdup("PWD"), getcwd(NULL, 0));
 }
 
 void	env_init(t_env **env, char **og_env)

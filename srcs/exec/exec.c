@@ -124,7 +124,10 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	{
 		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
 		|| ft_strcmp(cmd[i]->cmd[0], "exit") != 0)
+		{
 			builtin_execution(data, cmd, i);
+			printf("exit status in builtin: %d\n", cmd[i]->exit_status);
+		}
 		else
 		{
 			if (i < (*cmd)->nr_cmds - 1)
@@ -151,6 +154,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 					close(cmd[i]->pipefd[0]);
 				if (!cmd[i]->builtin)
 					execution(data, cmd[i]);
+				printf("exit status in exec: %d\n", cmd[i]->exit_status);					
 				exit(cmd[i]->exit_status);
 			}
 			
@@ -159,14 +163,9 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 		{
 			close(cmd[i - 1]->pipefd[0]); //DONT TOUCH
 			close(cmd[i - 1]->pipefd[1]);
-			// printf("pipe %d closed\n", cmd[i - 1]->pipefd[0]);
-			// printf("pipe %d closed\n", cmd[i - 1]->pipefd[1]);
 		}
-		// if (i == (*cmd)->nr_cmds - 1)
-		// 			close(cmd[i]->pipefd[0]);
 		if (cmd[i]->nr_heredoc > 0 && (*cmd)->pid[i] != 0)
 			close(heredoc_fd);
-			// printf("exit status: %d\n", cmd[i]->exit_status);
 		i++;
 	}
 	i = 0;
@@ -189,7 +188,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	//wait3(NULL, 0, NULL);
 	nr_cmds = (*cmd)->nr_cmds;
 	//printf("nr_cmds: %d\n", nr_cmds);
-	//printf("exit status in cmd: %d\n", cmd[nr_cmds-1]->exit_status);
+	printf("exit status in cmd: %d\n", cmd[nr_cmds-1]->exit_status);
 	env_set_var(&data->env_list, "?", ft_itoa(cmd[nr_cmds-1]->exit_status));
 	//save_exitstatus(cmd, data, i);
 }
@@ -229,14 +228,16 @@ void	parse_and_exec(char *s, t_data *data)
 	add_history(s);
 	xcmd = init_exe_cmd(cmd);
 	clear_single_cmd_list(cmd->cmd_list);
+	clear_pipe_token_list(cmd->pipes);
 	free(cmd);
 	redir_and_execute(xcmd, data);
 	free_xcmd(xcmd, (*xcmd)->nr_cmds);
 }
 
 /*
-when syntax error, history doesn't work
 free everything!
+exit status doesnt work for builtins
 FIX MAKEFILE
 norminette
+if terminated by signal??
 */

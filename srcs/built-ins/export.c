@@ -114,9 +114,10 @@ void	ft_export(t_xcmd *xcmd, t_data *data)
 		return ;
 	i = 1;
 	j = 1;
+	//xcmd->exit_status = 0;
 	while (xcmd->cmd[i] && xcmd->expanded_full[j])
 	{
-		if (is_invalid(xcmd->expanded_full[1]))
+		if (is_invalid(xcmd->expanded_full[j]))
 			print_invalid_identifier(xcmd->cmd[i], &xcmd->exit_status);
 		if (xcmd->expanded_full[j] && !is_invalid(xcmd->expanded_full[j]))
 		{
@@ -124,7 +125,7 @@ void	ft_export(t_xcmd *xcmd, t_data *data)
 			// 	return ;
 			new = create_new_node(xcmd->cmd[i], xcmd->expanded_full[j]);
 			add_node(data, new);
-			xcmd->exit_status = 0;
+			xcmd->exit_status = 69;
 		}
 		i++;
 		j++;
