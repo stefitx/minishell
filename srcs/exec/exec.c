@@ -227,9 +227,7 @@ void	parse_and_exec(char *s, t_data *data)
 		return ;
 	add_history(s);
 	xcmd = init_exe_cmd(cmd);
-	clear_single_cmd_list(cmd->cmd_list);
-	clear_pipe_token_list(cmd->pipes);
-	free(cmd);
+	clear_command(cmd);
 	redir_and_execute(xcmd, data);
 	free_xcmd(xcmd, (*xcmd)->nr_cmds);
 }

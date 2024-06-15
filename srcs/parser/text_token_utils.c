@@ -66,6 +66,7 @@ void	text_token_list_clear(t_text_token *head)
 	free(head->original);
 	free(head->original_quoted);
 	clear_str_node_list(head->expanded);
+	free(head->expanded_full);
 	free(head->expanded_joined);
 	free(head);
 }

@@ -12,6 +12,8 @@
 
 #include "../../inc/parser.h"
 
+#include <readline/history.h>
+
 static t_text_token	*copy_text_token(t_text_token *token)
 {
 	t_text_token	*new;
@@ -81,6 +83,7 @@ t_command	*parse_command(char *s, t_env *env)
 	if (syntax_check(raw_tokens))
 	{
 		token_list_clear(raw_tokens);
+		add_history(s);
 		return (NULL);
 	}
 	tokens = refine_tokens(raw_tokens, env);
@@ -88,6 +91,13 @@ t_command	*parse_command(char *s, t_env *env)
 	token_list_clear(raw_tokens);
 	ref_token_list_clear(tokens);
 	return (cmd);
+}
+
+void	clear_command(t_command	*cmd)
+{
+	clear_single_cmd_list(cmd->cmd_list);
+	clear_pipe_token_list(cmd->pipes);
+	free(cmd);
 }
 
 /*
