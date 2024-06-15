@@ -50,8 +50,6 @@ t_export	*create_new_node(char *str, char *full_str)
 	
 	equal_pos = has_equal_sign(str);
 	new = (t_export *)ft_malloc(sizeof(t_export));
-	if (!new)
-		return (NULL);
 	new->add = 0;
 	if (full_str[equal_pos + 1] == '\0' || equal_pos == 0)
 	{

@@ -17,7 +17,7 @@ int	check_n_flag(char *s)
 	if (ft_strncmp(s, "-n", 2) == 0)
 	{
 		s++;
-		while (*s)
+		while (*s != '\0')
 		{
 			if (*s != 'n')
 				return (0);
@@ -28,39 +28,50 @@ int	check_n_flag(char *s)
 	return (0);
 }
 
-void	ft_echo(t_xcmd *cmd)
+int	*parse_args(t_xcmd *cmd)
 {
-	int	i;
+	int	*i_n_flag;
 	int	n_flag;
 
 	n_flag = 0;
-	if (cmd->exit_status != 0)
-		return ;
-	i = 1;
-	while (cmd->cmd[i])
-	{	
-		if (ft_strncmp(cmd->cmd[i], "-n", 2) == 0)
+	i_n_flag = ft_malloc(sizeof(int) * 2);
+	i_n_flag[1] = 0;
+	i_n_flag[0] = 1;
+	while (cmd->cmd[i_n_flag[0]])
+	{
+		if (ft_strncmp(cmd->cmd[i_n_flag[0]], "-n", 2) == 0)
 		{
-			n_flag = check_n_flag(cmd->cmd[1]);
+			n_flag = check_n_flag(cmd->cmd[i_n_flag[0]]);
 			if (n_flag == 1)
 			{
-				i++;
-				continue ;
+				i_n_flag[1] = 1;
+				i_n_flag[0]++;
 			}
 			else
 				break ;
 		}
-		else 
+		else
 			break ;
 	}
-	while (cmd->cmd[i])
+	return (i_n_flag);
+}
+
+void	ft_echo(t_xcmd *cmd)
+{
+	int	*i_n_flag;
+
+	if (cmd->exit_status != 0)
+		return ;
+	i_n_flag = parse_args(cmd);
+	while (cmd->cmd[i_n_flag[0]])
 	{
-		ft_putstr_fd(cmd->cmd[i], 1);
-		if (cmd->cmd[i + 1])
+		ft_putstr_fd(cmd->cmd[i_n_flag[0]], 1);
+		if (cmd->cmd[i_n_flag[0] + 1])
 			ft_putstr_fd(" ", 1);
-		i++;
+		i_n_flag[0]++;
 	}
-	if (!n_flag)
+	if (!i_n_flag[1])
 		ft_putstr_fd("\n", 1);
 	cmd->exit_status = 0;
+	free(i_n_flag);
 }

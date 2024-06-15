@@ -27,63 +27,72 @@ void	free_arr(char **env)
 	free(env);
 }
 
-void		change_directories(t_xcmd *cmd, char **env, t_env *env_list)
+void	change_directories(t_xcmd *cmd, char **env, t_env *env_list)
 {
-	char	*oldpwd;
+	char	**oldpwd;
 	char	**home_path;
+	t_env	*cursor;
 
-	home_path= find_path(env, "HOME=");
+	home_path = find_path(env, "HOME=");
 	if (home_path == NULL || *home_path == NULL)
 	{
 		ft_putstr_fd("minishell: cd: HOME not set\n", 2);
 		cmd->exit_status = 1;
-		free_arr(env);
-		free_arr(home_path);
-		return ;
 	}
 	else
 	{
-		oldpwd = find_path(env, "PWD=")[0];
-		env_set_var(&env_list, "OLDPWD", oldpwd);
-		free(oldpwd);
+		oldpwd = find_path(env, "PWD=");
+		cursor = env_get_var(env_list, "OLDPWD");
+		if (!cursor)
+			env_add_var(&env_list, ft_strdup("OLDPWD"), ft_strdup(oldpwd[0]));
+		else
+			env_set_var(&env_list, "OLDPWD", ft_strdup(oldpwd[0]));
 		chdir(home_path[0]);
-		env_set_var(&env_list, "PWD", home_path[0]);
+		env_set_var(&env_list, "PWD", ft_strdup(home_path[0]));
 		cmd->exit_status = 0;
-		free_arr(home_path);
+		free_arr(oldpwd);
 	}
-	free_arr(env);
+	free_arr(home_path);
+}
+
+void	it_has_args(t_xcmd *cmd, t_env *env_list)
+{
+	char	*oldpwd;
+	char	*newpwd;
+	int		res;
+
+	oldpwd = getcwd(NULL, 0);
+	res = chdir(cmd->cmd[1]);
+	if (res == 0)
+	{
+		env_set_var(&env_list, "OLDPWD", oldpwd);
+		newpwd = getcwd(NULL, 0);
+		env_set_var(&env_list, "PWD", newpwd);
+		cmd->exit_status = 0;
+	}
+	else
+	{
+		ft_putstr_fd("minishell: cd: ", 2);
+		perror(cmd->cmd[1]);
+		cmd->exit_status = 1;
+		return ;
+	}
 }
 
 void	ft_cd(t_xcmd *cmd, t_env *env_list)
 {
-	char	*oldpwd;
-	char 	*newpwd;
 	char	**env;
-	int		res;
 
 	env = env_to_arr(env_list);
 	if (cmd->exit_status != 0)
 		return ;
 	if (cmd->cmd[1] != NULL)
 	{
-		oldpwd = getcwd(NULL, 0);
-		res = chdir(cmd->cmd[1]);
-		if (res == 0) 
-		{
-			env_set_var(&env_list, "OLDPWD", oldpwd);
-			newpwd = getcwd(NULL, 0);
-			env_set_var(&env_list, "PWD", newpwd);
-			cmd->exit_status = 0;
-		}
-		else
-		{
-			ft_putstr_fd("minishell: cd: ", 2);
-			perror(cmd->cmd[1]);
-			cmd->exit_status = 1;
-			return ;
-		}
+		it_has_args(cmd, env_list);
 		free_arr(env);
+		return ;
 	}
 	else
 		change_directories(cmd, env, env_list);
+	free_arr(env);
 }

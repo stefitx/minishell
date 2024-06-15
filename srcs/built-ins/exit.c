@@ -28,49 +28,52 @@ static int	ft_isnumber(char *str)
 	return (1);
 }
 
-void	ft_exit(t_xcmd *xcmd, int *flag)
+void	it_is_number(t_xcmd *xcmd, int *flag)
 {
 	int	i;
 
+	i = ft_atoi(xcmd->cmd[1]);
+	if (xcmd->cmd[2])
+	{
+		if (!*flag)
+			ft_putstr_fd("exit\n", 2);
+		ft_putstr_fd("minishell: exit: too many arguments\n", 2);
+		xcmd->exit_status = 1;
+	}
+	else
+	{
+		ft_putstr_fd("exit\n", 1);
+		xcmd->exit_status = (unsigned int)i;
+		if (*flag)
+			return ;
+		exit((unsigned int)i);
+	}
+}
+
+void	numeric_argument_required(t_xcmd *xcmd, int *flag)
+{
+	ft_putstr_fd("exit\n", 2);
+	ft_putstr_fd("minishell: exit: ", 2);
+	ft_putstr_fd(xcmd->cmd[1], 2);
+	ft_putstr_fd(": numeric argument required\n", 2);
+	xcmd->exit_status = 255;
+	if (*flag)
+		return ;
+	exit(255);
+}
+
+void	ft_exit(t_xcmd *xcmd, int *flag)
+{
 	if (xcmd->exit_status != 0)
 		return ;
-	i = 0;
 	if (!xcmd->cmd || !xcmd->cmd[0])
 		return ;
 	if (xcmd->cmd[1])
 	{
 		if (ft_isnumber(xcmd->cmd[1]))
-		{
-			i = ft_atoi(xcmd->cmd[1]);
-			if (xcmd->cmd[2])
-			{
-				if (!*flag)
-					ft_putstr_fd("exit\n", 2);
-				ft_putstr_fd("minishell: exit: too many arguments\n", 2);
-				// if (*flag)
-				// 	return ;
-				xcmd->exit_status = 1;
-			}
-			else
-			{
-				ft_putstr_fd("exit\n", 1);
-				xcmd->exit_status = (unsigned int)i;
-				if (*flag)
-					return ;
-				exit((unsigned int)i);
-			}
-		}
+			it_is_number(xcmd, flag);
 		else
-		{
-			ft_putstr_fd("exit\n", 2);
-			ft_putstr_fd("minishell: exit: ", 2);
-			ft_putstr_fd(xcmd->cmd[1], 2);
-			ft_putstr_fd(": numeric argument required\n", 2);
-			xcmd->exit_status = 255;
-			if (*flag)
-				return ;
-			exit(255);
-		}
+			numeric_argument_required(xcmd, flag);
 	}
 	else
 	{
