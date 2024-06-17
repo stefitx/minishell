@@ -12,11 +12,10 @@
 
 #include "../../inc/env.h"
 
-void if_no_env(t_env **env)
+void	if_no_env(t_env **env)
 {
 	t_env	*cursor;
 	int		val;
-
 
 	cursor = env_get_var(*env, "SHLVL");
 	if (cursor)
@@ -31,7 +30,9 @@ void if_no_env(t_env **env)
 		env_add_var(env, ft_strdup("SHLVL"), ft_strdup("1"));
 	cursor = env_get_var(*env, "PATH");
 	if (!cursor)
-		env_add_var(env, ft_strdup("PATH"), ft_strdup("/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"));
+		env_add_var(env, ft_strdup("PATH"),
+			ft_strjoin("/usr/local/sbin:/usr/local/bin:",
+				"/usr/sbin:/usr/bin:/sbin:/bin"));
 	cursor = env_get_var(*env, "PWD");
 	if (!cursor)
 		env_add_var(env, ft_strdup("PWD"), getcwd(NULL, 0));
@@ -42,7 +43,6 @@ void	env_init(t_env **env, char **og_env)
 	int		i;
 	char	*name;
 	char	*val;
-
 
 	while (*og_env)
 	{
@@ -59,5 +59,4 @@ void	env_init(t_env **env, char **og_env)
 	env_add_var(env, ft_strdup("IFS"), NULL);
 	if (getenv("IFS"))
 		env_set_var(env, "IFS", ft_strdup(getenv("IFS")));
-	
 }

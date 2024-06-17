@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-# include "../exec/exec.h"
+#include "../exec/exec.h"
 
 int	is_addition(char *str)
 {
@@ -39,7 +39,7 @@ int	is_invalid(char *str)
 	while (str[i] && str[i] != '=')
 	{
 		if (!ft_isalnum(str[i]) && str[i] != '_' && str[i] != '+'
-		&& str[i] != '=')
+			&& str[i] != '=')
 			return (1);
 		if (str[i] == '+' && str[i + 1] != '=')
 			return (1);
@@ -48,7 +48,7 @@ int	is_invalid(char *str)
 	return (0);
 }
 
-int has_equal_sign(char *str)
+int	has_equal_sign(char *str)
 {
 	int	i;
 
@@ -60,4 +60,16 @@ int has_equal_sign(char *str)
 		i++;
 	}
 	return (0);
+}
+
+void	equal_sign(int equal_pos, char *full_str, char *str, t_export *new)
+{
+	new->value = ft_strdup(full_str + equal_pos + 1);
+	if (!is_addition(str))
+		new->name = ft_substr(str, 0, equal_pos);
+	else if (is_addition(str))
+	{
+		new->add = 1;
+		new->name = ft_substr(str, 0, equal_pos - 1);
+	}
 }

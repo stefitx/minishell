@@ -31,52 +31,6 @@ void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid)
 	cursor = cursor->next;
 }
 
-char	**get_cmd_array(t_single_cmd *cmd)
-{
-	t_text_token	*t_text_token;
-	t_str_node		*t_str_node;
-	char			**args;
-	int				i;
-
-	t_text_token = cmd->args;
-	i = 0;
-	while (t_text_token)
-	{
-		if (t_text_token->expanded)
-		{
-			t_str_node = t_text_token->expanded;
-			while (t_str_node)
-			{
-				if (t_str_node->str != NULL)
-					i++;
-				t_str_node = t_str_node->next;
-			}
-			i++;
-		}
-		t_text_token = t_text_token->next;
-	}
-	args = ft_malloc(sizeof(char *) * (i + 1));
-	i = 0;
-	t_text_token = cmd->args;
-	while (t_text_token)
-	{
-		if (t_text_token->expanded)
-		{
-			t_str_node = t_text_token->expanded;
-			while (t_str_node)
-			{
-				
-				if (t_str_node->str != NULL)
-					args[i++] = ft_strdup(t_str_node->str);
-				t_str_node = t_str_node->next;
-			}
-		}
-		t_text_token = t_text_token->next;
-	}
-	args[i] = NULL;
-	return (args);
-}
-
 char	**get_expanded_full(t_single_cmd *cmd)
 {
 	t_text_token	*t_text_token;
@@ -104,23 +58,12 @@ char	**get_expanded_full(t_single_cmd *cmd)
 	return (expanded_full);
 }
 
-t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
+t_xcmd	**fill_x(t_xcmd **xcmd, t_single_cmd *cmd, int nr_cmds, pid_t *pid)
 {
-	t_xcmd			**xcmd;
-	t_single_cmd	*t_single_cmd;
-	pid_t			*pid;
-	int				i;
+	int	i;
 
-	xcmd = ft_malloc(sizeof(t_xcmd *) * nr_cmds);
-	pid = malloc(sizeof(pid_t) * nr_cmds);
-	if (!pid)
-	{
-		free(xcmd);
-		return (NULL);
-	}
 	i = 0;
-	t_single_cmd = cmd->cmd_list;
-	while (i < nr_cmds && t_single_cmd)
+	while (i < nr_cmds && cmd)
 	{
 		xcmd[i] = malloc(sizeof(t_xcmd));
 		if (!xcmd[i])
@@ -130,17 +73,35 @@ t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
 			free(xcmd);
 			return (NULL);
 		}
-		if (t_single_cmd)
+		if (cmd)
 		{
-			xcmd[i]->expanded_full = get_expanded_full(t_single_cmd);
-			xcmd[i]->cmd = get_cmd_array(t_single_cmd);
+			xcmd[i]->expanded_full = get_expanded_full(cmd);
+			xcmd[i]->cmd = get_cmd_array(cmd);
 		}
 		xcmd[i]->cmd_id = i;
 		xcmd[i]->nr_cmds = nr_cmds;
-		fill(xcmd[i], t_single_cmd, nr_cmds, pid);
-		t_single_cmd = t_single_cmd->next;
+		fill(xcmd[i], cmd, nr_cmds, pid);
+		cmd = cmd->next;
 		i++;
 	}
+	return (xcmd);
+}
+
+t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
+{
+	t_xcmd			**xcmd;
+	t_single_cmd	*t_single_cmd;
+	pid_t			*pid;
+
+	xcmd = ft_malloc(sizeof(t_xcmd *) * nr_cmds);
+	pid = malloc(sizeof(pid_t) * nr_cmds);
+	if (!pid)
+	{
+		free(xcmd);
+		return (NULL);
+	}
+	t_single_cmd = cmd->cmd_list;
+	xcmd = fill_x(xcmd, t_single_cmd, nr_cmds, pid);
 	return (xcmd);
 }
 

@@ -90,6 +90,7 @@ static void	parse_cmd(char *s, t_env *env)
 			cursor3 = cursor->redirs;
 			while (cursor3)
 			{
+				printf("IN PARSE COMMAND %s\n", cursor3->text_token->expanded->str);	
 				printf("- %s %s\n", redirs[cursor3->redir_type],
 					cursor3->text_token->original);
 				printf("  - Original: `%s`\n", cursor3->text_token->original);

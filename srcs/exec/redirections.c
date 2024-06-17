@@ -124,19 +124,16 @@ void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 		{
 			dup2(cmd[i]->pipefd[1], 1);
 			close(cmd[i]->pipefd[1]);
-			close(cmd[i]->pipefd[0]);
 		}
 		else if (cmd[i]->cmd_id > 0)
 		{
 			dup2(cmd[i - 1]->pipefd[0], 0);
 			close(cmd[i - 1]->pipefd[0]);
-			close(cmd[i]->pipefd[0]);
 			if (i < cmd[i]->nr_cmds - 1)
 			{
 				dup2(cmd[i]->pipefd[1], 1);
 				close(cmd[i]->pipefd[1]);
 			}
-			
 		}
 	}
 }

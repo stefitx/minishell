@@ -53,73 +53,75 @@ typedef struct s_xcmd
 	int				exit_status;
 }	t_xcmd;
 
-int		ft_strcmp(const char *line, const char *s);
-int		changedir(char	**cmd);
-void	execute_command(char **env, char *command);
-void	exec_cmd(char **env, char *command);
-
-void	fill_path(t_xcmd *xcmd);
+int			ft_strcmp(const char *line, const char *s);
+int			changedir(char	**cmd);
+void		execute_command(char **env, char *command);
+void		exec_cmd(char **env, char *command);
+void		fill_path(t_xcmd *xcmd);
 
 // exec
-void	parse_and_exec(char *s, t_data *data);
-void	redir_and_execute(t_xcmd **cmd, t_data *data);
+void		parse_and_exec(char *s, t_data *data);
+void		redir_and_execute(t_xcmd **cmd, t_data *data);
 
 // exec_utils
-void	pipe_error(int *pipefd);
+void		pipe_error(int *pipefd);
 
 // pipexstuff
-char	**find_path(char **env, char *s);
-void	execution(t_data *data, t_xcmd *cmd);
+char		**find_path(char **env, char *s);
+void		execution(t_data *data, t_xcmd *cmd);
 
 // init_xcmd
-void	fill_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
-void	fill_cmd(char ***xcmd, t_single_cmd *cmd);
-void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid);
-t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds);
-t_xcmd	**init_exe_cmd(t_command *cmd);
+void		fill_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
+void		fill_cmd(char ***xcmd, t_single_cmd *cmd);
+void		fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid);
+t_xcmd		**allocate_and_fill(t_command *cmd, int nr_cmds);
+t_xcmd		**init_exe_cmd(t_command *cmd);
 
 // init_utils
-int		count_cmds(t_command *cmd);
-void	count_args(t_text_token *text, char ***args);
-void	allocate_cmd_and_pid(t_xcmd **xcmd, int nr_cmds);
-void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
-int		check_builtin(char **xcmd);
+int			count_cmds(t_command *cmd);
+void		count_args(t_text_token *text, char ***args);
+void		allocate_cmd_and_pid(t_xcmd **xcmd, int nr_cmds);
+void		count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
+int			check_builtin(char **xcmd);
+char		**malloc_args(t_single_cmd *cmd);
+char		**get_cmd_array(t_single_cmd *cmd);
 
 // redirections
-void	redirections(t_xcmd **cmd, int i, int *flag);
+void		redirections(t_xcmd **cmd, int i, int *flag);
 
-char	**get_cmd_array(t_single_cmd *cmd);
+char		**get_cmd_array(t_single_cmd *cmd);
 
 // cd
-void	free_arr(char **env);
-void	ft_cd(t_xcmd *cmd, t_env *env_list);
+void		free_arr(char **env);
+void		ft_cd(t_xcmd *cmd, t_env *env_list);
 
 // echo
-void	ft_echo(t_xcmd *cmd);
+void		ft_echo(t_xcmd *cmd);
 
 // env
 
-void	ft_env(t_xcmd *cmd, t_data *data);
+void		ft_env(t_xcmd *cmd, t_data *data);
 
 // exit
-void	ft_exit(t_xcmd *xcmd, int *flag);
+void		ft_exit(t_xcmd *xcmd, int *flag);
 
 // export
-void	ft_export(t_xcmd *xcmd, t_data *data);
-void	init_export(t_export **export_arr);
+void		ft_export(t_xcmd *xcmd, t_data *data);
+void		init_export(t_export **export_arr);
 t_export	*get_existing_node_position(t_data *data, char *name);
 
 // export_utils
-int	already_exists(t_data *data, char *name);
-int	is_addition(char *str);
-int	is_invalid(char *str);
-void	init_export(t_export **export_arr);
-int has_equal_sign(char *str);
+int			already_exists(t_data *data, char *name);
+int			is_addition(char *str);
+int			is_invalid(char *str);
+void		init_export(t_export **export_arr);
+int			has_equal_sign(char *str);
+void		equal_sign(int equal_pos, char *full_str, char *str, t_export *new);
 
 // pwd
-void	ft_pwd(t_xcmd *xcmd);
+void		ft_pwd(t_xcmd *xcmd);
 
 // unset
-void	ft_unset(t_xcmd *xcmd, t_data *data);
+void		ft_unset(t_xcmd *xcmd, t_data *data);
 
 #endif

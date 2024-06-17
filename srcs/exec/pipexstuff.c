@@ -57,7 +57,7 @@ char	*construct_command_path(char **split_path, char *command)
 
 void	check_if_directory(char **split_path, char **cmd)
 {
-	DIR*	dir;
+	DIR	*dir;
 
 	if (cmd[0] != NULL)
 	{
@@ -68,8 +68,7 @@ void	check_if_directory(char **split_path, char **cmd)
 			{
 				closedir(dir);
 				ft_putstr_fd("minishell: ", 2);
-				ft_putstr_fd(cmd[0], 2);
-				ft_putstr_fd(": is a directory\n", 2);
+				perror(cmd[0]);
 				exit(126);
 			}
 		}
@@ -78,8 +77,7 @@ void	check_if_directory(char **split_path, char **cmd)
 			if (dir)
 				closedir(dir);
 			ft_putstr_fd("minishell: ", 2);
-			ft_putstr_fd(cmd[0], 2);
-			ft_putstr_fd(": No such file or directory\n", 2);
+			perror(cmd[0]);
 			exit(127);
 		}
 	}
@@ -94,7 +92,7 @@ char	*access_path(char **cmd, char **env)
 	check_if_directory(split_path, cmd);
 	if (access(cmd[0], F_OK) == 0)
 	{
-		if (access(cmd[0], X_OK) == -1)	
+		if (access(cmd[0], X_OK) == -1)
 		{
 			ft_putstr_fd("minishell: ", 2);
 			perror(cmd[0]);

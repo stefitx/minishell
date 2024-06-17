@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-# include "../exec/exec.h"
+#include "../exec/exec.h"
 
 void	ft_pwd(t_xcmd *xcmd)
 {
@@ -22,7 +22,9 @@ void	ft_pwd(t_xcmd *xcmd)
 		return ;
 	if (!pwd)
 	{
-		ft_putstr_fd("minishell: pwd: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory\n", 2);
+		ft_putstr_fd("minishell: pwd: error retrieving current directory:", 2);
+		ft_putstr_fd(" getcwd: cannot access parent directories:", 2);
+		ft_putstr_fd(" No such file or directory\n", 2);
 		xcmd->exit_status = 1;
 	}
 	else

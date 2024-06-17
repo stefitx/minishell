@@ -27,18 +27,60 @@ int	count_cmds(t_command *cmd)
 	return (nr_cmds);
 }
 
-void	count_args(t_text_token *text, char ***args)
+char	**malloc_args(t_single_cmd *cmd)
 {
-	int	i;
+	t_text_token	*t_text_token;
+	t_str_node		*t_str_node;
+	char			**args;
+	int				i;
 
 	i = 0;
-	while (text)
+	t_text_token = cmd->args;
+	while (t_text_token)
 	{
-		if (text->expanded)
+		if (t_text_token->expanded)
+		{
+			t_str_node = t_text_token->expanded;
+			while (t_str_node)
+			{
+				if (t_str_node->str != NULL)
+					i++;
+				t_str_node = t_str_node->next;
+			}
 			i++;
-		text = text->next;
+		}
+		t_text_token = t_text_token->next;
 	}
-	(*args) = ft_malloc(sizeof(char *) * (i + 1));
+	args = ft_malloc(sizeof(char *) * (i + 1));
+	return (args);
+}
+
+char	**get_cmd_array(t_single_cmd *cmd)
+{
+	t_text_token	*t_text_token;
+	t_str_node		*t_str_node;
+	char			**args;
+	int				i;
+
+	args = malloc_args(cmd);
+	i = 0;
+	t_text_token = cmd->args;
+	while (t_text_token)
+	{
+		if (t_text_token->expanded)
+		{
+			t_str_node = t_text_token->expanded;
+			while (t_str_node)
+			{
+				if (t_str_node->str != NULL)
+					args[i++] = ft_strdup(t_str_node->str);
+				t_str_node = t_str_node->next;
+			}
+		}
+		t_text_token = t_text_token->next;
+	}
+	args[i] = NULL;
+	return (args);
 }
 
 void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
@@ -60,9 +102,6 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 			xcmd->nr_heredoc++;
 		temp = temp->next;
 	}
-	// printf("nr_redir_in: %d\n", xcmd->nr_redir_in);
-	// printf("nr_redir_out: %d\n", xcmd->nr_redir_out);
-	// printf("nr_heredoc: %d\n", xcmd->nr_heredoc);
 }
 
 int	check_builtin(char **xcmd)
@@ -82,7 +121,7 @@ int	check_builtin(char **xcmd)
 	if (ft_strcmp(xcmd[0], "pwd") != 0)
 		return (1);
 	if (ft_strcmp(xcmd[0], "unset") != 0)
-			return (1);
+		return (1);
 	else
 		return (0);
 }
