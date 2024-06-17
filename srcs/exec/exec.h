@@ -65,6 +65,7 @@ void		redir_and_execute(t_xcmd **cmd, t_data *data);
 
 // exec_utils
 void		pipe_error(int *pipefd);
+int			ambiguous_redir(t_text_token *redir, t_xcmd *cmd);
 
 // pipexstuff
 char		**find_path(char **env, char *s);

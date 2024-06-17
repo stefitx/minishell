@@ -12,6 +12,33 @@
 
 #include "../../inc/minishell.h"
 
+int	ambiguous_redir(t_text_token *redir, t_xcmd *cmd)
+{
+	int				i;
+	t_text_token	*temp;
+	t_str_node		*temp2;
+
+	i = 0;
+	temp = redir;
+	temp2 = temp->expanded;
+	while (temp2)
+	{
+		if (temp2->str)
+			i++;
+		temp2 = temp2->next;
+	}
+	if (i != 1 || redir->expanded->str == NULL)
+	{
+		write(2, "minishell: ", 11);
+		write(2, "ambiguous redirect\n", 19);
+		cmd->exit_status = 1;
+		if (!cmd->builtin && cmd->cmd != NULL && cmd->cmd[0] != NULL)
+			exit(1);
+		return (1);
+	}
+	return (0);
+}
+
 void	pipe_error(int *pipefd)
 {
 	if (pipe(pipefd) == -1)

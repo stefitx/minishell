@@ -12,29 +12,27 @@
 
 #include "../../inc/minishell.h"
 
-int	ambiguous_redir(t_text_token *redir, t_xcmd *cmd)
+int	fd_error(t_xcmd *cmd, t_redir_token *temp, int fd, char c)
 {
-	int	i;
-	t_text_token	*temp;
-	t_str_node		*temp2;
+	char	*f;
 
-	i = 0;
-	temp = redir;
-	temp2 = temp->expanded;
-	while (temp2)
+	if (c == 'o')
 	{
-		if (temp2->str)
-			i++;
-		temp2 = temp2->next;
+		f = temp->text_token->expanded->str;
+		if (temp->redir_type == REDIR_APPEND)
+			cmd->fd_o = open(f, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		else
+			cmd->fd_o = open(f, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	}
-	if (i != 1 || redir->expanded->str == NULL)
+	if (fd < 0)
 	{
 		write(2, "minishell: ", 11);
-		write(2, "ambiguous redirect\n", 19);
+		perror(temp->text_token->expanded->str);
 		cmd->exit_status = 1;
 		if (!cmd->builtin && cmd->cmd != NULL && cmd->cmd[0] != NULL)
 			exit(1);
-		return (1);
+		if (cmd->builtin)
+			return (1);
 	}
 	return (0);
 }
@@ -48,31 +46,14 @@ void	out_redir(t_xcmd *cmd)
 		close(cmd->fd_o);
 	while (temp && temp->text_token)
 	{
-		if (temp->redir_type == REDIR_OUTFILE || temp->redir_type == REDIR_APPEND)
+		if (temp->redir_type == REDIR_OUTFILE
+			|| temp->redir_type == REDIR_APPEND)
 		{
 			if (ambiguous_redir(temp->text_token, cmd))
 				return ;
 			if (temp->text_token && temp->text_token->expanded)
-			{
-				if (temp->redir_type == REDIR_APPEND)
-				{
-					cmd->fd_o = open(temp->text_token->expanded->str, O_WRONLY | O_CREAT | O_APPEND, 0644);
-				}
-				else
-				{
-					cmd->fd_o = open(temp->text_token->expanded->str, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-				}
-				if (cmd->fd_o < 0)
-				{
-					write(2, "minishell: ", 11);
-					perror(temp->text_token->expanded->str);
-					cmd->exit_status = 1;
-					if (!cmd->builtin && cmd->cmd != NULL && cmd->cmd[0] != NULL)
-						exit(1);
-					if (cmd->builtin)
-						return ;
-				}
-			}
+				if (fd_error(cmd, temp, cmd->fd_o, 'o'))
+					return ;
 		}
 		temp = temp->next;
 	}
@@ -96,16 +77,8 @@ void	in_redir(t_xcmd *cmd)
 			if (temp->text_token && temp->text_token->expanded)
 			{
 				cmd->fd_in = open(temp->text_token->expanded->str, O_RDONLY);
-				if (cmd->fd_in < 0)
-				{
-					write(2, "minishell: ", 11);
-					perror(temp->text_token->expanded->str);
-					cmd->exit_status = 1;
-					if (!cmd->builtin && cmd->cmd != NULL && cmd->cmd[0] != NULL)
-						exit(1);
-					if (cmd->builtin)
-						return ;
-				}
+				if (fd_error(cmd, temp, cmd->fd_in, 'i'))
+					return ;
 			}
 		}
 		temp = temp->next;
@@ -113,7 +86,6 @@ void	in_redir(t_xcmd *cmd)
 	dup2(cmd->fd_in, STDIN_FILENO);
 	close(cmd->fd_in);
 }
-
 
 void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 {

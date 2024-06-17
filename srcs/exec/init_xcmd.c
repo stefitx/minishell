@@ -20,6 +20,7 @@ void	fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid)
 	xcmd->exit_status = 0;
 	xcmd->nr_redir_in = 0;
 	xcmd->nr_redir_out = 0;
+	xcmd->nr_heredoc = 0;
 	xcmd->builtin = check_builtin(xcmd->cmd);
 	xcmd->fd_in = -3;
 	xcmd->fd_o = -3;
