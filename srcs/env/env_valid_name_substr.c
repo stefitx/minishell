@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/env.h"
+#include "../../inc/minishell.h"
 
 int	env_valid_name_substr(char *s, unsigned int start, size_t len)
 {

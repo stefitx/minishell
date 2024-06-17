@@ -127,7 +127,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	i = 0;
 	while (i < (*cmd)->nr_cmds)
 	{
-		printf("nr of heredoc: %d\n", cmd[i]->nr_heredoc);
+		//printf("nr of heredoc: %d\n", cmd[i]->nr_heredoc);
 		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
 		|| ft_strcmp(cmd[i]->cmd[0], "exit") != 0)
 		{
@@ -178,7 +178,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 			{
 				if (WTERMSIG(status) == SIGINT)
 				{
-					printf(" SIGNALEDD\n");
+					//printf(" SIGNALEDD\n");
 					cmd[i]->exit_status = 130;
 					printf("\n");
 				}
@@ -205,7 +205,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 		{
 			if (WTERMSIG(status) == SIGINT)
 			{
-				printf(" SIGNALEDD\n");
+				// printf(" SIGNALEDD\n");
 				cmd[i]->exit_status = 130;
 				printf("\n");
 			}
@@ -217,8 +217,8 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 		}
 		else if (WIFEXITED(status))
 		{
-			printf("status: %d\n", status);
-			printf("we get here\n");
+			// printf("status: %d\n", status);
+			// printf("we get here\n");
 			cmd[i]->exit_status = WEXITSTATUS(status);
 		}
 		//printf("exit status: %d\n", cmd[i]->exit_status);

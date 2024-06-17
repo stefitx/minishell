@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 #include <readline/history.h>
 

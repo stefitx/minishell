@@ -112,7 +112,6 @@ char	*access_path(char **cmd, char **env)
 void	execution(t_data *data, t_xcmd *cmd)
 {
 	char	**env;
-	int		i;
 
 	if (cmd->cmd[0] == NULL || !cmd->cmd || !cmd->cmd[0][0])
 		exit(0);
@@ -121,11 +120,8 @@ void	execution(t_data *data, t_xcmd *cmd)
 	if (execve(cmd->path, cmd->cmd, env) == -1)
 	{
 		free(cmd->path);
-		i = 0;
-		while (env[i])
-			free(env[i++]);
-		free(env);
-		perror("Command execution failed");
-		exit(EXIT_FAILURE);
+		free_arr(env);
+		ft_putstr_fd("minishell: command not found\n", 2);
+		exit(127);
 	}
 }

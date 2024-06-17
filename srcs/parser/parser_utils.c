@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 char	*get_ifs_set(t_env *env)
 {

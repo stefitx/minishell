@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/env.h"
+#include "../../inc/minishell.h"
 
 void	env_clear_var(t_env *env_var)
 {

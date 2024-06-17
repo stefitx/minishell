@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 t_str_node	*create_str_node(char *s)
 {

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 void	ft_strappend(char **s, char *add)
 {

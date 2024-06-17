@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/env.h"
+#include "../../inc/minishell.h"
 
 t_env	*env_get_var(t_env *var, char *name)
 {

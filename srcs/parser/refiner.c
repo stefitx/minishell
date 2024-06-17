@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 static void	handle_special_token(t_token *raw_token, t_refiner_data *data);
 static void	handle_text_token(t_token *raw_token, t_refiner_data *data);

@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 t_pipe_token	*create_pipe_token(void)
 {

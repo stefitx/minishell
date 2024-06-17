@@ -24,7 +24,7 @@ int	fd_error(t_xcmd *cmd, t_redir_token *temp, int fd, char c)
 		else
 			cmd->fd_o = open(f, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	}
-	if (fd < 0)
+	if ((fd < 0 && c == 'i') || (c == 'o' && cmd->fd_o < 0))
 	{
 		write(2, "minishell: ", 11);
 		perror(temp->text_token->expanded->str);

@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 t_text_token	*text_token_create(char *original, char *original_quoted,
 		t_str_node *expanded, int in_quotes)

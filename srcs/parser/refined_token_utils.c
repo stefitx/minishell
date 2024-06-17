@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 t_ref_token	*ref_token_create(enum e_ref_token_types type, void *data)
 {

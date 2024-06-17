@@ -76,7 +76,7 @@ HEADER		=	./inc/minishell.h
 LIBFT_ROOT	:=	./inc/libft/
 RDLINE_ROOT	:=	./inc/readline/
 DIR_OBJ		:=	temp/
-INC_ROOT	:=	inc/m
+INC_ROOT	:=	inc/
 SRCS_DIR	=	srcs/
 
 ENV_DIR		= env/
@@ -101,25 +101,18 @@ BUILTIN_OBJ	= $(addprefix $(DIR_OBJ),$(BUILTIN_SRC:.c=.o))
 EXEC_OBJ	= $(addprefix $(DIR_OBJ),$(EXEC_SRC:.c=.o))
 PARSER_OBJ	= $(addprefix $(DIR_OBJ),$(PARSER_SRC:.c=.o))
 
-LIB_A		:=	./inc/readline/libreadline.a \
- 				./inc/libft/libft.a ./inc/readline/libhistory.a
+LIB_A		:=	./inc/libft/libft.a
 
-LIB_ADD_DIR	:=	-L$(RDLINE_ROOT) -L$(LIBFT_ROOT)
+LIB_ADD_DIR	:=	-L$(LIBFT_ROOT)
 
 LIB_SEARCH	:=	-lreadline -lhistory -ltermcap -lft
 
 HEADERS		:=	$(INC_ROOT)
-HEADERS		+=	$(addsuffix $(INC_ROOT),$(LIBFT_ROOT))
-HEADERS		+=	$(addsuffix $(INC_ROOT),env.h)
-HEADERS		+=	$(addsuffix $(INC_ROOT),parser.h)
-
-#Gross but gets the job done
-# ifeq ($(HOME), /Users/pfontenl)
-# 	RDLINE_ROOT	=	./inc/readline/
-# 	LIB_A =			./inc/readline/libreadline.a \
-#  					./inc/libft/libft.a ./inc/readline/libhistory.a
-# 	LIB_ADD_DIR	=	-L$(RDLINE_ROOT) -L$(LIBFT_ROOT)
-# endif
+HEADERS		+=	inc/libft/libft.h
+HEADERS		+=	inc/env.h
+HEADERS		+=	inc/parser.h
+HEADERS		+=	srcs/exec/exec.h
+HEADERS		+=	srcs/built-ins/builtins.h
 
 #RULES
 all: temp libraries $(NAME)
@@ -127,7 +120,7 @@ all: temp libraries $(NAME)
 temp:
 	@mkdir -p $(DIR_OBJ)
 
-libraries: libft rdline
+libraries: libft
 
 $(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
@@ -136,24 +129,13 @@ $(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 libft:
 	@$(MAKE) -C $(LIBFT_ROOT) --no-print-directory
 
-$(RDLINE_ROOT)libreadline.a: rdline
-
-rdline:	$(RDLINE_ROOT)libreadline.a
-	cd $(RDLINE_ROOT) && ./configure && make --no-print-directory
-
-$(DIR_OBJ)%.o: %.c Makefile $(LIB_A) $(HEADER)
+$(DIR_OBJ)%.o: %.c Makefile $(LIB_A) #$(HEADER)
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
+	@$(CC) $(CFLAGS) -MMD -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
 	@printf "$(PREFIX)$(COLOR_CYAN)Compiled $< to $@!$(COLOR_NONE)\n"
-
-# $(DIR_OBJ)%.o: $(SRCS_DIR)$(ENV_DIR)%.c Makefile $(LIB_A) $(HEADER)
-# 	@mkdir -p $(dir $@)
-# 	@$(CC) $(CFLAGS) -DREADLINE_LIBRARY=1 $(INCLUDE) -c $< -o $@
-# 	@printf "$(PREFIX)$(COLOR_CYAN)Compiled $< to $@!$(COLOR_NONE)\n"
 
 clean:
 	@$(MAKE) -C $(LIBFT_ROOT) clean --no-print-directory
-	@$(MAKE) -C $(RDLINE_ROOT) clean --no-print-directory
 	@$(RM) $(DIR_OBJ)
 	@echo "$(PREFIX)$(COLOR_RED)Objects deleted successfully!$(COLOR_NONE)"
 
@@ -163,6 +145,8 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re libraries libft rdline
+.PHONY: all clean fclean re libraries libft
+
+-include temp/srcs/*/*.d
 
 .SILENT:

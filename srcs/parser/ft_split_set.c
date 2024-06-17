@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft/libft.h"
+#include "../../inc/minishell.h"
 
 static size_t	count_words(char const *s, char *set)
 {

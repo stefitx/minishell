@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 static void	handle_quote(char *cmd, t_tokenizer_data *data)
 {

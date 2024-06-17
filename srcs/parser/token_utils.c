@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 t_token	*token_create(char *s, enum e_token_types type, char quote)
 {

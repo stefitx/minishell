@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 t_single_cmd	*create_single_cmd(t_text_token *args, t_redir_token *redirs)
 {

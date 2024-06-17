@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
+#include "../../inc/minishell.h"
 
 t_redir_token	*redir_token_create(enum e_redir_types type, t_text_token *data)
 {
