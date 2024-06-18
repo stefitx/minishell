@@ -34,12 +34,12 @@ char	*ft_itoa(int n)
 	int				size;
 
 	if (n == 0)
-		return (ft_strdup("0"));
+		return (ft_strdup_err("0"));
 	if (n == -2147483648)
-		return (ft_strdup("-2147483648"));
+		return (ft_strdup_err("-2147483648"));
 	i = 0;
 	size = ft_size(n);
-	s = ft_malloc(sizeof(char) * (size + 1));
+	s = malloc(sizeof(char) * (size + 1));
 	if (!s)
 		return (NULL);
 	if (n < 0)

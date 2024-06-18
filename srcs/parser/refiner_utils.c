@@ -20,7 +20,7 @@ void	add_ref_text_token(t_refiner_data *data)
 	token = text_token_create(data->og, data->og_quoted, data->expanded,
 			data->in_quotes);
 	if (data->expanded_full)
-		token->expanded_full = ft_strdup(data->expanded_full);
+		token->expanded_full = ft_strdup_err(data->expanded_full);
 	ref_token_append(&data->ref_tokens, REF_TOKEN_TEXT, token);
 	free(data->og);
 	data->og = NULL;

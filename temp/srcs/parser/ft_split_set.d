@@ -1,0 +1,11 @@
+temp/srcs/parser/ft_split_set.o: srcs/parser/ft_split_set.c \
+ inc/libft/libft.h srcs/parser/../../inc/minishell.h \
+ srcs/parser/../../inc/./libft/libft.h srcs/parser/../../inc/parser.h \
+ srcs/parser/../../inc/libft/libft.h srcs/parser/../../inc/env.h \
+ srcs/parser/../../inc/../srcs/exec/exec.h \
+ srcs/parser/../../inc/../srcs/exec/../../inc/env.h \
+ srcs/parser/../../inc/../srcs/exec/../../inc/minishell.h \
+ srcs/parser/../../inc/../srcs/exec/../built-ins/builtins.h \
+ srcs/parser/../../inc/../srcs/exec/../built-ins/../../inc/minishell.h \
+ srcs/parser/../../inc/../srcs/exec/../built-ins/../exec/exec.h \
+ srcs/parser/../../inc/../srcs/built-ins/builtins.h

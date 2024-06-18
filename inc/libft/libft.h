@@ -72,5 +72,13 @@ void	ft_lstclear(t_list **lst, void (*del)(void*));
 void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
-void	*ft_malloc(size_t size);
+// extra
+void	*ft_malloc_err(size_t size);
+void	*ft_calloc_err(size_t count, size_t size);
+char	*ft_strdup_err(const char *s1);
+char	*ft_substr_err(char const *s, unsigned int start, size_t len);
+char	*ft_strjoin_err(char const *s1, char const *s2);
+char	*ft_strtrim_err(char const *s1, char const *set);
+char	*ft_itoa_err(int n);
+char	**ft_split_err(char const *s, char c);
 #endif

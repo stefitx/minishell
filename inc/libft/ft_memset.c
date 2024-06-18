@@ -31,7 +31,7 @@ int main(void)
 {
 	void  *b;
 	int c = 'i';
-	b = ft_malloc(sizeof(char) * 40);
+	b = malloc(sizeof(char) * 40);
 	printf("%s\n", ft_memset(b, c, 3));
 	return 0;
 }*/

@@ -18,11 +18,9 @@ t_text_token	*text_token_create(char *original, char *original_quoted,
 {
 	t_text_token	*token;
 
-	token = ft_calloc(1, sizeof(t_text_token));
-	if (!token)
-		return (NULL);
-	token->original = ft_strdup(original);
-	token->original_quoted = ft_strdup(original_quoted);
+	token = ft_calloc_err(1, sizeof(t_text_token));
+	token->original = ft_strdup_err(original);
+	token->original_quoted = ft_strdup_err(original_quoted);
 	token->expanded = expanded;
 	token->in_quotes = in_quotes;
 	token->next = NULL;
@@ -38,7 +36,7 @@ t_text_token	*text_token_clone(t_text_token *token)
 	new = text_token_create(token->original, token->original_quoted,
 			clone_str_node_list(token->expanded), token->in_quotes);
 	if (token->expanded_full)
-		new->expanded_full = ft_strdup(token->expanded_full);
+		new->expanded_full = ft_strdup_err(token->expanded_full);
 	return (new);
 }
 

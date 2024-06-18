@@ -30,7 +30,7 @@ void	ft_bzero(void *s, size_t n)
 	
 
 	i = 0;
-	b = ft_malloc(sizeof(char) *40);
+	b = malloc(sizeof(char) *40);
 	ft_bzero(b, 4);
 	b[4] = 'b';
 	while (b[i] == '\0')

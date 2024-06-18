@@ -52,7 +52,7 @@ char	**ft_split(char const *s, char c)
 	i = 0;
 	start = 0;
 	j = 0;
-	matrix = ft_malloc(sizeof(char *) * (count_strings(s, c) + 1));
+	matrix = malloc(sizeof(char *) * (count_strings(s, c) + 1));
 	if (matrix == NULL)
 		return (NULL);
 	while (s[i])

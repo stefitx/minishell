@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/parser.h"
-#include "../../inc/minishell.h"
+#include "../../inc/libft/libft.h"
 
 void	ft_strappend(char **s, char *add)
 {
@@ -20,9 +20,9 @@ void	ft_strappend(char **s, char *add)
 	if (!s || !add)
 		return ;
 	if (*s)
-		new = ft_strjoin(*s, add);
+		new = ft_strjoin_err(*s, add);
 	else
-		new = ft_strdup(add);
+		new = ft_strdup_err(add);
 	free(*s);
 	*s = new;
 }

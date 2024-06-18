@@ -17,7 +17,7 @@ t_ref_token	*ref_token_create(enum e_ref_token_types type, void *data)
 {
 	t_ref_token	*token;
 
-	token = ft_calloc(1, sizeof(t_ref_token));
+	token = ft_calloc_err(1, sizeof(t_ref_token));
 	if (!token)
 		return (NULL);
 	token->token_type = type;

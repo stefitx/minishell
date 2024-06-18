@@ -15,14 +15,8 @@
 t_pipe_token	*create_pipe_token(void)
 {
 	t_pipe_token	*token;
-	// int				fds[2];
 
-	token = ft_calloc(1, sizeof(t_pipe_token));
-	if (!token)
-		return (NULL);
-	// pipe(fds);
-	// token->fd_in = fds[0];
-	// token->fd_out = fds[1];
+	token = ft_calloc_err(1, sizeof(t_pipe_token));
 	token->next = NULL;
 	return (token);
 }
@@ -31,9 +25,7 @@ t_pipe_token	*clone_pipe_token(t_pipe_token *token)
 {
 	t_pipe_token	*new;
 
-	new = ft_calloc(1, sizeof(t_pipe_token));
-	if (!new)
-		return (NULL);
+	new = ft_calloc_err(1, sizeof(t_pipe_token));
 	new->fd_in = token->fd_in;
 	new->fd_out = token->fd_out;
 	new->next = NULL;

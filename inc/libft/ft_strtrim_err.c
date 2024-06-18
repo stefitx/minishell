@@ -1,26 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_malloc.c                                        :+:      :+:    :+:   */
+/*   ft_strtrim_err.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/09 23:19:48 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/09 23:19:53 by atudor           ###   ########.fr       */
+/*   Created: 2023/09/21 22:10:57 by atudor            #+#    #+#             */
+/*   Updated: 2023/09/24 21:36:11 by atudor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-void	*ft_malloc(size_t size)
+char	*ft_strtrim_err(char const *s1, char const *set)
 {
-	void	*ptr;
+	char	*res;
+	int		i;
+	int		j;
+	int		s_s1;
 
-	ptr = malloc(size);
-	if (!ptr)
+	if (!s1 || !set)
+		return (NULL);
+	i = 0;
+	j = 0;
+	s_s1 = ft_strlen(s1);
+	while (s1[i] != '\0' && ft_strchr(set, s1[i]))
+		i++;
+	while (s_s1 > i && ft_strchr(set, s1[s_s1 - 1]))
+		s_s1--;
+	res = ft_malloc_err((s_s1 - i + 1) * sizeof(char));
+	while (i < s_s1)
 	{
-		ft_putstr_fd("Error: malloc failed\n", 2);
-		exit(1);
+		res[j] = s1[i];
+		j++;
+		i++;
 	}
-	return (ptr);
+	res[j] = '\0';
+	return (res);
 }

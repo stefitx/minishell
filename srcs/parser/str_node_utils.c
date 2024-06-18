@@ -17,10 +17,10 @@ t_str_node	*create_str_node(char *s)
 {
 	t_str_node	*node;
 
-	node = ft_calloc(1, sizeof(t_str_node));
+	node = ft_calloc_err(1, sizeof(t_str_node));
 	if (!node)
 		return (NULL);
-	node->str = ft_strdup(s);
+	node->str = ft_strdup_err(s);
 	node->next = NULL;
 	return (node);
 }

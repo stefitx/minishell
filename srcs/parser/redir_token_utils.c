@@ -17,9 +17,7 @@ t_redir_token	*redir_token_create(enum e_redir_types type, t_text_token *data)
 {
 	t_redir_token	*token;
 
-	token = ft_calloc(1, sizeof(t_redir_token));
-	if (!token)
-		return (NULL);
+	token = ft_calloc_err(1, sizeof(t_redir_token));
 	token->redir_type = type;
 	token->text_token = data;
 	token->next = NULL;

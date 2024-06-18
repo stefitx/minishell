@@ -17,7 +17,7 @@ t_single_cmd	*create_single_cmd(t_text_token *args, t_redir_token *redirs)
 {
 	t_single_cmd	*cmd;
 
-	cmd = ft_calloc(1, sizeof(t_single_cmd));
+	cmd = ft_calloc_err(1, sizeof(t_single_cmd));
 	if (!cmd)
 		return (NULL);
 	cmd->args = args;

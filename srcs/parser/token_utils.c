@@ -17,9 +17,7 @@ t_token	*token_create(char *s, enum e_token_types type, char quote)
 {
 	t_token	*token;
 
-	token = ft_calloc(1, sizeof(t_token));
-	if (!token)
-		return (NULL);
+	token = ft_calloc_err(1, sizeof(t_token));
 	token->content = s;
 	if (type == TOKEN_REDIR && s[0] == '|')
 		type = TOKEN_PIPE;

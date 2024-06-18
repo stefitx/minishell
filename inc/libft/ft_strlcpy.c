@@ -35,7 +35,7 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 {
 char *dst = "yaaaaaa";
 char *src = "nahhhhhhhh";
-dst = ft_malloc( 40 * sizeof(char));
+dst = malloc( 40 * sizeof(char));
 printf("%zu", ft_strlcpy(dst, src, 5));
 printf("%zu", strlcpy(dst, src, 5));
 free(dst);

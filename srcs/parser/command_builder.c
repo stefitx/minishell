@@ -63,7 +63,7 @@ t_command	*build_commands(t_ref_token *tokens)
 	t_cmd_builder_data	data;
 
 	ft_bzero(&data, sizeof(t_cmd_builder_data));
-	data.cmd_set = ft_calloc(1, sizeof(t_command));
+	data.cmd_set = ft_calloc_err(1, sizeof(t_command));
 	while (tokens)
 	{
 		main_loop(tokens, &data);

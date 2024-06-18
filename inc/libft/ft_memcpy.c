@@ -35,7 +35,7 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
 	//char *dst = "ddddd";
 	char *src = "yaaaaaas";
-	char *dst = ft_malloc(10 * sizeof(char));
+	char *dst = malloc(10 * sizeof(char));
 	printf("%s", ft_memcpy(dst, src, 3));
 			return 0;
 			}*/

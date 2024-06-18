@@ -45,20 +45,7 @@ static char	*copy_word(char const *s, char *set, size_t *cursor)
 		len++;
 		(*cursor)++;
 	}
-	return (ft_substr(s, start, len));
-}
-
-static void	free_words(char **words, size_t word_count)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < word_count)
-	{
-		free(words[i]);
-		i++;
-	}
-	free(words);
+	return (ft_substr_err(s, start, len));
 }
 
 char	**split_words(char const *s, char *set, size_t word_count)
@@ -67,21 +54,13 @@ char	**split_words(char const *s, char *set, size_t word_count)
 	char	**words;
 	size_t	cursor;
 
-	words = ft_calloc(word_count + 1, sizeof(char *));
+	words = ft_calloc_err(word_count + 1, sizeof(char *));
 	if (!words)
 		return (NULL);
 	i = 0;
 	cursor = 0;
 	while (i < word_count)
-	{
-		words[i] = copy_word(s, set, &cursor);
-		if (!words[i])
-		{
-			free_words(words, word_count);
-			return (NULL);
-		}
-		i++;
-	}
+		words[i++] = copy_word(s, set, &cursor);
 	words[i] = 0;
 	return (words);
 }
@@ -95,5 +74,7 @@ char	**ft_split_set(char const *s, char *set)
 		return (NULL);
 	word_count = count_words(s, set);
 	words = split_words(s, set, word_count);
+	if (!words)
+		exit(1);
 	return (words);
 }

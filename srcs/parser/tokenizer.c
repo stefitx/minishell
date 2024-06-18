@@ -19,7 +19,7 @@ static void	handle_quote(char *cmd, t_tokenizer_data *data)
 		data->quote = '\0';
 	else if (!data->quote)
 		data->quote = cmd[data->i];
-	token_append(&data->tokens, ft_substr(cmd, data->i++, 1), TOKEN_QUOTE,
+	token_append(&data->tokens, ft_substr_err(cmd, data->i++, 1), TOKEN_QUOTE,
 		data->quote);
 }
 
@@ -34,10 +34,10 @@ static void	handle_control_char(char *cmd, t_tokenizer_data *data)
 				(unsigned int)data->start, (size_t)(data->i - data->start + 1)))
 			data->i++;
 		if (data->i == data->start)
-			token_append(&data->tokens, ft_strdup("$"), TOKEN_TEXT,
+			token_append(&data->tokens, ft_strdup_err("$"), TOKEN_TEXT,
 				data->quote);
 		else
-			token_append(&data->tokens, ft_substr(cmd, data->start, data->i
+			token_append(&data->tokens, ft_substr_err(cmd, data->start, data->i
 					- data->start), TOKEN_VARIABLE, data->quote);
 	}
 	else if (data->quote == '\0')
@@ -45,7 +45,7 @@ static void	handle_control_char(char *cmd, t_tokenizer_data *data)
 		data->start = data->i;
 		if (ft_strchr("<>", cmd[data->i]) && cmd[data->i] == cmd[data->i + 1])
 			data->i++;
-		token_append(&data->tokens, ft_substr(cmd, data->start, ++data->i
+		token_append(&data->tokens, ft_substr_err(cmd, data->start, ++data->i
 				- data->start), TOKEN_REDIR, data->quote);
 	}
 }
@@ -66,7 +66,7 @@ t_token	*split_tokens(char *cmd)
 		while (cmd[data.i] && !is_control_char(cmd[data.i], data.quote))
 			data.i++;
 		if (data.i > data.start || data.quote != '\0')
-			token_append(&data.tokens, ft_substr(cmd, data.start, data.i
+			token_append(&data.tokens, ft_substr_err(cmd, data.start, data.i
 					- data.start), TOKEN_TEXT, data.quote);
 		if (cmd[data.i] && ft_strchr("$<>|\"'", cmd[data.i]))
 			handle_control_char(cmd, &data);
