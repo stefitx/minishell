@@ -67,6 +67,17 @@ void		redir_and_execute(t_xcmd **cmd, t_data *data);
 void		pipe_error(int *pipefd);
 int			ambiguous_redir(t_text_token *redir, t_xcmd *cmd);
 
+//builtin_related.c
+
+void		builtin_execution(t_data *data, t_xcmd **xcmd, int i);
+int			builtin_menu(t_xcmd **xcmd, int i, t_data *data);
+int			check_builtin(char **xcmd);
+
+//heredoc.c
+
+void		heredoc_print(char *limiter, int *heredoc_fd);
+int			eval_heredoc(t_redir_token *redir_list);
+
 // pipexstuff
 char		**find_path(char **env, char *s);
 void		execution(t_data *data, t_xcmd *cmd);
@@ -77,15 +88,16 @@ void		fill_cmd(char ***xcmd, t_single_cmd *cmd);
 void		fill(t_xcmd *xcmd, t_single_cmd *cursor, int nr_cmds, pid_t *pid);
 t_xcmd		**allocate_and_fill(t_command *cmd, int nr_cmds);
 t_xcmd		**init_exe_cmd(t_command *cmd);
+void		save_exitstatus(t_xcmd **cmd, int i);
 
 // init_utils
 int			count_cmds(t_command *cmd);
 void		count_args(t_text_token *text, char ***args);
 void		allocate_cmd_and_pid(t_xcmd **xcmd, int nr_cmds);
 void		count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);
-int			check_builtin(char **xcmd);
 char		**malloc_args(t_single_cmd *cmd);
 char		**get_cmd_array(t_single_cmd *cmd);
+void		free_xcmd(t_xcmd **xcmd, int size);
 
 // redirections
 void		redirections(t_xcmd **cmd, int i, int *flag);

@@ -73,7 +73,7 @@ char	**get_cmd_array(t_single_cmd *cmd)
 			while (t_str_node)
 			{
 				if (t_str_node->str != NULL)
-					args[i++] = ft_strdup(t_str_node->str);
+					args[i++] = ft_strdup_err(t_str_node->str);
 				t_str_node = t_str_node->next;
 			}
 		}
@@ -104,24 +104,26 @@ void	count_redirs(t_xcmd *xcmd, t_redir_token *parse_redir)
 	}
 }
 
-int	check_builtin(char **xcmd)
+void	free_xcmd(t_xcmd **xcmd, int size)
 {
-	if (xcmd[0] == NULL || xcmd == NULL)
-		return (0);
-	if (ft_strcmp(xcmd[0], "cd") != 0)
-		return (1);
-	if (ft_strcmp(xcmd[0], "echo") != 0)
-		return (1);
-	if (ft_strcmp(xcmd[0], "env") != 0)
-		return (1);
-	if (ft_strcmp(xcmd[0], "exit") != 0)
-		return (1);
-	if (ft_strcmp(xcmd[0], "export") != 0)
-		return (1);
-	if (ft_strcmp(xcmd[0], "pwd") != 0)
-		return (1);
-	if (ft_strcmp(xcmd[0], "unset") != 0)
-		return (1);
-	else
-		return (0);
+	int	i;
+
+	i = 0;
+	if (!xcmd || !*xcmd)
+		return ;
+	if ((*xcmd)->pid)
+		free((*xcmd)->pid);
+	while (i < size && xcmd[i])
+	{
+		if (xcmd[i])
+		{
+			if (xcmd[i]->cmd)
+				free_arr(xcmd[i]->cmd);
+			if (xcmd[i]->expanded_full)
+				free_arr(xcmd[i]->expanded_full);
+			free(xcmd[i]);
+		}
+		i++;
+	}
+	free(xcmd);
 }

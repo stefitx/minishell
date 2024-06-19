@@ -28,7 +28,7 @@ int	count_strings(const char *s, char sep)
 	return (count);
 }
 
-char	**ft_split(char const *s, char c)
+char	**ft_split_err(char const *s, char c)
 {
 	char	**matrix;
 	int		i;

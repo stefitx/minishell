@@ -64,12 +64,12 @@ int	has_equal_sign(char *str)
 
 void	equal_sign(int equal_pos, char *full_str, char *str, t_export *new)
 {
-	new->value = ft_strdup(full_str + equal_pos + 1);
+	new->value = ft_strdup_err(full_str + equal_pos + 1);
 	if (!is_addition(str))
-		new->name = ft_substr(str, 0, equal_pos);
+		new->name = ft_substr_err(str, 0, equal_pos);
 	else if (is_addition(str))
 	{
 		new->add = 1;
-		new->name = ft_substr(str, 0, equal_pos - 1);
+		new->name = ft_substr_err(str, 0, equal_pos - 1);
 	}
 }

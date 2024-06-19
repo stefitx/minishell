@@ -29,8 +29,8 @@ char	**find_path(char **env, char *s)
 	}
 	if (env[i] == NULL)
 		return (NULL);
-	to_split = ft_substr(env[i], ft_strlen(s), ft_strlen(env[i]));
-	split_path = ft_split(to_split, ':');
+	to_split = ft_substr_err(env[i], ft_strlen(s), ft_strlen(env[i]));
+	split_path = ft_split_err(to_split, ':');
 	free(to_split);
 	return (split_path);
 }
@@ -44,8 +44,8 @@ char	*construct_command_path(char **split_path, char *command)
 	i = 0;
 	while (split_path[i])
 	{
-		temp = ft_strjoin(split_path[i], "/");
-		path = ft_strjoin(temp, command);
+		temp = ft_strjoin_err(split_path[i], "/");
+		path = ft_strjoin_err(temp, command);
 		free(temp);
 		if (access(path, F_OK | X_OK) == 0)
 			return (path);

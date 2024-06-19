@@ -23,7 +23,7 @@ void	add_node(t_data *data, t_export *new)
 	cursor = env_get_var(data->env_list, new->name);
 	if (cursor && new->add == 1)
 	{
-		temp = ft_strjoin(cursor->val, new->value);
+		temp = ft_strjoin_err(cursor->val, new->value);
 		free(new->value);
 		new->value = temp;
 	}
@@ -41,7 +41,7 @@ t_export	*create_new_node(char *str, char *full_str)
 	new->add = 0;
 	if (full_str[equal_pos + 1] == '\0' || equal_pos == 0)
 	{
-		new->name = ft_strdup(ft_strtrim(full_str, "=+"));
+		new->name = ft_strdup_err(ft_strtrim_err(full_str, "=+"));
 		if (equal_pos == 0)
 			new->value = NULL;
 		else

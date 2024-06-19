@@ -47,3 +47,25 @@ void	pipe_error(int *pipefd)
 		exit(EXIT_FAILURE);
 	}
 }
+
+void	save_exitstatus(t_xcmd **cmd, int i)
+{
+	int	status;
+
+	waitpid((*cmd)->pid[i], &status, 0);
+	if (WIFEXITED(status))
+		cmd[i]->exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == SIGINT)
+		{
+			cmd[i]->exit_status = 130;
+			printf("\n");
+		}
+		else if (WTERMSIG(status) == SIGQUIT)
+		{
+			cmd[i]->exit_status = 131;
+			printf("Quit: %d\n", WTERMSIG(status));
+		}
+	}
+}

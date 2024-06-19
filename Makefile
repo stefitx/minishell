@@ -69,6 +69,8 @@ EXEC_FILES	=	exec.c \
 				redirections.c \
 				exec_utils.c \
 				pipexstuff.c \
+				builtin_related.c \
+				heredoc.c
 # HEREDOC_FILES	=
 # BONUS_FILES	=
 

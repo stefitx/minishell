@@ -52,7 +52,7 @@ char	**get_expanded_full(t_single_cmd *cmd)
 	while (t_text_token)
 	{
 		if (t_text_token->expanded_full != NULL)
-			expanded_full[i++] = ft_strdup(t_text_token->expanded_full);
+			expanded_full[i++] = ft_strdup_err(t_text_token->expanded_full);
 		t_text_token = t_text_token->next;
 	}
 	expanded_full[i] = NULL;
