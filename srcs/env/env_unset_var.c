@@ -20,7 +20,7 @@ void	env_unset_var(t_env **env, char *name)
 
 	if (ft_strncmp(name, "?", 2) == 0)
 	{
-		env_set_var(env, "?", ft_strdup("0"));
+		env_set_var(env, "?", ft_strdup_err("0"));
 		return ;
 	}
 	cursor = *env;

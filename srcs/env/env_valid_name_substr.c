@@ -18,7 +18,7 @@ int	env_valid_name_substr(char *s, unsigned int start, size_t len)
 	char	*sub;
 	int		out;
 
-	sub = ft_substr(s, start, len);
+	sub = ft_substr_err(s, start, len);
 	out = env_valid_name(sub);
 	free(sub);
 	return (out);

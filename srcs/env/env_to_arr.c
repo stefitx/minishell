@@ -19,7 +19,7 @@ char	**env_to_arr(t_env *env)
 	char	**env_arr;
 
 	i = 0;
-	env_arr = ft_calloc(env_len(env), sizeof(char *));
+	env_arr = ft_calloc_err(env_len(env), sizeof(char *));
 	while (env->next)
 	{
 		if (ft_strncmp(env->name, "?", 2) != 0

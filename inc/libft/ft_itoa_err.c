@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-int	ft_size(int n)
+static int	ft_size(int n)
 {
 	int	size;
 
@@ -27,7 +27,7 @@ int	ft_size(int n)
 	return (size);
 }
 
-char	*ft_itoa(int n)
+char	*ft_itoa_err(int n)
 {
 	char			*s;
 	int				i;
