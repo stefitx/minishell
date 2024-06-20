@@ -44,7 +44,7 @@ void	builtin_execution(t_data *data, t_xcmd **xcmd, int i)
 	orig_stdout = dup(STDOUT_FILENO);
 	flag = 0;
 	if (xcmd[i]->nr_heredoc > 0)
-		dup2(eval_heredoc(xcmd[i]->redirs), STDIN_FILENO);
+		dup2(eval_heredoc(xcmd[i]->redirs, xcmd[i]), STDIN_FILENO);
 	redirections(xcmd, i, &flag);
 	if (!builtin_menu(xcmd, i, data) && ft_strcmp(xcmd[i]->cmd[0], "exit") != 0)
 	{

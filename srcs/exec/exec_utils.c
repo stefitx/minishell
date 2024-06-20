@@ -54,18 +54,21 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 
 	waitpid((*cmd)->pid[i], &status, 0);
 	if (WIFEXITED(status))
+	{
 		cmd[i]->exit_status = WEXITSTATUS(status);
+	}
+	
 	else if (WIFSIGNALED(status))
 	{
-		if (WTERMSIG(status) == SIGINT)
+		if (g_signals == SIGINT)
 		{
 			cmd[i]->exit_status = 130;
 			printf("\n");
 		}
-		else if (WTERMSIG(status) == SIGQUIT)
+		else if (g_signals == SIGQUIT)
 		{
 			cmd[i]->exit_status = 131;
-			printf("Quit: %d\n", WTERMSIG(status));
+			printf("\nQuit: %d\n", 3);
 		}
 	}
 }

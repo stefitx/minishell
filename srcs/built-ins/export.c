@@ -45,7 +45,7 @@ t_export	*create_new_node(char *str, char *full_str)
 		if (equal_pos == 0)
 			new->value = NULL;
 		else
-			new->value = ft_strdup("\0");
+			new->value = ft_strdup_err("\0");
 	}
 	else if (equal_pos > 0)
 		equal_sign(equal_pos, full_str, str, new);

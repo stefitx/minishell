@@ -12,6 +12,8 @@
 
 #include "../../inc/minishell.h"
 
+int g_signals = 0;
+
 int	ft_strcmp(const char *line, const char *s)
 {
 	size_t	i;
@@ -56,6 +58,7 @@ static void	sig_handler_idle(int signal)
 {
 	if (signal == SIGINT || signal == SIGQUIT)
 	{
+		g_signals = signal;
 		rl_blank_line();
 		if (signal == SIGINT)
 		{
@@ -69,7 +72,7 @@ static void	sig_handler_idle(int signal)
 	}
 }
 
-static void	sig_idle(struct sigaction *sigact)
+void	sig_idle(struct sigaction *sigact)
 {
 	(*sigact).sa_handler = sig_handler_idle;
 	sigemptyset(&(*sigact).sa_mask);
@@ -86,6 +89,7 @@ int	main(int argc, char **argv, char **env)
 	t_env				*our_env;
 
 	(void)argv;
+
 	if (argc != 1)
 		return (perror("Usage: ./minishell\n"), 1);
 	sig_idle(&sigact);
@@ -94,6 +98,7 @@ int	main(int argc, char **argv, char **env)
 	data.env_list = our_env;
 	while (1)
 	{
+		g_signals = 0;
 		line = readline("shortking👑$ ");
 		if (!line)
 		{

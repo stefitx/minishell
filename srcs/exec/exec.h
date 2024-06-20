@@ -27,7 +27,9 @@
 # include "../../inc/minishell.h"
 # include "../built-ins/builtins.h"
 
-//Executor
+//Executo
+
+
 typedef struct s_data
 {
 	t_env			*env_list;
@@ -75,8 +77,8 @@ int			check_builtin(char **xcmd);
 
 //heredoc.c
 
-void		heredoc_print(char *limiter, int *heredoc_fd);
-int			eval_heredoc(t_redir_token *redir_list);
+void		heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd);
+int			eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd);
 
 // pipexstuff
 char		**find_path(char **env, char *s);

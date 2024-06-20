@@ -33,4 +33,8 @@
 # include "env.h"
 # include "../srcs/built-ins/builtins.h"
 
+extern int	g_signals;
+
+void	sig_idle(struct sigaction *sigact);
+
 #endif

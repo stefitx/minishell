@@ -34,12 +34,13 @@ void	child(t_xcmd **cmd, int i, t_data *data)
 	int	j;
 	int	heredoc_fd;
 	int	flag;
+	struct sigaction	sigact;
 
-	signal(SIGINT, SIG_DFL);
+	sig_idle(&sigact);
 	heredoc_fd = 0;
 	if (cmd[i]->nr_heredoc > 0)
 	{
-		heredoc_fd = eval_heredoc(cmd[i]->redirs);
+		heredoc_fd = eval_heredoc(cmd[i]->redirs, cmd[i]);
 		if (heredoc_fd != -1)
 			dup2(heredoc_fd, STDIN_FILENO);
 	}
@@ -74,7 +75,8 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i)
 			close(cmd[i - 1]->pipefd[0]);
 			close(cmd[i - 1]->pipefd[1]);
 		}
-		if (cmd[i]->nr_heredoc > 0 && (*cmd)->pid[i] != 0)
+		if (cmd[i]->nr_heredoc > 0 && cmd[i]->cmd
+			&& (*cmd)->pid[i] != 0)
 			save_exitstatus(cmd, i);
 		i++;
 	}
@@ -113,7 +115,5 @@ void	parse_and_exec(char *s, t_data *data)
 }
 
 /*
-exit status doesnt work for signals
-FIX MAKEFILE dependencies for .h
-update ft_strdup_err and ft_malloc_err et  al
+simple heredoc doesnt catch signals
 */

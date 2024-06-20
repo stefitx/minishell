@@ -62,7 +62,7 @@ char	**ft_split_err(char const *s, char c)
 	int i;
 	i = 0;
 	while(splitted[i])
-	{
+	{jjhyujkjgtftdrefsearsdfbm
 		printf("%s\n", splitted[i]);
 		i++;
 	}
