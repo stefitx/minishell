@@ -44,7 +44,8 @@ void	change_directories(t_xcmd *cmd, char **env, t_env *env_list)
 		oldpwd = find_path(env, "PWD=");
 		cursor = env_get_var(env_list, "OLDPWD");
 		if (!cursor)
-			env_add_var(&env_list, ft_strdup_err("OLDPWD"), ft_strdup_err(oldpwd[0]));
+			env_add_var(&env_list, ft_strdup_err("OLDPWD"),
+				ft_strdup_err(oldpwd[0]));
 		else
 			env_set_var(&env_list, "OLDPWD", ft_strdup_err(oldpwd[0]));
 		chdir(home_path[0]);

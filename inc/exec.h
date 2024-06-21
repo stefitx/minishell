@@ -23,13 +23,10 @@
 # include <sys/stat.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include "../../inc/env.h"
-# include "../../inc/minishell.h"
-# include "../../inc/signals.h"
-# include "../built-ins/builtins.h"
-
-//Executo
-
+# include "env.h"
+# include "minishell.h"
+# include "signals.h"
+# include "builtins.h"
 
 typedef struct s_data
 {
@@ -64,7 +61,7 @@ void		fill_path(t_xcmd *xcmd);
 
 // exec
 void		parse_and_exec(char *s, t_data *data, struct sigaction *sigact);
-void		redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *sigact);
+void		redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *s);
 
 // exec_utils
 void		pipe_error(int *pipefd);
@@ -79,7 +76,7 @@ int			check_builtin(char **xcmd);
 //heredoc.c
 
 void		heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd);
-int			eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd);
+int			eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, pid_t pid);
 
 // pipexstuff
 char		**find_path(char **env, char *s);

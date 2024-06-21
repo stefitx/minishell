@@ -29,9 +29,10 @@
 
 # include "./libft/libft.h"
 # include "parser.h"
-# include "../srcs/exec/exec.h"
+# include "exec.h"
 # include "env.h"
-# include "../srcs/built-ins/builtins.h"
+# include "builtins.h"
+# include "signals.h"
 
 extern int	g_signals;
 

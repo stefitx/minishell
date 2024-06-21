@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-#include "../exec/exec.h"
+#include "../../inc/exec.h"
 
 void	add_node(t_data *data, t_export *new)
 {

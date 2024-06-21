@@ -26,20 +26,22 @@ void	final_wait(t_xcmd **cmd, t_data *data)
 		save_exitstatus(cmd, i);
 		i++;
 	}
-	env_set_var(&data->env_list, "?", ft_itoa_err(cmd[nr_cmds - 1]->exit_status));
+	printf("child is dead\n");
+	env_set_var(&data->env_list, "?",
+		ft_itoa_err(cmd[nr_cmds - 1]->exit_status));
 }
 
-void	child(t_xcmd **cmd, int i, t_data *data)
+void	child(t_xcmd **cmd, int i, t_data *data, struct sigaction *sigact)
 {
 	int	j;
 	int	heredoc_fd;
 	int	flag;
 
-	printf("Hi, I'm a child with PID %ld!\n", (long)getpid());
+	update_sig_handler(sigact, SIG_HANDLE_NONE);
 	heredoc_fd = 0;
 	if (cmd[i]->nr_heredoc > 0)
 	{
-		heredoc_fd = eval_heredoc(cmd[i]->redirs, cmd[i]);
+		heredoc_fd = eval_heredoc(cmd[i]->redirs, cmd[i], 1);
 		if (heredoc_fd != -1)
 			dup2(heredoc_fd, STDIN_FILENO);
 	}
@@ -68,7 +70,7 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i, struct sigaction *sigact)
 				pipe_error(cmd[i]->pipefd);
 			(*cmd)->pid[i] = fork();
 			if ((*cmd)->pid[i] == 0)
-				child(cmd, i, data);
+				child(cmd, i, data, sigact);
 		}
 		if (i > 0 && (*cmd)->nr_cmds > 1)
 		{
@@ -82,7 +84,7 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i, struct sigaction *sigact)
 	}
 }
 
-void	redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *sigact)
+void	redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *s)
 {
 	int		orig_stdin;
 	int		orig_stdout;
@@ -91,7 +93,8 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *sigact)
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
 	i = 0;
-	exec_daddy(cmd, data, i, sigact);
+	exec_daddy(cmd, data, i, s);
+	printf("daddy is done\n");
 	final_wait(cmd, data);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
@@ -107,7 +110,10 @@ void	parse_and_exec(char *s, t_data *data, struct sigaction *sigact)
 	update_sig_handler(sigact, SIG_HANDLE_NONE);
 	cmd = parse_command(s, data->env_list);
 	if (!cmd || !cmd->cmd_list)
+	{
+		update_sig_handler(sigact, SIG_HANDLE_IDLE);
 		return ;
+	}
 	add_history(s);
 	xcmd = init_exe_cmd(cmd);
 	redir_and_execute(xcmd, data, sigact);

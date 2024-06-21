@@ -34,6 +34,26 @@ int	builtin_menu(t_xcmd **xcmd, int i, t_data *data)
 		return (0);
 }
 
+void	call_heredoc(t_xcmd *xcmd)
+{
+	pid_t	pid;
+	int		status;
+	int		heredoc_fd;
+
+	if (xcmd->nr_heredoc > 0)
+	{
+		pid = fork();
+		if (pid == 0)
+		{
+			heredoc_fd = dup2(eval_heredoc(xcmd->redirs, xcmd, pid),
+					STDIN_FILENO);
+			close(heredoc_fd);
+		}
+		else
+			waitpid(pid, &status, 0);
+	}
+}
+
 void	builtin_execution(t_data *data, t_xcmd **xcmd, int i)
 {
 	int		orig_stdin;
@@ -43,8 +63,7 @@ void	builtin_execution(t_data *data, t_xcmd **xcmd, int i)
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
 	flag = 0;
-	if (xcmd[i]->nr_heredoc > 0)
-		dup2(eval_heredoc(xcmd[i]->redirs, xcmd[i]), STDIN_FILENO);
+	call_heredoc(xcmd[i]);
 	redirections(xcmd, i, &flag);
 	if (!builtin_menu(xcmd, i, data) && ft_streq(xcmd[i]->cmd[0], "exit") != 0)
 	{

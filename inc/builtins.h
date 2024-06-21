@@ -13,7 +13,7 @@
 #ifndef BUILTINS_H
 # define BUILTINS_H
 
-# include "../../inc/minishell.h"
+# include "minishell.h"
 # include <stdio.h>
 # include <unistd.h>
 # include <stdlib.h>
@@ -24,8 +24,7 @@
 # include <sys/stat.h>
 # include <readline/readline.h>
 # include <readline/history.h>
-# include "../exec/exec.h"
-# include "../../inc/minishell.h"
+# include "exec.h"
 
 typedef struct s_export
 {

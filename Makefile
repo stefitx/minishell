@@ -86,11 +86,8 @@ SRCS_DIR	=	srcs/
 ENV_DIR		= env/
 BUILTIN_DIR	= built-ins/
 EXEC_DIR	= exec/
-# EXPAN_DIR	= expan/
-# HERE_DIR	= heredoc/
 INPUT_DIR	= input/
 SIGNAL_DIR	= signals/
-# LEXER_DIR	= lex/
 PARSER_DIR	= parser/
 
 
@@ -119,8 +116,8 @@ HEADERS		+=	inc/libft/libft.h
 HEADERS		+=	inc/env.h
 HEADERS		+=	inc/parser.h
 HEADERS		+=	inc/signals.h
-HEADERS		+=	srcs/exec/exec.h
-HEADERS		+=	srcs/built-ins/builtins.h
+HEADERS		+=	inc/exec.h
+HEADERS		+=	inc/builtins.h
 
 #RULES
 all: temp libraries $(NAME)

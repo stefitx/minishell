@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec.h                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/04 15:13:56 by atudor            #+#    #+#             */
+/*   Updated: 2024/04/19 18:41:50 by pfontenl         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../inc/minishell.h"
 #include "../../inc/signals.h"
 
@@ -18,15 +30,13 @@ static void	rl_blank_line(void)
 
 void	sig_handler_idle(int signal)
 {
-	// write(2, "IDLE\n", 6);
-	// printf("Idle signal hander called!\nMy PID: %ld\nParent PID: %ld\n\n", (long)getpid(), (long)getppid());
 	if (signal == SIGINT || signal == SIGQUIT)
 	{
-		// printf("Idle Signal Handled! %d\n", signal);
 		g_signals = signal;
 		rl_blank_line();
 		if (signal == SIGINT)
 		{
+			printf("ihshivhheifhhehhf\n");
 			write(STDOUT_FILENO, "\n", 1);
 			rl_replace_line("", 1);
 			rl_on_new_line();

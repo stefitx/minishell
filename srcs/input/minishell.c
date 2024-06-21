@@ -11,9 +11,8 @@
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-#include "../../inc/signals.h"
 
-int g_signals = 0;
+int	g_signals = 0;
 
 int	ft_streq(const char *line, const char *s)
 {
@@ -48,10 +47,8 @@ int	main(int argc, char **argv, char **env)
 	t_env				*our_env;
 
 	(void)argv;
-
 	if (argc != 1)
 		return (perror("Usage: ./minishell\n"), 1);
-	printf("Minishell PID: %ld\n", (long)getpid());
 	update_sig_handler(&sigact, SIG_HANDLE_IDLE);
 	our_env = NULL;
 	env_init(&our_env, env);

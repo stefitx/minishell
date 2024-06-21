@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
-#include "../exec/exec.h"
+#include "../../inc/exec.h"
 
 void	ft_pwd(t_xcmd *xcmd)
 {
