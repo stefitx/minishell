@@ -34,7 +34,7 @@ int	*parse_args(t_xcmd *cmd)
 	int	n_flag;
 
 	n_flag = 0;
-	i_n_flag = ft_malloc(sizeof(int) * 2);
+	i_n_flag = ft_malloc_err(sizeof(int) * 2);
 	i_n_flag[1] = 0;
 	i_n_flag[0] = 1;
 	while (cmd->cmd[i_n_flag[0]])

@@ -37,7 +37,7 @@ t_export	*create_new_node(char *str, char *full_str)
 	int			equal_pos;
 
 	equal_pos = has_equal_sign(str);
-	new = (t_export *)ft_malloc(sizeof(t_export));
+	new = (t_export *)ft_malloc_err(sizeof(t_export));
 	new->add = 0;
 	if (full_str[equal_pos + 1] == '\0' || equal_pos == 0)
 	{

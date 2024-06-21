@@ -29,14 +29,13 @@ void	final_wait(t_xcmd **cmd, t_data *data)
 	env_set_var(&data->env_list, "?", ft_itoa_err(cmd[nr_cmds - 1]->exit_status));
 }
 
-void	child(t_xcmd **cmd, int i, t_data *data)
+void	child(t_xcmd **cmd, int i, t_data *data, struct sigaction *sigact)
 {
 	int	j;
 	int	heredoc_fd;
 	int	flag;
-	struct sigaction	sigact;
 
-	sig_idle(&sigact);
+	update_sig_handler(sigact, SIG_HANDLE_EXEC);
 	heredoc_fd = 0;
 	if (cmd[i]->nr_heredoc > 0)
 	{
@@ -55,7 +54,7 @@ void	child(t_xcmd **cmd, int i, t_data *data)
 	exit(cmd[i]->exit_status);
 }
 
-void	exec_daddy(t_xcmd **cmd, t_data *data, int i)
+void	exec_daddy(t_xcmd **cmd, t_data *data, int i, struct sigaction *sigact)
 {
 	while (i < (*cmd)->nr_cmds)
 	{
@@ -68,7 +67,7 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i)
 				pipe_error(cmd[i]->pipefd);
 			(*cmd)->pid[i] = fork();
 			if ((*cmd)->pid[i] == 0)
-				child(cmd, i, data);
+				child(cmd, i, data, sigact);
 		}
 		if (i > 0 && (*cmd)->nr_cmds > 1)
 		{
@@ -82,7 +81,7 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i)
 	}
 }
 
-void	redir_and_execute(t_xcmd **cmd, t_data *data)
+void	redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *sigact)
 {
 	int		orig_stdin;
 	int		orig_stdout;
@@ -91,7 +90,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
 	i = 0;
-	exec_daddy(cmd, data, i);
+	exec_daddy(cmd, data, i, sigact);
 	final_wait(cmd, data);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
@@ -99,19 +98,21 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data)
 	close(orig_stdout);
 }
 
-void	parse_and_exec(char *s, t_data *data)
+void	parse_and_exec(char *s, t_data *data, struct sigaction *sigact)
 {
 	t_xcmd		**xcmd;
 	t_command	*cmd;
 
+	update_sig_handler(sigact, SIG_HANDLE_NONE);
 	cmd = parse_command(s, data->env_list);
 	if (!cmd || !cmd->cmd_list)
 		return ;
 	add_history(s);
 	xcmd = init_exe_cmd(cmd);
-	redir_and_execute(xcmd, data);
+	redir_and_execute(xcmd, data, sigact);
 	free_xcmd(xcmd, (*xcmd)->nr_cmds);
 	clear_command(cmd);
+	update_sig_handler(sigact, SIG_HANDLE_IDLE);
 }
 
 /*

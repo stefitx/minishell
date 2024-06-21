@@ -25,6 +25,7 @@
 # include <readline/history.h>
 # include "../../inc/env.h"
 # include "../../inc/minishell.h"
+# include "../../inc/signals.h"
 # include "../built-ins/builtins.h"
 
 //Executo
@@ -62,8 +63,8 @@ void		exec_cmd(char **env, char *command);
 void		fill_path(t_xcmd *xcmd);
 
 // exec
-void		parse_and_exec(char *s, t_data *data);
-void		redir_and_execute(t_xcmd **cmd, t_data *data);
+void		parse_and_exec(char *s, t_data *data, struct sigaction *sigact);
+void		redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *sigact);
 
 // exec_utils
 void		pipe_error(int *pipefd);

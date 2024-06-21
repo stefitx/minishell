@@ -45,6 +45,8 @@ void	sig_handler_heredoc(int signal)
 {
 	if (signal == SIGINT)
 	{
+		write(2, "HERE\n", 6);
+		printf("Heredoc signal hander called!\nMy PID: %ld\nParent PID: %ld\n\n", (long)getpid(), (long)getppid());
 		g_signals = signal;
 	}
 }
@@ -58,10 +60,6 @@ void	sig_heredoc(struct sigaction *sigact, t_xcmd *cmd)
 		write(STDOUT_FILENO, "\n", 1);
 		cmd->exit_status = 130;
 	}
-	sigemptyset(&(*sigact).sa_mask);
-	(*sigact).sa_flags = 0;
-	sigaction(SIGINT, sigact, NULL);
-	sigaction(SIGQUIT, sigact, NULL);
 }
 
 int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd)
@@ -83,11 +81,11 @@ int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd)
 		heredoc = heredoc->next;
 	}
 	if (g_signals == SIGINT)
-		{
-			printf("returning -1\n");
-			close(heredoc_fd[0]);
-			exit(130);
-		}
+	{
+		printf("returning -1\n");
+		close(heredoc_fd[0]);
+		exit(130);
+	}
 	close(heredoc_fd[1]);
 	return (heredoc_fd[0]);
 }

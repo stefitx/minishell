@@ -39,6 +39,8 @@ ENV_FILES =	env_add_var.c \
 			env_valid_name_substr.c \
 			env_valid_name.c
 INPUT_FILES	= minishell.c
+SIGNAL_FILES = 	signals.c \
+				sig_handler_idle.c
 BUILTIN_FILES = cd.c \
 				echo.c \
 				env.c \
@@ -87,18 +89,21 @@ EXEC_DIR	= exec/
 # EXPAN_DIR	= expan/
 # HERE_DIR	= heredoc/
 INPUT_DIR	= input/
+SIGNAL_DIR	= signals/
 # LEXER_DIR	= lex/
 PARSER_DIR	= parser/
 
 
 ENV_SRC		= $(addprefix $(SRCS_DIR),$(addprefix $(ENV_DIR),$(ENV_FILES)))
 INPUT_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(INPUT_DIR),$(INPUT_FILES)))
+SIGNAL_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(SIGNAL_DIR),$(SIGNAL_FILES)))
 BUILTIN_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(BUILTIN_DIR),$(BUILTIN_FILES)))
 EXEC_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(EXEC_DIR),$(EXEC_FILES)))
 PARSER_SRC	= $(addprefix $(SRCS_DIR),$(addprefix $(PARSER_DIR),$(PARSER_FILES)))
 
 ENV_OBJ		= $(addprefix $(DIR_OBJ),$(ENV_SRC:.c=.o))
 INPUT_OBJ	= $(addprefix $(DIR_OBJ),$(INPUT_SRC:.c=.o))
+SIGNAL_OBJ	= $(addprefix $(DIR_OBJ),$(SIGNAL_SRC:.c=.o))
 BUILTIN_OBJ	= $(addprefix $(DIR_OBJ),$(BUILTIN_SRC:.c=.o))
 EXEC_OBJ	= $(addprefix $(DIR_OBJ),$(EXEC_SRC:.c=.o))
 PARSER_OBJ	= $(addprefix $(DIR_OBJ),$(PARSER_SRC:.c=.o))
@@ -113,6 +118,7 @@ HEADERS		:=	$(INC_ROOT)
 HEADERS		+=	inc/libft/libft.h
 HEADERS		+=	inc/env.h
 HEADERS		+=	inc/parser.h
+HEADERS		+=	inc/signals.h
 HEADERS		+=	srcs/exec/exec.h
 HEADERS		+=	srcs/built-ins/builtins.h
 
@@ -124,7 +130,7 @@ temp:
 
 libraries: libft
 
-$(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
+$(NAME): $(ENV_OBJ) $(INPUT_OBJ) $(SIGNAL_OBJ) $(BUILTIN_OBJ) $(EXEC_OBJ) $(PARSER_OBJ)
 	@$(CC) $(CFLAGS) $^ $(LIB_ADD_DIR) $(LIB_SEARCH) $(LIB_A) -o $@
 	@echo "$(PREFIX)$(COLOR_GREEN)Minishell built successfully!$(COLOR_NONE)"
 

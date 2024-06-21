@@ -6,6 +6,7 @@ temp/srcs/built-ins/unset.o: srcs/built-ins/unset.c \
  srcs/built-ins/../../inc/../srcs/exec/exec.h \
  srcs/built-ins/../../inc/../srcs/exec/../../inc/env.h \
  srcs/built-ins/../../inc/../srcs/exec/../../inc/minishell.h \
+ srcs/built-ins/../../inc/../srcs/exec/../../inc/signals.h \
  srcs/built-ins/../../inc/../srcs/exec/../built-ins/builtins.h \
  srcs/built-ins/../../inc/../srcs/exec/../built-ins/../../inc/minishell.h \
  srcs/built-ins/../../inc/../srcs/exec/../built-ins/../exec/exec.h \

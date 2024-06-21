@@ -51,7 +51,7 @@ char	**malloc_args(t_single_cmd *cmd)
 		}
 		t_text_token = t_text_token->next;
 	}
-	args = ft_malloc(sizeof(char *) * (i + 1));
+	args = ft_malloc_err(sizeof(char *) * (i + 1));
 	return (args);
 }
 

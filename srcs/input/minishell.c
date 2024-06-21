@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../inc/minishell.h"
+#include "../../inc/signals.h"
 
 int g_signals = 0;
 
@@ -39,48 +40,6 @@ int	ft_strcmp(const char *line, const char *s)
 		return (0);
 }
 
-static void	rl_blank_line(void)
-{
-	int		i;
-	char	*temp;
-
-	temp = ft_strdup_err(rl_line_buffer);
-	i = 0;
-	while (i++ < 2)
-		ft_strappend(&temp, " ");
-	rl_on_new_line();
-	rl_replace_line(temp, 1);
-	rl_redisplay();
-	free(temp);
-}
-
-static void	sig_handler_idle(int signal)
-{
-	if (signal == SIGINT || signal == SIGQUIT)
-	{
-		g_signals = signal;
-		rl_blank_line();
-		if (signal == SIGINT)
-		{
-			write(STDOUT_FILENO, "\n", 1);
-			rl_replace_line("", 1);
-			rl_on_new_line();
-			rl_redisplay();
-		}
-		else if (ft_strlen(rl_line_buffer) <= 2)
-			rl_replace_line("", 1);
-	}
-}
-
-void	sig_idle(struct sigaction *sigact)
-{
-	(*sigact).sa_handler = sig_handler_idle;
-	sigemptyset(&(*sigact).sa_mask);
-	(*sigact).sa_flags = 0;
-	sigaction(SIGINT, sigact, NULL);
-	sigaction(SIGQUIT, sigact, NULL);
-}
-
 int	main(int argc, char **argv, char **env)
 {
 	struct sigaction	sigact;
@@ -92,7 +51,9 @@ int	main(int argc, char **argv, char **env)
 
 	if (argc != 1)
 		return (perror("Usage: ./minishell\n"), 1);
-	sig_idle(&sigact);
+	printf("Minishell PID: %ld\n", (long)getpid());
+	(void)sig_handler_idle;
+	update_sig_handler(&sigact, SIG_HANDLE_IDLE);
 	our_env = NULL;
 	env_init(&our_env, env);
 	data.env_list = our_env;
@@ -105,7 +66,7 @@ int	main(int argc, char **argv, char **env)
 			write(STDOUT_FILENO, "exit\n", 5);
 			exit(0);
 		}
-		parse_and_exec(line, &data);
+		parse_and_exec(line, &data, &sigact);
 		free(line);
 	}
 	return (0);

@@ -46,7 +46,7 @@ char	**get_expanded_full(t_single_cmd *cmd)
 			i++;
 		t_text_token = t_text_token->next;
 	}
-	expanded_full = ft_malloc(sizeof(char *) * (i + 1));
+	expanded_full = ft_malloc_err(sizeof(char *) * (i + 1));
 	t_text_token = cmd->args;
 	i = 0;
 	while (t_text_token)
@@ -94,7 +94,7 @@ t_xcmd	**allocate_and_fill(t_command *cmd, int nr_cmds)
 	t_single_cmd	*t_single_cmd;
 	pid_t			*pid;
 
-	xcmd = ft_malloc(sizeof(t_xcmd *) * nr_cmds);
+	xcmd = ft_malloc_err(sizeof(t_xcmd *) * nr_cmds);
 	pid = malloc(sizeof(pid_t) * nr_cmds);
 	if (!pid)
 	{
