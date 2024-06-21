@@ -14,19 +14,19 @@
 
 int	builtin_menu(t_xcmd **xcmd, int i, t_data *data)
 {
-	if (ft_strcmp(xcmd[i]->cmd[0], "exit") == 0)
+	if (ft_streq(xcmd[i]->cmd[0], "exit") == 0)
 	{
-		if (ft_strcmp(xcmd[i]->cmd[0], "cd") != 0)
+		if (ft_streq(xcmd[i]->cmd[0], "cd") != 0)
 			ft_cd(xcmd[i], data->env_list);
-		else if (ft_strcmp(xcmd[i]->cmd[0], "echo") != 0)
+		else if (ft_streq(xcmd[i]->cmd[0], "echo") != 0)
 			ft_echo(xcmd[i]);
-		else if (ft_strcmp(xcmd[i]->cmd[0], "env") != 0)
+		else if (ft_streq(xcmd[i]->cmd[0], "env") != 0)
 			ft_env(xcmd[i], data);
-		else if (ft_strcmp(xcmd[i]->cmd[0], "export") != 0)
+		else if (ft_streq(xcmd[i]->cmd[0], "export") != 0)
 			ft_export(xcmd[i], data);
-		else if (ft_strcmp(xcmd[i]->cmd[0], "pwd") != 0)
+		else if (ft_streq(xcmd[i]->cmd[0], "pwd") != 0)
 			ft_pwd(xcmd[i]);
-		else if (ft_strcmp(xcmd[i]->cmd[0], "unset") != 0)
+		else if (ft_streq(xcmd[i]->cmd[0], "unset") != 0)
 			ft_unset(xcmd[i], data);
 		return (1);
 	}
@@ -46,7 +46,7 @@ void	builtin_execution(t_data *data, t_xcmd **xcmd, int i)
 	if (xcmd[i]->nr_heredoc > 0)
 		dup2(eval_heredoc(xcmd[i]->redirs, xcmd[i]), STDIN_FILENO);
 	redirections(xcmd, i, &flag);
-	if (!builtin_menu(xcmd, i, data) && ft_strcmp(xcmd[i]->cmd[0], "exit") != 0)
+	if (!builtin_menu(xcmd, i, data) && ft_streq(xcmd[i]->cmd[0], "exit") != 0)
 	{
 		dup2(orig_stdin, STDIN_FILENO);
 		dup2(orig_stdout, STDOUT_FILENO);
@@ -64,19 +64,19 @@ int	check_builtin(char **xcmd)
 {
 	if (xcmd[0] == NULL || xcmd == NULL)
 		return (0);
-	if (ft_strcmp(xcmd[0], "cd") != 0)
+	if (ft_streq(xcmd[0], "cd") != 0)
 		return (1);
-	if (ft_strcmp(xcmd[0], "echo") != 0)
+	if (ft_streq(xcmd[0], "echo") != 0)
 		return (1);
-	if (ft_strcmp(xcmd[0], "env") != 0)
+	if (ft_streq(xcmd[0], "env") != 0)
 		return (1);
-	if (ft_strcmp(xcmd[0], "exit") != 0)
+	if (ft_streq(xcmd[0], "exit") != 0)
 		return (1);
-	if (ft_strcmp(xcmd[0], "export") != 0)
+	if (ft_streq(xcmd[0], "export") != 0)
 		return (1);
-	if (ft_strcmp(xcmd[0], "pwd") != 0)
+	if (ft_streq(xcmd[0], "pwd") != 0)
 		return (1);
-	if (ft_strcmp(xcmd[0], "unset") != 0)
+	if (ft_streq(xcmd[0], "unset") != 0)
 		return (1);
 	else
 		return (0);

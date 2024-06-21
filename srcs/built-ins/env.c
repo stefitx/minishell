@@ -21,8 +21,8 @@ void	ft_env(t_xcmd *cmd, t_data *data)
 	cursor = data->env_list;
 	while (cursor)
 	{
-		if (ft_strcmp(cursor->name, "?") == 0
-			&& ft_strcmp(cursor->name, "IFS") == 0
+		if (ft_streq(cursor->name, "?") == 0
+			&& ft_streq(cursor->name, "IFS") == 0
 			&& cursor->val)
 		{
 			ft_putstr_fd(cursor->name, 1);

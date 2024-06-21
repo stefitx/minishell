@@ -56,7 +56,7 @@ typedef struct s_xcmd
 	int				exit_status;
 }	t_xcmd;
 
-int			ft_strcmp(const char *line, const char *s);
+int			ft_streq(const char *line, const char *s);
 int			changedir(char	**cmd);
 void		execute_command(char **env, char *command);
 void		exec_cmd(char **env, char *command);

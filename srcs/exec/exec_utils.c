@@ -57,18 +57,18 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 	{
 		cmd[i]->exit_status = WEXITSTATUS(status);
 	}
-	
 	else if (WIFSIGNALED(status))
 	{
+		printf("\n[WIFSIGNALED] Status: %d, Global Signal: %d\n", status, g_signals);
 		if (g_signals == SIGINT)
 		{
 			cmd[i]->exit_status = 130;
-			printf("\n");
+			//printf("\n^C aaaaaaaamvavhsghaghaigasi\n");
 		}
 		else if (g_signals == SIGQUIT)
 		{
 			cmd[i]->exit_status = 131;
-			printf("\nQuit: %d\n", 3);
+			printf("\nQuit: 3\n");
 		}
 	}
 }

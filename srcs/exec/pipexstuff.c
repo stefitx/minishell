@@ -62,7 +62,7 @@ void	check_if_directory(char **split_path, char **cmd)
 	if (cmd[0] != NULL)
 	{
 		dir = opendir(cmd[0]);
-		if (ft_strchr(cmd[0], '/') != NULL || ft_strcmp(cmd[0], "~") != 0)
+		if (ft_strchr(cmd[0], '/') != NULL || ft_streq(cmd[0], "~") != 0)
 		{
 			if (dir || errno != ENOTDIR)
 			{

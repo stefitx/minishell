@@ -26,7 +26,7 @@ void	heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd)
 	{
 		line = readline("> ");
 		printf("exit_status: %d\n", cmd->exit_status);
-		if (!line || ft_strcmp(line, limiter))
+		if (!line || ft_streq(line, limiter))
 		{
 			free(line);
 			break ;
@@ -66,7 +66,7 @@ int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd)
 {
 	int				heredoc_fd[2];
 	t_redir_token	*heredoc;
-	struct sigaction	sigact;
+	//struct sigaction	sigact;
 
 	heredoc = redir_list;
 	heredoc_fd[0] = -3;
@@ -74,7 +74,7 @@ int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd)
 		return (-1);
 	while (heredoc && heredoc->text_token && cmd->exit_status != 130)
 	{
-		sig_heredoc(&sigact, cmd);
+		//sig_heredoc(&sigact, cmd);
 		printf("exit_status: %d\n", cmd->exit_status);
 		if (heredoc->redir_type == REDIR_HEREDOC)
 			heredoc_print(heredoc->text_token->expanded_full, heredoc_fd, cmd);

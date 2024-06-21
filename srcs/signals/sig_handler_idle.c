@@ -22,6 +22,7 @@ void	sig_handler_idle(int signal)
 	// printf("Idle signal hander called!\nMy PID: %ld\nParent PID: %ld\n\n", (long)getpid(), (long)getppid());
 	if (signal == SIGINT || signal == SIGQUIT)
 	{
+		// printf("Idle Signal Handled! %d\n", signal);
 		g_signals = signal;
 		rl_blank_line();
 		if (signal == SIGINT)

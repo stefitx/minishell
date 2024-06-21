@@ -62,7 +62,7 @@ int	no_arg_export(t_xcmd *xcmd, t_data *data)
 		while (cursor)
 		{
 			if (cursor->name && cursor->name[0] != '?'
-				&& ft_strcmp(cursor->name, "IFS") == 0)
+				&& ft_streq(cursor->name, "IFS") == 0)
 			{
 				ft_putstr_fd("declare -x ", 1);
 				ft_putstr_fd(cursor->name, 1);

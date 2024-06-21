@@ -29,13 +29,13 @@ void	final_wait(t_xcmd **cmd, t_data *data)
 	env_set_var(&data->env_list, "?", ft_itoa_err(cmd[nr_cmds - 1]->exit_status));
 }
 
-void	child(t_xcmd **cmd, int i, t_data *data, struct sigaction *sigact)
+void	child(t_xcmd **cmd, int i, t_data *data)
 {
 	int	j;
 	int	heredoc_fd;
 	int	flag;
 
-	update_sig_handler(sigact, SIG_HANDLE_EXEC);
+	printf("Hi, I'm a child with PID %ld!\n", (long)getpid());
 	heredoc_fd = 0;
 	if (cmd[i]->nr_heredoc > 0)
 	{
@@ -56,10 +56,11 @@ void	child(t_xcmd **cmd, int i, t_data *data, struct sigaction *sigact)
 
 void	exec_daddy(t_xcmd **cmd, t_data *data, int i, struct sigaction *sigact)
 {
+	update_sig_handler(sigact, SIG_HANDLE_EXEC);
 	while (i < (*cmd)->nr_cmds)
 	{
 		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
-			|| ft_strcmp(cmd[i]->cmd[0], "exit") != 0)
+			|| ft_streq(cmd[i]->cmd[0], "exit") != 0)
 			builtin_execution(data, cmd, i);
 		else
 		{
@@ -67,7 +68,7 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i, struct sigaction *sigact)
 				pipe_error(cmd[i]->pipefd);
 			(*cmd)->pid[i] = fork();
 			if ((*cmd)->pid[i] == 0)
-				child(cmd, i, data, sigact);
+				child(cmd, i, data);
 		}
 		if (i > 0 && (*cmd)->nr_cmds > 1)
 		{
