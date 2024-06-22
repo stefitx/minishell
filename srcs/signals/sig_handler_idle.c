@@ -30,11 +30,9 @@ static void	rl_blank_line(void)
 
 void	sig_handler_idle(int signal)
 {
-	g_signals = signal;
 	rl_blank_line();
 	if (signal == SIGINT)
 	{
-		printf("ihshivhheifhhehhf\n");
 		write(STDOUT_FILENO, "\n", 1);
 		rl_replace_line("", 1);
 		rl_on_new_line();

@@ -20,7 +20,7 @@ void	*ft_malloc_err(size_t size)
 	if (!ptr)
 	{
 		ft_putstr_fd("Error: malloc failed\n", 2);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	return (ptr);
 }

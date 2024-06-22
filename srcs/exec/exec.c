@@ -26,7 +26,6 @@ void	final_wait(t_xcmd **cmd, t_data *data)
 		save_exitstatus(cmd, i);
 		i++;
 	}
-	printf("child is dead\n");
 	env_set_var(&data->env_list, "?",
 		ft_itoa_err(cmd[nr_cmds - 1]->exit_status));
 }
@@ -94,7 +93,6 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *s)
 	orig_stdout = dup(STDOUT_FILENO);
 	i = 0;
 	exec_daddy(cmd, data, i, s);
-	printf("daddy is done\n");
 	final_wait(cmd, data);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);

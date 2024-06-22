@@ -54,10 +54,7 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 
 	waitpid((*cmd)->pid[i], &status, 0);
 	if (WIFEXITED(status))
-	{
-		printf("exit status: %d\n", WEXITSTATUS(status));
 		cmd[i]->exit_status = WEXITSTATUS(status);
-	}
 	else if (WIFSIGNALED(status))
 	{
 		if (g_signals == SIGINT)
@@ -65,7 +62,7 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 		else if (g_signals == SIGQUIT)
 		{
 			cmd[i]->exit_status = 131;
-			printf("\nQuit (core dumped)\n");
+			printf("Quit (core dumped)\n");
 		}
 	}
 }
