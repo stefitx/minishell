@@ -32,7 +32,7 @@ int	is_invalid(char *str)
 	int	i;
 
 	i = 0;
-	if (!str)
+	if (str == NULL || !*str)
 		return (1);
 	if (!ft_isalpha(str[i]) && str[i] != '_')
 		return (1);

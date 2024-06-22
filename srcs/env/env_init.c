@@ -31,8 +31,8 @@ void	if_no_env(t_env **env)
 		env_add_var(env, ft_strdup_err("SHLVL"), ft_strdup_err("1"));
 	cursor = env_get_var(*env, "PATH");
 	if (!cursor)
-		env_add_var(env, ft_strdup_err("PATH"), "/usr/local/sbin: \
-			/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
+		env_add_var(env, ft_strdup_err("PATH"), "/usr/local/sbin:"
+			"/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
 	cursor = env_get_var(*env, "PWD");
 	if (!cursor)
 		env_add_var(env, ft_strdup_err("PWD"), getcwd(NULL, 0));

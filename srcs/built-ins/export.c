@@ -41,7 +41,7 @@ t_export	*create_new_node(char *str, char *full_str)
 	new->add = 0;
 	if (full_str[equal_pos + 1] == '\0' || equal_pos == 0)
 	{
-		new->name = ft_strdup_err(ft_strtrim_err(full_str, "=+"));
+		new->name = ft_strtrim_err(full_str, "=+");
 		if (equal_pos == 0)
 			new->value = NULL;
 		else
@@ -101,16 +101,18 @@ void	ft_export(t_xcmd *xcmd, t_data *data)
 		return ;
 	i = 1;
 	j = 1;
-	while (xcmd->cmd[i] && xcmd->expanded_full[j])
+	while (xcmd->cmd[i])
 	{
-		if (is_invalid(xcmd->expanded_full[j]))
+		if (is_invalid(xcmd->cmd[i]))
 			print_invalid_identifier(xcmd->cmd[i], &xcmd->exit_status);
-		if (xcmd->expanded_full[j] && !is_invalid(xcmd->expanded_full[j]))
+		if (xcmd->expanded_full[j] && !is_invalid(xcmd->expanded_full[j])
+			&& xcmd->cmd[i])
 		{
 			new = create_new_node(xcmd->cmd[i], xcmd->expanded_full[j]);
 			add_node(data, new);
 		}
 		i++;
-		j++;
+		if (xcmd->expanded_full[j])
+			j++;
 	}
 }
