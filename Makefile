@@ -40,7 +40,8 @@ ENV_FILES =	env_add_var.c \
 			env_valid_name.c
 INPUT_FILES	= minishell.c
 SIGNAL_FILES = 	signals.c \
-				sig_handler_idle.c
+				sig_handler_idle.c \
+				sig_handler_exec.c
 BUILTIN_FILES = cd.c \
 				echo.c \
 				env.c \

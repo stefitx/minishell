@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
+/*   By: pfontenl <pfontenl@student.42.fr>          +#+ +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
 /*   Updated: 2024/04/27 15:44:15 by pfontenl         ###   ########.fr       */
@@ -19,15 +19,6 @@ static void	sig_handler_init(struct sigaction *sigact)
 	(*sigact).sa_flags = 0;
 	sigaction(SIGINT, sigact, NULL);
 	sigaction(SIGQUIT, sigact, NULL);
-}
-
-void	sig_handler_exec(int signal)
-{
-	printf("ihshivhheifhhehhf\n");
-	if (signal == SIGINT || signal == SIGQUIT)
-	{
-		g_signals = signal;
-	}
 }
 
 void	update_sig_handler(struct sigaction *sigact, enum e_sig_handle mode)
