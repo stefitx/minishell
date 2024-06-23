@@ -40,7 +40,7 @@ void	child(t_xcmd **cmd, int i, t_data *data, struct sigaction *sigact)
 	heredoc_fd = 0;
 	if (cmd[i]->nr_heredoc > 0)
 	{
-		heredoc_fd = eval_heredoc(cmd[i]->redirs, cmd[i], 1);
+		heredoc_fd = eval_heredoc(cmd[i]->redirs, cmd[i], sigact);
 		if (heredoc_fd != -1)
 			dup2(heredoc_fd, STDIN_FILENO);
 	}
@@ -62,7 +62,7 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i, struct sigaction *sigact)
 	{
 		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
 			|| ft_streq(cmd[i]->cmd[0], "exit") != 0)
-			builtin_execution(data, cmd, i);
+			builtin_exec(data, cmd, i, sigact);
 		else
 		{
 			if (i < (*cmd)->nr_cmds - 1)
@@ -93,6 +93,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *s)
 	orig_stdout = dup(STDOUT_FILENO);
 	i = 0;
 	exec_daddy(cmd, data, i, s);
+	update_sig_handler(s, SIG_HANDLE_BLCK);
 	final_wait(cmd, data);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);

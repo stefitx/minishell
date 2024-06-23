@@ -17,3 +17,10 @@ void	sig_handler_exec(int signal)
 {
 	g_signals = signal;
 }
+
+void	sig_handler_hdoc(int signal)
+{
+	if (signal == SIGQUIT)
+		return ;
+	g_signals = signal;
+}

@@ -25,10 +25,13 @@ void	update_sig_handler(struct sigaction *sigact, enum e_sig_handle mode)
 {
 	if (mode == SIG_HANDLE_IDLE)
 		(*sigact).sa_handler = sig_handler_idle;
+	else if (mode == SIG_HANDLE_HDOC)
+		(*sigact).sa_handler = sig_handler_hdoc;
 	else if (mode == SIG_HANDLE_EXEC)
 		(*sigact).sa_handler = sig_handler_exec;
+	else if (mode == SIG_HANDLE_BLCK)
+		(*sigact).sa_handler = SIG_IGN;
 	else
 		(*sigact).sa_handler = SIG_DFL;
 	sig_handler_init(sigact);
-	(void)sig_handler_init;
 }

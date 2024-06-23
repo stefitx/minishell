@@ -25,11 +25,15 @@ void	heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd)
 	while (g_signals != SIGINT)
 	{
 		line = readline("> ");
+		printf("g_signals is %d\n",g_signals);
 		if (!line || ft_streq(line, limiter) || g_signals == SIGINT)
 		{
 			free(line);
 			if (g_signals == SIGINT)
+			{
+				printf("g_signals is %d\n",g_signals);
 				cmd->exit_status = 130;
+			}
 			break ;
 		}
 		write(heredoc_fd[1], line, ft_strlen(line));
@@ -38,19 +42,11 @@ void	heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd)
 	}
 }
 
-void	close_and_exit(int *heredoc_fd, pid_t pid)
-{
-	close(heredoc_fd[0]);
-	close(heredoc_fd[1]);
-	if (pid == 0)
-		exit(130);
-}
 
-int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, pid_t pid)
+int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, struct sigaction *s)
 {
 	int					heredoc_fd[2];
 	t_redir_token		*heredoc;
-	struct sigaction	sigact;
 
 	heredoc = redir_list;
 	heredoc_fd[0] = -3;
@@ -58,19 +54,18 @@ int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, pid_t pid)
 		return (-1);
 	while (heredoc && heredoc->text_token && cmd->exit_status != 130)
 	{
-		if (pid == 0)
-			update_sig_handler(&sigact, SIG_HANDLE_NONE);
+		update_sig_handler(s, SIG_HANDLE_NONE);
 		if (heredoc->redir_type == REDIR_HEREDOC)
 			heredoc_print(heredoc->text_token->expanded_full, heredoc_fd, cmd);
-		if (g_signals == SIGINT)
-		{
-			close_and_exit(heredoc_fd, pid);
-			return (-1);
-		}
+		
+		// if (g_signals == SIGINT)
+		// {
+		// 	close(heredoc_fd[0]);
+		// 	close(heredoc_fd[1]);
+		// 	return (-1);
+		// }
 		heredoc = heredoc->next;
 	}
 	close(heredoc_fd[1]);
-	if (pid == 0)
-		exit(0);
 	return (heredoc_fd[0]);
 }

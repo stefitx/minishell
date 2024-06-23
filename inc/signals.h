@@ -19,12 +19,15 @@ enum	e_sig_handle
 {
 	SIG_HANDLE_NONE,
 	SIG_HANDLE_IDLE,
-	SIG_HANDLE_EXEC
+	SIG_HANDLE_HDOC,
+	SIG_HANDLE_EXEC,
+	SIG_HANDLE_BLCK
 };
 
 void	update_sig_handler(struct sigaction *sigact, enum e_sig_handle mode);
 
 void	sig_handler_idle(int signal);
+void	sig_handler_hdoc(int signal);
 void	sig_handler_exec(int signal);
 
 #endif

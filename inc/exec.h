@@ -69,14 +69,15 @@ int			ambiguous_redir(t_text_token *redir, t_xcmd *cmd);
 
 //builtin_related.c
 
-void		builtin_execution(t_data *data, t_xcmd **xcmd, int i);
+void		builtin_exec(t_data *data, t_xcmd **xcmd, int i,
+				struct sigaction *s);
 int			builtin_menu(t_xcmd **xcmd, int i, t_data *data);
 int			check_builtin(char **xcmd);
 
 //heredoc.c
 
 void		heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd);
-int			eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, pid_t pid);
+int			eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, struct sigaction *s);
 
 // pipexstuff
 char		**find_path(char **env, char *s);

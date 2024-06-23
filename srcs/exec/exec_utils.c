@@ -57,6 +57,7 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 		cmd[i]->exit_status = WEXITSTATUS(status);
 	else if (WIFSIGNALED(status))
 	{
+		g_signals = WTERMSIG(status);
 		if (g_signals == SIGINT)
 			cmd[i]->exit_status = 130;
 		else if (g_signals == SIGQUIT)
