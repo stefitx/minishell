@@ -43,10 +43,10 @@ void	heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd)
 }
 
 
-int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, struct sigaction *s)
+int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, t_sigacts *s)
 {
-	int					heredoc_fd[2];
-	t_redir_token		*heredoc;
+	int				heredoc_fd[2];
+	t_redir_token	*heredoc;
 
 	heredoc = redir_list;
 	heredoc_fd[0] = -3;
@@ -54,18 +54,26 @@ int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, struct sigaction *s)
 		return (-1);
 	while (heredoc && heredoc->text_token && cmd->exit_status != 130)
 	{
-		update_sig_handler(s, SIG_HANDLE_NONE);
+		(void)s;
+		update_sig_handlers(s, SIG_HANDLE_HDOC);
 		if (heredoc->redir_type == REDIR_HEREDOC)
 			heredoc_print(heredoc->text_token->expanded_full, heredoc_fd, cmd);
-		
-		// if (g_signals == SIGINT)
-		// {
-		// 	close(heredoc_fd[0]);
-		// 	close(heredoc_fd[1]);
-		// 	return (-1);
-		// }
 		heredoc = heredoc->next;
 	}
 	close(heredoc_fd[1]);
+	return (heredoc_fd[0]);
+}
+
+int	get_heredoc_fd(t_redir_token *redir_list)
+{
+	int				heredoc_fd[2];
+	t_redir_token	*heredoc;
+
+	heredoc = redir_list;
+	heredoc_fd[0] = -3;
+	if (!heredoc || !heredoc->text_token)
+		return (-1);
+	while (heredoc && heredoc->text_token)
+		heredoc = heredoc->next;
 	return (heredoc_fd[0]);
 }

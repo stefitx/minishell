@@ -36,6 +36,4 @@
 
 extern int	g_signals;
 
-void	sig_idle(struct sigaction *sigact);
-
 #endif

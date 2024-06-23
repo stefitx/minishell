@@ -34,7 +34,7 @@ int	builtin_menu(t_xcmd **xcmd, int i, t_data *data)
 		return (0);
 }
 
-void	call_heredoc(t_xcmd *xcmd, struct sigaction *sigact)
+void	call_heredoc(t_xcmd *xcmd, t_sigacts *sigacts)
 {
 	pid_t	pid;
 	int		status;
@@ -45,16 +45,30 @@ void	call_heredoc(t_xcmd *xcmd, struct sigaction *sigact)
 		pid = fork();
 		if (pid == 0)
 		{
-			heredoc_fd = eval_heredoc(xcmd->redirs, xcmd, sigact);
+			printf("Heredoc fd: %d\n", get_heredoc_fd(xcmd->redirs));
+			update_sig_handlers(sigacts, SIG_HANDLE_HDOC);
+			heredoc_fd = eval_heredoc(xcmd->redirs, xcmd, sigacts);
+			printf("Heredoc fd: %d\n", heredoc_fd);
 			close(heredoc_fd);
 			exit(xcmd->exit_status);
 		}
 		else
+		{
 			waitpid(pid, &status, 0);
+			if (WIFSIGNALED(status))
+			{
+				g_signals = WTERMSIG(status);
+				if (g_signals == SIGINT)
+					g_signals = 130;
+				else if (g_signals == SIGQUIT)
+					g_signals = 131;
+			}
+			close(7); // heredoc fd is usually 7, MAKE THIS CLEANER LATER MIGHT NOT ALWAYS BE 7 AND IT'S UGLY AS SIN DAWG
+		}
 	}
 }
 
-void	builtin_exec(t_data *data, t_xcmd **xcmd, int i, struct sigaction *s)
+void	builtin_exec(t_data *data, t_xcmd **xcmd, int i, t_sigacts *s)
 {
 	int		orig_stdin;
 	int		orig_stdout;
@@ -63,7 +77,9 @@ void	builtin_exec(t_data *data, t_xcmd **xcmd, int i, struct sigaction *s)
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
 	flag = 0;
+	update_sig_handlers(s, SIG_HANDLE_BLCK);
 	call_heredoc(xcmd[i], s);
+	update_sig_handlers(s, SIG_HANDLE_EXEC);
 	redirections(xcmd, i, &flag);
 	if (!builtin_menu(xcmd, i, data) && ft_streq(xcmd[i]->cmd[0], "exit") != 0)
 	{

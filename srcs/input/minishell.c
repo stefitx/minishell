@@ -41,15 +41,15 @@ int	ft_streq(const char *line, const char *s)
 
 int	main(int argc, char **argv, char **env)
 {
-	struct sigaction	sigact;
-	char				*line;
-	t_data				data;
-	t_env				*our_env;
+	t_sigacts	sigacts;
+	char		*line;
+	t_data		data;
+	t_env		*our_env;
 
 	(void)argv;
 	if (argc != 1)
 		return (perror("Usage: ./minishell\n"), 1);
-	update_sig_handler(&sigact, SIG_HANDLE_IDLE);
+	update_sig_handlers(&sigacts, SIG_HANDLE_IDLE);
 	our_env = NULL;
 	env_init(&our_env, env);
 	data.env_list = our_env;
@@ -62,7 +62,7 @@ int	main(int argc, char **argv, char **env)
 			write(STDOUT_FILENO, "exit\n", 5);
 			exit(0);
 		}
-		parse_and_exec(line, &data, &sigact);
+		parse_and_exec(line, &data, &sigacts);
 		free(line);
 	}
 	return (0);

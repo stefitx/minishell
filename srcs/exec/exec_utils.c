@@ -59,7 +59,10 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 	{
 		g_signals = WTERMSIG(status);
 		if (g_signals == SIGINT)
+		{
 			cmd[i]->exit_status = 130;
+			printf("\n");
+		}
 		else if (g_signals == SIGQUIT)
 		{
 			cmd[i]->exit_status = 131;

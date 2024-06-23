@@ -60,8 +60,8 @@ void		exec_cmd(char **env, char *command);
 void		fill_path(t_xcmd *xcmd);
 
 // exec
-void		parse_and_exec(char *s, t_data *data, struct sigaction *sigact);
-void		redir_and_execute(t_xcmd **cmd, t_data *data, struct sigaction *s);
+void		parse_and_exec(char *s, t_data *data, t_sigacts *sigacts);
+void		redir_and_execute(t_xcmd **cmd, t_data *data, t_sigacts *s);
 
 // exec_utils
 void		pipe_error(int *pipefd);
@@ -69,15 +69,15 @@ int			ambiguous_redir(t_text_token *redir, t_xcmd *cmd);
 
 //builtin_related.c
 
-void		builtin_exec(t_data *data, t_xcmd **xcmd, int i,
-				struct sigaction *s);
+void		builtin_exec(t_data *data, t_xcmd **xcmd, int i, t_sigacts *s);
 int			builtin_menu(t_xcmd **xcmd, int i, t_data *data);
 int			check_builtin(char **xcmd);
 
 //heredoc.c
 
 void		heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd);
-int			eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, struct sigaction *s);
+int			eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, t_sigacts *s);
+int			get_heredoc_fd(t_redir_token *redir_list);
 
 // pipexstuff
 char		**find_path(char **env, char *s);

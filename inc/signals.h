@@ -24,10 +24,17 @@ enum	e_sig_handle
 	SIG_HANDLE_BLCK
 };
 
-void	update_sig_handler(struct sigaction *sigact, enum e_sig_handle mode);
+typedef struct	sigaction	s_sigaction;
+
+typedef struct	s_sigacts
+{
+	s_sigaction	sigint_sigact;
+	s_sigaction	sigquit_sigact;
+}				t_sigacts;
+
+void	update_sig_handlers(t_sigacts *sigacts, enum e_sig_handle mode);
 
 void	sig_handler_idle(int signal);
-void	sig_handler_hdoc(int signal);
 void	sig_handler_exec(int signal);
 
 #endif
