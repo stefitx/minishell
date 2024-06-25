@@ -36,14 +36,15 @@ void	child(t_xcmd **cmd, int i, t_data *data, t_sigacts *sigacts)
 	int	heredoc_fd;
 	int	flag;
 
-	update_sig_handlers(sigacts, SIG_HANDLE_NONE);
 	heredoc_fd = 0;
 	if (cmd[i]->nr_heredoc > 0)
 	{
+		update_sig_handlers(sigacts, SIG_HANDLE_HDOC);
 		heredoc_fd = eval_heredoc(cmd[i]->redirs, cmd[i], sigacts);
 		if (heredoc_fd != -1)
 			dup2(heredoc_fd, STDIN_FILENO);
 	}
+	update_sig_handlers(sigacts, SIG_HANDLE_NONE);
 	redirections(cmd, i, &flag);
 	if (cmd[i]->builtin)
 		builtin_menu(cmd, i, data);
@@ -67,6 +68,7 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i, t_sigacts *sigacts)
 		{
 			if (i < (*cmd)->nr_cmds - 1)
 				pipe_error(cmd[i]->pipefd);
+			update_sig_handlers(sigacts, SIG_HANDLE_BLCK);
 			(*cmd)->pid[i] = fork();
 			if ((*cmd)->pid[i] == 0)
 				child(cmd, i, data, sigacts);
