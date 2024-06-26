@@ -16,8 +16,10 @@
 static void	rl_blank_line(void)
 {
 	int		i;
+	char	*og_line;
 	char	*temp;
 
+	og_line = ft_strdup_err(rl_line_buffer);
 	temp = ft_strdup_err(rl_line_buffer);
 	i = 0;
 	while (i++ < 2)
@@ -26,6 +28,9 @@ static void	rl_blank_line(void)
 	rl_replace_line(temp, 1);
 	rl_redisplay();
 	free(temp);
+	rl_replace_line(og_line, 1);
+	rl_redisplay();
+	free(og_line);
 }
 
 void	sig_handler_idle(int signal)
