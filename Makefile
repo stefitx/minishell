@@ -20,7 +20,7 @@ COLOR_CYAN=\033[1;36m
 PREFIX=$(COLOR_YELLOW)[MINISHELL]$(COLOR_NONE)  
 
 CC		=	gcc
-CFLAGS	=	-Wall -Wextra -Werror -g #-fsanitize=address
+CFLAGS	=	-Wall -Wextra -Werror -g -fsanitize=address
 INCLUDE	=	-I./inc -I./readline 
 RM		=	rm -fr
 
