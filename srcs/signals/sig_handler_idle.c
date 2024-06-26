@@ -20,9 +20,9 @@ static void	rl_blank_line(void)
 	char	*temp;
 
 	og_line = ft_strdup_err(rl_line_buffer);
-	temp = ft_strdup_err(rl_line_buffer);
-	i = 0;
-	while (i++ < 2)
+	temp = NULL;
+	i = ft_strlen(rl_line_buffer) + 2;
+	while (i-- > 0)
 		ft_strappend(&temp, " ");
 	rl_on_new_line();
 	rl_replace_line(temp, 1);
