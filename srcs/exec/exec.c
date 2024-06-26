@@ -26,8 +26,14 @@ void	final_wait(t_xcmd **cmd, t_data *data)
 		save_exitstatus(cmd, i);
 		i++;
 	}
-	env_set_var(&data->env_list, "?",
-		ft_itoa_err(cmd[nr_cmds - 1]->exit_status));
+	printf("g_signals: %d\n", g_signals);
+	if (g_signals == SIGINT)
+		env_set_var(&data->env_list, "?", ft_itoa_err(130));
+	else if (g_signals == SIGQUIT)
+		env_set_var(&data->env_list, "?", ft_itoa_err(131));
+	else
+		env_set_var(&data->env_list, "?",
+			ft_itoa_err(cmd[nr_cmds - 1]->exit_status));
 }
 
 void	child(t_xcmd **cmd, int i, t_data *data, t_sigacts *sigacts)
@@ -61,13 +67,17 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i, t_sigacts *sigacts)
 	update_sig_handlers(sigacts, SIG_HANDLE_EXEC);
 	while (i < (*cmd)->nr_cmds)
 	{
-		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1)
-			|| ft_streq(cmd[i]->cmd[0], "exit") != 0)
-			builtin_exec(data, cmd, i, sigacts);
+		printf("nr_cmds: %d\n", (*cmd)->nr_cmds);
+		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1))
+				builtin_exec(data, cmd, i, sigacts);
 		else
 		{
 			if (i < (*cmd)->nr_cmds - 1)
+			{
+				printf(" we pipin\n");
 				pipe_error(cmd[i]->pipefd);
+			}
+			printf("forking\n");
 			update_sig_handlers(sigacts, SIG_HANDLE_BLCK);
 			(*cmd)->pid[i] = fork();
 			if ((*cmd)->pid[i] == 0)
@@ -94,6 +104,7 @@ void	redir_and_execute(t_xcmd **cmd, t_data *data, t_sigacts *s)
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
 	i = 0;
+	printf(" first cmd: %s\n", cmd[i]->cmd[0]);
 	exec_daddy(cmd, data, i, s);
 	update_sig_handlers(s, SIG_HANDLE_BLCK);
 	final_wait(cmd, data);

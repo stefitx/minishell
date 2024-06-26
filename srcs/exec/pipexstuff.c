@@ -68,7 +68,8 @@ void	check_if_directory(char **split_path, char **cmd)
 			{
 				closedir(dir);
 				ft_putstr_fd("minishell: ", 2);
-				perror(cmd[0]);
+				ft_putstr_fd(cmd[0], 2);
+				ft_putstr_fd(": is a directory\n", 2);
 				exit(126);
 			}
 		}
@@ -105,7 +106,7 @@ char	*access_path(char **cmd, char **env)
 		return (path);
 	ft_putstr_fd("minishell: ", 2);
 	ft_putstr_fd(cmd[0], 2);
-	ft_putstr_fd(": command not found\n", 2);
+	ft_putstr_fd(": command not found HAHA HERE\n", 2);
 	exit(127);
 }
 

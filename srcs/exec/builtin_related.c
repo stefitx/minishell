@@ -39,17 +39,28 @@ void	call_heredoc(t_xcmd *xcmd, t_sigacts *sigacts)
 	pid_t	pid;
 	int		status;
 	int		heredoc_fd;
-
+	int		orig_stdin;
+	int		orig_stdout;
+	orig_stdin = dup(STDIN_FILENO);
+	orig_stdout = dup(STDOUT_FILENO);
 	if (xcmd->nr_heredoc > 0)
 	{
+		xcmd->heredoc_fd = 42;
 		pid = fork();
 		if (pid == 0)
 		{
-			printf("Heredoc fd: %d\n", get_heredoc_fd(xcmd->redirs));
-			update_sig_handlers(sigacts, SIG_HANDLE_HDOC);
-			heredoc_fd = eval_heredoc(xcmd->redirs, xcmd, sigacts);
-			printf("Heredoc fd: %d\n", heredoc_fd);
-			close(heredoc_fd);
+			if (g_signals)
+				xcmd->exit_status = 130;
+			else
+			{
+				update_sig_handlers(sigacts, SIG_HANDLE_HDOC);
+				heredoc_fd = eval_heredoc(xcmd->redirs, xcmd, sigacts);
+				close(heredoc_fd);
+				dup2(orig_stdin, STDIN_FILENO);
+				dup2(orig_stdout, STDOUT_FILENO);
+				close(orig_stdin);
+				close(orig_stdout);
+			}
 			exit(xcmd->exit_status);
 		}
 		else
@@ -57,15 +68,15 @@ void	call_heredoc(t_xcmd *xcmd, t_sigacts *sigacts)
 			waitpid(pid, &status, 0);
 			if (WIFSIGNALED(status))
 			{
-				g_signals = WTERMSIG(status);
-				if (g_signals == SIGINT)
-					g_signals = 130;
-				else if (g_signals == SIGQUIT)
-					g_signals = 131;
+				g_signals = SIGINT;
+				xcmd->exit_status = 130;
 			}
-			close(7); // heredoc fd is usually 7, MAKE THIS CLEANER LATER MIGHT NOT ALWAYS BE 7 AND IT'S UGLY AS SIN DAWG
 		}
 	}
+	dup2(orig_stdin, STDIN_FILENO);
+	dup2(orig_stdout, STDOUT_FILENO);
+	close(orig_stdin);
+	close(orig_stdout);
 }
 
 void	builtin_exec(t_data *data, t_xcmd **xcmd, int i, t_sigacts *s)

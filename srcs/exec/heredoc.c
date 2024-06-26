@@ -25,13 +25,13 @@ void	heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd)
 	while (g_signals != SIGINT)
 	{
 		line = readline("> ");
-		printf("g_signals is %d\n",g_signals);
+		//printf("g_signals is %d\n",g_signals);
 		if (!line || ft_streq(line, limiter) || g_signals == SIGINT)
 		{
 			free(line);
 			if (g_signals == SIGINT)
 			{
-				printf("g_signals is %d\n",g_signals);
+				//printf("g_signals is %d\n",g_signals);
 				cmd->exit_status = 130;
 			}
 			break ;
@@ -61,6 +61,7 @@ int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, t_sigacts *s)
 		heredoc = heredoc->next;
 	}
 	close(heredoc_fd[1]);
+	//printf("heredoc_fd[0]: %d\n", heredoc_fd[0]);
 	return (heredoc_fd[0]);
 }
 

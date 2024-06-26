@@ -56,10 +56,10 @@ void	numeric_argument_required(t_xcmd *xcmd, int *flag)
 	ft_putstr_fd("minishell: exit: ", 2);
 	ft_putstr_fd(xcmd->cmd[1], 2);
 	ft_putstr_fd(": numeric argument required\n", 2);
-	xcmd->exit_status = 255;
+	xcmd->exit_status = 2;
 	if (*flag)
 		return ;
-	exit(255);
+	exit(2);
 }
 
 void	ft_exit(t_xcmd *xcmd, int *flag)

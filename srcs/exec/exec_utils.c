@@ -52,6 +52,7 @@ void	save_exitstatus(t_xcmd **cmd, int i)
 {
 	int	status;
 
+	status = 0;
 	waitpid((*cmd)->pid[i], &status, 0);
 	if (WIFEXITED(status))
 		cmd[i]->exit_status = WEXITSTATUS(status);
