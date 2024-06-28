@@ -24,12 +24,12 @@ enum	e_sig_handle
 	SIG_HANDLE_BLCK
 };
 
-typedef struct	sigaction	s_sigaction;
+typedef struct sigaction	t_sigaction;
 
-typedef struct	s_sigacts
+typedef struct s_sigacts
 {
-	s_sigaction	sigint_sigact;
-	s_sigaction	sigquit_sigact;
+	t_sigaction	sigint_sigact;
+	t_sigaction	sigquit_sigact;
 }				t_sigacts;
 
 void	update_sig_handlers(t_sigacts *sigacts, enum e_sig_handle mode);

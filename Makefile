@@ -121,7 +121,12 @@ HEADERS		+=	inc/exec.h
 HEADERS		+=	inc/builtins.h
 
 #RULES
-all: temp libraries $(NAME)
+all: norminette temp libraries $(NAME)
+
+norminette:
+	@echo "$(PREFIX)$(COLOR_CYAN)Checking norminette...$(COLOR_NONE)"
+	@norminette;
+	@echo "$(PREFIX)$(COLOR_GREEN)Norminette OK!$(COLOR_NONE)"
 
 temp:
 	@mkdir -p $(DIR_OBJ)
@@ -151,7 +156,7 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re libraries libft
+.PHONY: all clean fclean re norminette temp libraries libft
 
 -include temp/srcs/*/*.d
 

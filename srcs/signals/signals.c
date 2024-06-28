@@ -12,7 +12,7 @@
 
 #include "../../inc/minishell.h"
 
-static void	sig_handler_init(s_sigaction *sigact, int signal)
+static void	sig_handler_init(t_sigaction *sigact, int signal)
 {
 	sigemptyset(&(*sigact).sa_mask);
 	sigaddset(&(*sigact).sa_mask, signal);

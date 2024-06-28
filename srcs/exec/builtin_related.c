@@ -41,6 +41,7 @@ void	call_heredoc(t_xcmd *xcmd, t_sigacts *sigacts)
 	int		heredoc_fd;
 	int		orig_stdin;
 	int		orig_stdout;
+
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
 	if (xcmd->nr_heredoc > 0)
