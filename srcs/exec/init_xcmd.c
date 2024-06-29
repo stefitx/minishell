@@ -6,7 +6,7 @@
 /*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/08 22:40:04 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/08 22:40:11 by atudor           ###   ########.fr       */
+/*   Updated: 2024/06/29 13:59:36 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ t_xcmd	**fill_x(t_xcmd **xcmd, t_single_cmd *cmd, int nr_cmds, pid_t *pid)
 			while (i >= 0)
 				free(xcmd[i--]);
 			free(xcmd);
-			return (NULL);
+			exit(1);
 		}
 		if (cmd)
 		{
