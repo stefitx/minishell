@@ -36,5 +36,6 @@ void	update_sig_handlers(t_sigacts *sigacts, enum e_sig_handle mode);
 
 void	sig_handler_idle(int signal);
 void	sig_handler_exec(int signal);
+void	sig_handler_init(t_sigaction *sigact, int signal);
 
 #endif

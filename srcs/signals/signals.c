@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+ +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 13:49:05 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/27 15:44:15 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/06/29 13:52:51 by pfontenl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ void	update_sig_handlers(t_sigacts *sigacts, enum e_sig_handle mode)
 		sigacts->sigquit_sigact.sa_handler = sigacts->sigint_sigact.sa_handler;
 	sig_handler_init(&sigacts->sigint_sigact, SIGINT);
 	sig_handler_init(&sigacts->sigquit_sigact, SIGQUIT);
+}
+
 	//char *modes[] = { "None", "Idle", "Heredoc", "Exec", "Block" };
 	//printf("Mode %s set on PID %ld\n", modes[mode], (long)getpid());
-}

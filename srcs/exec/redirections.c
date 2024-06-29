@@ -95,20 +95,16 @@ void	pipe_redir(t_xcmd **cmd, int i, int *flag)
 		if (cmd[i]->cmd_id == 0)
 		{
 			if (dup2(cmd[i]->pipefd[1], 1) == -1)
-				printf("1 dup2 error\n");
-
-			close(cmd[i]->pipefd[1]);
+				close(cmd[i]->pipefd[1]);
 		}
 		else if (cmd[i]->cmd_id > 0)
 		{
 			if (dup2(cmd[i - 1]->pipefd[0], 0) == -1)
-				printf("2 dup2 error\n");
-			close(cmd[i - 1]->pipefd[0]);
+				close(cmd[i - 1]->pipefd[0]);
 			if (i < cmd[i]->nr_cmds - 1)
 			{
 				if (dup2(cmd[i]->pipefd[1], 1) == -1)
-					printf("3 dup2 error\n");
-				close(cmd[i]->pipefd[1]);
+					close(cmd[i]->pipefd[1]);
 				if (cmd[i - 1]->cmd == NULL)
 					close(cmd[i - 1]->pipefd[1]);
 			}

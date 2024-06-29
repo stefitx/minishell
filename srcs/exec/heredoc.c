@@ -25,15 +25,11 @@ void	heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd)
 	while (g_signals != SIGINT)
 	{
 		line = readline("> ");
-		//printf("g_signals is %d\n",g_signals);
 		if (!line || ft_streq(line, limiter) || g_signals == SIGINT)
 		{
 			free(line);
 			if (g_signals == SIGINT)
-			{
-				//printf("g_signals is %d\n",g_signals);
 				cmd->exit_status = 130;
-			}
 			break ;
 		}
 		write(heredoc_fd[1], line, ft_strlen(line));
@@ -41,7 +37,6 @@ void	heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd)
 		free(line);
 	}
 }
-
 
 int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, t_sigacts *s)
 {
@@ -61,7 +56,6 @@ int	eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, t_sigacts *s)
 		heredoc = heredoc->next;
 	}
 	close(heredoc_fd[1]);
-	//printf("heredoc_fd[0]: %d\n", heredoc_fd[0]);
 	return (heredoc_fd[0]);
 }
 
@@ -77,4 +71,50 @@ int	get_heredoc_fd(t_redir_token *redir_list)
 	while (heredoc && heredoc->text_token)
 		heredoc = heredoc->next;
 	return (heredoc_fd[0]);
+}
+
+void	heredoc_offspring(t_xcmd *xcmd, t_sigacts *sigacts)
+{
+	int		orig_stdin;
+	int		orig_stdout;
+	int		heredoc_fd;
+
+	orig_stdin = dup(STDIN_FILENO);
+	orig_stdout = dup(STDOUT_FILENO);
+	if (g_signals)
+		xcmd->exit_status = 130;
+	else
+	{
+		update_sig_handlers(sigacts, SIG_HANDLE_HDOC);
+		heredoc_fd = eval_heredoc(xcmd->redirs, xcmd, sigacts);
+		close(heredoc_fd);
+		dup2(orig_stdin, STDIN_FILENO);
+		dup2(orig_stdout, STDOUT_FILENO);
+		close(orig_stdin);
+		close(orig_stdout);
+	}
+	exit(xcmd->exit_status);
+}
+
+void	heredoc_bastard_birth(t_xcmd *xcmd, t_sigacts *sigacts)
+{
+	pid_t	pid;
+	int		status;
+
+	if (xcmd->nr_heredoc > 0)
+	{
+		xcmd->heredoc_fd = 42;
+		pid = fork();
+		if (pid == 0)
+			heredoc_offspring(xcmd, sigacts);
+		else
+		{
+			waitpid(pid, &status, 0);
+			if (WIFSIGNALED(status))
+			{
+				g_signals = SIGINT;
+				xcmd->exit_status = 130;
+			}
+		}
+	}
 }

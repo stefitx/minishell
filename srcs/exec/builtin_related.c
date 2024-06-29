@@ -36,44 +36,12 @@ int	builtin_menu(t_xcmd **xcmd, int i, t_data *data)
 
 void	call_heredoc(t_xcmd *xcmd, t_sigacts *sigacts)
 {
-	pid_t	pid;
-	int		status;
-	int		heredoc_fd;
 	int		orig_stdin;
 	int		orig_stdout;
 
 	orig_stdin = dup(STDIN_FILENO);
 	orig_stdout = dup(STDOUT_FILENO);
-	if (xcmd->nr_heredoc > 0)
-	{
-		xcmd->heredoc_fd = 42;
-		pid = fork();
-		if (pid == 0)
-		{
-			if (g_signals)
-				xcmd->exit_status = 130;
-			else
-			{
-				update_sig_handlers(sigacts, SIG_HANDLE_HDOC);
-				heredoc_fd = eval_heredoc(xcmd->redirs, xcmd, sigacts);
-				close(heredoc_fd);
-				dup2(orig_stdin, STDIN_FILENO);
-				dup2(orig_stdout, STDOUT_FILENO);
-				close(orig_stdin);
-				close(orig_stdout);
-			}
-			exit(xcmd->exit_status);
-		}
-		else
-		{
-			waitpid(pid, &status, 0);
-			if (WIFSIGNALED(status))
-			{
-				g_signals = SIGINT;
-				xcmd->exit_status = 130;
-			}
-		}
-	}
+	heredoc_bastard_birth(xcmd, sigacts);
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
 	close(orig_stdin);
