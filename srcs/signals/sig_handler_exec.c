@@ -16,5 +16,4 @@
 void	sig_handler_exec(int signal)
 {
 	g_signals = signal;
-	printf("g_signals handlesr: %d\n", g_signals);
 }

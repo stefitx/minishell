@@ -226,7 +226,5 @@ void						add_ref_redir_token(char *content,
 // command_builder.c
 t_command					*parse_command(char *s, t_env *env);
 void						clear_command(t_command	*cmd);
-// sorry i had to add it or else it wouldnt compile
-// t_command					*build_commands(t_ref_token *tokens);
 
 #endif

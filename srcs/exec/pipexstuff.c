@@ -70,15 +70,11 @@ char	*access_path(char **cmd, char **env)
 			perror(cmd[0]);
 			exit(EXIT_FAILURE);
 		}
-		free_arr(split_path);
-		return (cmd[0]);
+		return (free_arr(split_path), cmd[0]);
 	}
 	path = construct_command_path(split_path, cmd[0]);
 	if (path != NULL)
-	{
-		free_arr(split_path);
-		return (path);
-	}
+		return (free_arr(split_path), path);
 	cmd_not_found(cmd);
 	exit(127);
 }

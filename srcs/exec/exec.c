@@ -126,7 +126,3 @@ void	parse_and_exec(char *s, t_data *data, t_sigacts *sigacts)
 	clear_command(cmd);
 	update_sig_handlers(sigacts, SIG_HANDLE_IDLE);
 }
-
-/*
-simple heredoc doesnt catch signals
-*/
