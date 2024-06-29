@@ -6,7 +6,7 @@
 /*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:09:33 by atudor            #+#    #+#             */
-/*   Updated: 2024/03/01 15:09:35 by atudor           ###   ########.fr       */
+/*   Updated: 2024/06/29 15:45:12 by atudor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ void	numeric_argument_required(t_xcmd *xcmd, int *flag)
 	exit(2);
 }
 
-void	ft_exit(t_xcmd *xcmd, int *flag)
+void	ft_exit(t_xcmd *xcmd, t_data *data, int *flag)
 {
 	if (xcmd->exit_status != 0)
 		return ;
@@ -80,6 +80,6 @@ void	ft_exit(t_xcmd *xcmd, int *flag)
 		if (*flag)
 			return ;
 		write(STDOUT_FILENO, "exit\n", 5);
-		exit(0);
+		exit(ft_atoi(env_get_var(data->env_list, "?")->val));
 	}
 }

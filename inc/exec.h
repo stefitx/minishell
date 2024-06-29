@@ -6,7 +6,7 @@
 /*   By: pfontenl <pfontenl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:13:56 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/19 18:41:50 by pfontenl         ###   ########.fr       */
+/*   Updated: 2024/06/29 15:46:20 by atudor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ void		ft_echo(t_xcmd *cmd);
 void		ft_env(t_xcmd *cmd, t_data *data);
 
 // exit
-void		ft_exit(t_xcmd *xcmd, int *flag);
+void		ft_exit(t_xcmd *xcmd, t_data *data, int *flag);
 
 // export
 void		ft_export(t_xcmd *xcmd, t_data *data);

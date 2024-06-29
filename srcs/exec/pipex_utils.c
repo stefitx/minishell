@@ -6,7 +6,7 @@
 /*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 23:19:48 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/09 23:19:53 by atudor           ###   ########.fr       */
+/*   Updated: 2024/06/29 14:38:59 by atudor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	check_dir_name(char **cmd, DIR *dir)
 		ft_putstr_fd(": is a directory\n", 2);
 		exit(126);
 	}
-	else if (access(cmd[0], X_OK) == -1)
+	else if (access(cmd[0], F_OK) == -1)
 	{
 		ft_putstr_fd("minishell: ", 2);
 		ft_putstr_fd(cmd[0], 2);

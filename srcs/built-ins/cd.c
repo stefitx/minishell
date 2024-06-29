@@ -6,7 +6,7 @@
 /*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:08:48 by atudor            #+#    #+#             */
-/*   Updated: 2024/03/01 15:08:49 by atudor           ###   ########.fr       */
+/*   Updated: 2024/06/29 14:49:57 by atudor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void	it_has_args(t_xcmd *cmd, t_env *env_list)
 	}
 	else
 	{
+		free(oldpwd);
 		ft_putstr_fd("minishell: cd: ", 2);
 		perror(cmd->cmd[1]);
 		cmd->exit_status = 1;

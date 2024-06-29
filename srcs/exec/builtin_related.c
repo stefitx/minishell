@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_utils.c                                       :+:      :+:    :+:   */
+/*   builtin_related.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: atudor <atudor@student.42barcelon>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 23:18:50 by atudor            #+#    #+#             */
-/*   Updated: 2024/04/09 23:18:53 by atudor           ###   ########.fr       */
+/*   Updated: 2024/06/29 15:45:48 by atudor           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	builtin_exec(t_data *data, t_xcmd **xcmd, int i, t_sigacts *s)
 		dup2(orig_stdout, STDOUT_FILENO);
 		close(orig_stdin);
 		close(orig_stdout);
-		ft_exit(xcmd[i], &flag);
+		ft_exit(xcmd[i], data, &flag);
 	}
 	dup2(orig_stdin, STDIN_FILENO);
 	dup2(orig_stdout, STDOUT_FILENO);
