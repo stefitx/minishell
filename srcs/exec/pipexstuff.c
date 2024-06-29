@@ -55,44 +55,6 @@ char	*construct_command_path(char **split_path, char *command)
 	return (NULL);
 }
 
-void	check_if_directory(char **split_path, char **cmd)
-{
-	DIR	*dir;
-
-	if (cmd[0] != NULL)
-	{
-		dir = opendir(cmd[0]);
-		if (ft_strchr(cmd[0], '/') != NULL || ft_streq(cmd[0], "~") != 0)
-		{
-			if (dir)
-			{
-				closedir(dir);
-				ft_putstr_fd("minishell: ", 2);
-				ft_putstr_fd(cmd[0], 2);
-				ft_putstr_fd(": is a directory\n", 2);
-				exit(126);
-			}
-			else if (access(cmd[0], X_OK) == -1)
-			{
-				ft_putstr_fd("minishell: ", 2);
-				ft_putstr_fd(cmd[0], 2);
-				ft_putstr_fd(": No such file or directory\n", 2);
-				exit(127);
-			}
-		}
-		else if (split_path == NULL || errno == ENOTDIR)
-		{
-			if (dir)
-				closedir(dir);
-			ft_putstr_fd("minishell: ", 2);
-			perror(cmd[0]);
-			exit(127);
-		}
-		if (dir)
-			closedir(dir);
-	}
-}
-
 char	*access_path(char **cmd, char **env)
 {
 	char	*path;
@@ -117,9 +79,7 @@ char	*access_path(char **cmd, char **env)
 		free_arr(split_path);
 		return (path);
 	}
-	ft_putstr_fd("minishell: ", 2);
-	ft_putstr_fd(cmd[0], 2);
-	ft_putstr_fd(": command not found\n", 2);
+	cmd_not_found(cmd);
 	exit(127);
 }
 
@@ -133,9 +93,7 @@ void	execution(t_data *data, t_xcmd *cmd)
 	cmd->path = access_path(cmd->cmd, env);
 	if (execve(cmd->path, cmd->cmd, env) == -1)
 	{
-		ft_putstr_fd("minishell: \n", 2);
-		ft_putstr_fd(cmd->cmd[0], 2);
-		ft_putstr_fd(": command not found\n", 2);
+		cmd_not_found(cmd->cmd);
 		free(cmd->path);
 		free_arr(env);
 		exit(127);

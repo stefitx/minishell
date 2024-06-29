@@ -73,7 +73,8 @@ EXEC_FILES	=	exec.c \
 				exec_utils.c \
 				pipexstuff.c \
 				builtin_related.c \
-				heredoc.c
+				heredoc.c \
+				pipex_utils.c
 # HEREDOC_FILES	=
 # BONUS_FILES	=
 

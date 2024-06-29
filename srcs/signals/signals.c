@@ -12,7 +12,7 @@
 
 #include "../../inc/minishell.h"
 
-static void	sig_handler_init(s_sigaction *sigact, int signal)
+void	sig_handler_init(t_sigaction *sigact, int signal)
 {
 	sigemptyset(&(*sigact).sa_mask);
 	sigaddset(&(*sigact).sa_mask, signal);
@@ -38,6 +38,7 @@ void	update_sig_handlers(t_sigacts *sigacts, enum e_sig_handle mode)
 		sigacts->sigquit_sigact.sa_handler = sigacts->sigint_sigact.sa_handler;
 	sig_handler_init(&sigacts->sigint_sigact, SIGINT);
 	sig_handler_init(&sigacts->sigquit_sigact, SIGQUIT);
+}
+
 	//char *modes[] = { "None", "Idle", "Heredoc", "Exec", "Block" };
 	//printf("Mode %s set on PID %ld\n", modes[mode], (long)getpid());
-}

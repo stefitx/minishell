@@ -79,10 +79,17 @@ int			check_builtin(char **xcmd);
 void		heredoc_print(char *limiter, int *heredoc_fd, t_xcmd *cmd);
 int			eval_heredoc(t_redir_token *redir_list, t_xcmd *cmd, t_sigacts *s);
 int			get_heredoc_fd(t_redir_token *redir_list);
+void		heredoc_bastard_birth(t_xcmd *xcmd, t_sigacts *sigacts);
 
 // pipexstuff
 char		**find_path(char **env, char *s);
 void		execution(t_data *data, t_xcmd *cmd);
+
+// pipex_utils
+
+void		cmd_not_found(char **cmd);
+void		check_if_directory(char **split_path, char **cmd);
+void		check_dir_name(char **cmd, DIR *dir);
 
 // init_xcmd
 void		fill_redirs(t_xcmd *xcmd, t_redir_token *parse_redir);

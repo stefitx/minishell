@@ -26,7 +26,6 @@ void	final_wait(t_xcmd **cmd, t_data *data)
 		save_exitstatus(cmd, i);
 		i++;
 	}
-	//printf("g_signals: %d\n", g_signals);
 	if (g_signals == SIGINT)
 		env_set_var(&data->env_list, "?", ft_itoa_err(130));
 	else if (g_signals == SIGQUIT)
@@ -67,17 +66,12 @@ void	exec_daddy(t_xcmd **cmd, t_data *data, int i, t_sigacts *sigacts)
 	update_sig_handlers(sigacts, SIG_HANDLE_EXEC);
 	while (i < (*cmd)->nr_cmds)
 	{
-		//printf("nr_cmds: %d\n", (*cmd)->nr_cmds);
 		if ((cmd[i]->builtin && (*cmd)->nr_cmds == 1))
-				builtin_exec(data, cmd, i, sigacts);
+			builtin_exec(data, cmd, i, sigacts);
 		else
 		{
 			if (i < (*cmd)->nr_cmds - 1)
-			{
-				//printf(" we pipin\n");
 				pipe_error(cmd[i]->pipefd);
-			}
-			//printf("forking\n");
 			update_sig_handlers(sigacts, SIG_HANDLE_BLCK);
 			(*cmd)->pid[i] = fork();
 			if ((*cmd)->pid[i] == 0)
